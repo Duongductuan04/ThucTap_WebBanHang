@@ -1,0 +1,156 @@
+﻿@using SimpleTaskApp.MobilePhones.Dto
+@using SimpleTaskApp.Areas.Admin.Models.Common.Modals
+@using SimpleTaskApp.Areas.Admin.Models.MobilePhones
+@model CreateMobilePhoneViewModel
+
+@{
+    Layout = null;
+}
+
+@await Html.PartialAsync(
+        "~/Areas/Admin/Views/Shared/Modals/_ModalHeader.cshtml",
+        new ModalHeaderViewModel(L("CreateNewMobilePhone"))
+    )
+
+<form id="MobilePhoneCreateForm" role="form" class="form-horizontal" enctype="multipart/form-data" method="post" asp-controller="Upload" asp-action="UploadImage" method="post">
+    <div class="modal-body">
+
+        <!-- Name -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="Name">@L("Name")</label>
+            <div class="col-md-9">
+                <input id="Name" name="Name" type="text" class="form-control" maxlength="256" required
+                       data-val="true"
+                       data-val-required="@L("Name_Required")"
+                       data-val-regex="@L("Name_Invalid")"
+                       data-val-regex-pattern="^[a-zA-Z0-9\s]+$" />
+                <span class="text-danger field-validation-valid" data-valmsg-for="Name" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="Description">@L("Description")</label>
+            <div class="col-md-9">
+                <textarea id="Description" name="Description" class="form-control" maxlength="500"
+                          data-val="true"
+                          data-val-maxlength="@L("Description_MaxLength")"
+                          data-val-maxlength-max="500"></textarea>
+                <span class="text-danger field-validation-valid" data-valmsg-for="Description" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+
+        <!-- Price -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="Price">@L("Price")</label>
+            <div class="col-md-9">
+                <input id="Price" name="Price" type="number" class="form-control" step="0.01" required
+                       data-val="true"
+                       data-val-required="@L("Price_Required")" />
+                <span class="text-danger field-validation-valid" data-valmsg-for="Price" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+
+        <!-- DiscountPrice -->
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="DiscountPrice">@L("DiscountPrice")</label>
+            <div class="col-md-9">
+                <input id="DiscountPrice" name="DiscountPrice" type="number" class="form-control" step="0.01" />
+                <span class="text-danger field-validation-valid" data-valmsg-for="DiscountPrice" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+
+        <!-- StockQuantity -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="StockQuantity">@L("StockQuantity")</label>
+            <div class="col-md-9">
+                <input id="StockQuantity" name="StockQuantity" type="number" class="form-control" required min="0"
+                       data-val="true"
+                       data-val-required="@L("StockQuantity_Required")"
+                       data-val-range="@L("StockQuantity_Invalid")" />
+                <span class="text-danger field-validation-valid" data-valmsg-for="StockQuantity" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+
+        <!-- Brand -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="Brand">@L("Brand")</label>
+            <div class="col-md-9">
+                <input id="Brand" name="Brand" type="text" class="form-control" maxlength="100" required
+                       data-val="true"
+                       data-val-required="@L("Brand_Required")"
+                       data-val-regex="@L("Brand_Invalid")"
+                       data-val-regex-pattern="^[a-zA-Z0-9\s]+$" />
+                <span class="text-danger field-validation-valid" data-valmsg-for="Brand" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+
+        <!-- Category -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="CategoryId">@L("Category")</label>
+            <div class="col-md-9">
+                <select id="CategoryId" name="CategoryId" class="form-control" required
+                        data-val="true" data-val-required="@L("Category_Required")">
+                    <option value="">-- @L("Select") --</option>
+                    @foreach (var c in Model.Categories)
+                    {
+                        <option value="@c.Value">@c.Text</option>
+                    }
+                </select>
+                <span class="text-danger field-validation-valid" data-valmsg-for="CategoryId" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+
+        <!-- Image -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="ImageFile">@L("Image")</label>
+            <div class="col-md-9">
+                <input id="ImageFile" name="ImageFile" type="file" class="form-control" required
+                       data-val="true"
+                       data-val-required="@L("Photo_Required")" />
+                <span class="text-danger field-validation-valid" data-valmsg-for="ImageFile" data-valmsg-replace="true"></span>
+                <small class="form-text text-muted">@L("ImageUploadHint")</small>
+            </div>
+        </div>
+        <!-- IsNew -->
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="IsNew">@L("IsNew")</label>
+            <div class="col-md-9">
+                <input type="hidden" name="IsNew" value="false" />
+                <input id="IsNew" name="IsNew" type="checkbox" value="true" />
+            </div>
+        </div>
+
+        <!-- IsOnSale -->
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="IsOnSale">@L("IsOnSale")</label>
+            <div class="col-md-9">
+                <input type="hidden" name="IsOnSale" value="false" />
+                <input id="IsOnSale" name="IsOnSale" type="checkbox" value="true" />
+            </div>
+        </div>
+        <!-- SaleStart -->
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="SaleStart">@L("SaleStart")</label>
+            <div class="col-md-9">
+                <input id="SaleStart" name="SaleStart" type="datetime-local" class="form-control" />
+            </div>
+        </div>
+
+        <!-- SaleEnd -->
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="SaleEnd">@L("SaleEnd")</label>
+            <div class="col-md-9">
+                <input id="SaleEnd" name="SaleEnd" type="datetime-local" class="form-control" />
+            </div>
+        </div>
+
+    </div>
+
+    @await Html.PartialAsync("~/Areas/Admin/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml")
+</form>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+<script src="~/view-resources/Views/MobilePhones/_CreateModal.js" asp-append-version="true"></script>

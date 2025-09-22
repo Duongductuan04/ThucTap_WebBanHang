@@ -1,0 +1,197 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<localizationDictionary culture="en">
+	<texts>
+		<!-- General -->
+		<text name="HomePage" value="Home" />
+		<text name="About" value="About" />
+		<text name="WelcomeMessage" value="Welcome to SimpleTaskApp!" />
+		<text name="FormIsNotValidMessage" value="The form is invalid. Please check and correct errors." />
+		<text name="TenantNameCanNotBeEmpty" value="Tenant name cannot be empty" />
+		<text name="InvalidUserNameOrPassword" value="Invalid username or password" />
+		<text name="ThereIsNoTenantDefinedWithName{0}" value="No tenant is defined with the name {0}" />
+		<text name="TenantIsNotActive" value="Tenant {0} is not active." />
+		<text name="UserIsNotActiveAndCanNotLogin" value="User {0} is not active and cannot log in." />
+		<text name="UserEmailIsNotConfirmedAndCanNotLogin" value="Email address is not confirmed. Cannot log in." />
+		<text name="UserLockedOutMessage" value="User account is locked. Please try again later." />
+		<text name="PleaseEnterLoginInformation" value="Please enter login information" />
+		<text name="TenancyName" value="Tenant name" />
+		<text name="UserNameOrEmail" value="Username or email" />
+		<text name="Password" value="Password" />
+		<text name="ResetPassword" value="Reset Password" />
+		<text name="UpdatePassword" value="Update Password" />
+		<text name="RememberMe" value="Remember me" />
+		<text name="LogIn" value="Log in" />
+		<text name="LoginFailed" value="Login failed!" />
+		<text name="FullName" value="Full name" />
+		<text name="UserName" value="Username" />
+		<text name="EmailAddress" value="Email" />
+		<text name="SavedSuccessfully" value="Saved successfully" />
+		<text name="CreateNewTenant" value="Create new tenant" />
+		<text name="AdminEmailAddress" value="Admin email" />
+		<text name="AdminPassword" value="Admin password" />
+		<text name="TenantName_Regex_Description" value="Tenant name must be at least 2 characters, start with a letter, and contain letters, numbers, hyphens, or underscores." />
+		<text name="DefaultPasswordIs" value="Default password is {0}" />
+		<text name="CanBeEmptyToLoginAsHost" value="Can be left empty to log in as host." />
+		<text name="Register" value="Register" />
+		<text name="OrLoginWith" value="Or log in with" />
+		<text name="WaitingForActivationMessage" value="Your account is waiting for activation from the system administrator." />
+		<text name="TenantSelection" value="Select tenant" />
+		<text name="TenantSelection_Detail" value="Please select one of the following tenants." />
+		<text name="Logout" value="Log out" />
+		<text name="DatabaseConnectionString" value="Database connection string" />
+		<text name="Users" value="Users" />
+		<text name="IsActive" value="Active" />
+		<text name="CreateNewUser" value="Create new user" />
+		<text name="Yes" value="Yes" />
+		<text name="No" value="No" />
+		<text name="Optional" value="Optional" />
+		<text name="LeaveEmptyToSwitchToHost" value="Leave empty to switch to host" />
+		<text name="CurrentTenant" value="Current tenant" />
+		<text name="NotSelected" value="Not selected" />
+		<text name="Change" value="Change" />
+		<text name="ChangeTenant" value="Change tenant" />
+		<text name="MultiLevelMenu" value="Multi-level menu" />
+		<text name="Back" value="Back" />
+		<text name="SuccessfullyRegistered" value="Registered successfully" />
+		<text name="WaitingForEmailActivation" value="Your email address needs to be activated" />
+		<text name="Roles" value="Roles" />
+		<text name="DisplayName" value="Display name" />
+		<text name="CreateNewRole" value="Create new role" />
+		<text name="RoleName" value="Role name" />
+		<text name="Actions" value="Actions" />
+		<text name="CouldNotCompleteLoginOperation" value="Cannot complete login operation. Please try again later." />
+		<text name="CouldNotValidateExternalUser" value="Cannot validate external user" />
+		<text name="EditRole" value="Edit role" />
+		<text name="EditTenant" value="Edit tenant" />
+		<text name="EditUser" value="Edit user" />
+		<text name="TenantIdIsNotActive{0}" value="TenantId {0} is not active" />
+		<text name="UnknownTenantId{0}" value="TenantId {0} is unknown" />
+		<text name="ThisFieldIsRequired" value="This field is required" />
+		<text name="PleaseWait" value="Please wait..." />
+		<text name="Administration" value="Administration" />
+		<text name="ClearAll" value="Clear all" />
+		<text name="ClearOthers" value="Clear others" />
+		<text name="LabelOptions" value="Label options" />
+		<text name="Permissions" value="Permissions" />
+		<text name="RoleDescription" value="Role description" />
+		<text name="Refresh" value="Refresh" />
+		<text name="UserDetails" value="User details" />
+		<text name="UserRoles" value="User roles" />
+		<text name="ConfirmPassword" value="Confirm password" />
+		<text name="Version" value="Version" />
+		<text name="On" value="On" />
+		<text name="Off" value="Off" />
+		<text name="AreYouSureWantToDelete" value="Are you sure you want to delete {0}?" />
+		<text name="SuccessfullyDeleted" value="Deleted successfully" />
+		<text name="StartTyping" value="Start typing..." />
+		<text name="Skins" value="Skins" />
+		<text name="Settings" value="Settings" />
+		<text name="Filter" value="Filter" />
+		<text name="CurrentPassword" value="Current password" />
+		<text name="NewPassword" value="New password" />
+		<text name="ConfirmNewPassword" value="Confirm new password" />
+		<text name="PasswordsDoNotMatch" value="Passwords do not match" />
+		<text name="PasswordsMustBeAtLeast8CharactersContainLowercaseUppercaseNumber" value="Password must be at least 8 characters, including lowercase, uppercase, and number" />
+		<text name="SearchWithThreeDot" value="Search..." />
+		<text name="PleaseEnterAtLeastNCharacter" value="Please enter at least {0} characters" />
+		<text name="PleaseEnterNoMoreThanNCharacter" value="Please enter no more than {0} characters" />
+		<text name="InvalidEmailAddress" value="Invalid email address" />
+		<text name="InvalidPattern" value="Invalid pattern" />
+		<text name="PairsDoNotMatch" value="Do not match" />
+		<text name="TotalRecordsCount" value="Total: {0}" />
+		<text name="Search" value="Search" />
+		<text name="403PageHeader" value="Forbidden" />
+		<text name="403PageDescription" value="You do not have permission to access this resource. Please contact administrator." />
+		<text name="403PageButton" value="Back to Dashboard" />
+
+		<!-- MobilePhone -->
+		<text name="MobilePhone" value="Mobile Phone" />
+		<text name="MobilePhones" value="Mobile Phones" />
+		<text name="MobilePhoneDetail" value="Detail" />
+		<text name="CreateMobilePhone" value="Add New" />
+		<text name="EditMobilePhone" value="Edit" />
+		<text name="CurrentImage" value="Current Image" />
+		<text name="NewImage" value="New Image" />
+		<text name="Image" value="Image" />
+		<text name="ImageUploadHint" value="Select image file (jpg, png, webp)" />
+		<text name="NameRequired" value="Required" />
+		<text name="NameInvalid" value="Invalid" />
+		<text name="Description" value="Description" />
+		<text name="DescriptionRequired" value="Required" />
+		<text name="DescriptionMaxLength" value="Max 500 characters" />
+		<text name="Price" value="Price" />
+		<text name="PriceRequired" value="Required" />
+		<text name="StockQuantity" value="Stock Quantity" />
+		<text name="StockQuantityRequired" value="Required" />
+		<text name="StockQuantityInvalid" value="Invalid" />
+		<text name="Category" value="Category" />
+		<text name="CategoryRequired" value="Select Category" />
+		<text name="Create" value="Add" />
+		<text name="Delete" value="Delete" />
+		<text name="ConfirmDelete" value="Are you sure?" />
+		<text name="Detail" value="Detail" />
+		<text name="Cancel" value="Cancel" />
+		<text name="Save" value="Save" />
+
+		<!-- Cart -->
+		<text name="Cart" value="Cart" />
+		<text name="ProductName" value="Product Name" />
+		<text name="DiscountPrice" value="Discount Price" />
+		<text name="DisplayPrice" value="Display Price" />
+		<text name="Quantity" value="Quantity" />
+		<text name="Total" value="Total" />
+		<text name="NoImage" value="No Image" />
+		<text name="EditCart" value="Edit Cart" />
+		<text name="QuantityRequired" value="Required" />
+
+		<!-- Order -->
+		<text name="Order" value="Order" />
+		<text name="OrderDetail" value="Order Detail" />
+		<text name="RecipientName" value="Recipient Name" />
+		<text name="RecipientPhone" value="Recipient Phone" />
+		<text name="RecipientAddress" value="Recipient Address" />
+		<text name="Status" value="Status" />
+		<text name="PaymentMethod" value="Payment Method" />
+		<text name="ShippingMethod" value="Shipping Method" />
+		<text name="TotalAmount" value="Total Amount" />
+		<text name="Products" value="Products" />
+		<text name="Close" value="Close" />
+		<text name="EditOrder" value="Edit Order" />
+		<text name="RecipientNameRequired" value="Required" />
+		<text name="RecipientAddressRequired" value="Required" />
+		<text name="RecipientPhoneRequired" value="Required" />
+		<text name="Pending" value="Pending" />
+		<text name="Shipping" value="Shipping" />
+		<text name="Completed" value="Completed" />
+		<text name="Cancelled" value="Cancelled" />
+		<text name="Cash" value="Cash" />
+		<text name="BankTransfer" value="Bank Transfer" />
+		<text name="EWallet" value="E-Wallet" />
+		<text name="Standard" value="Standard" />
+		<text name="Express" value="Express" />
+		<text name="SuperFast" value="Super Fast" />
+		<!-- Missing fields -->
+		<text name="Recipient" value="Recipient" />
+		<text name="Phone" value="Phone Number" />
+		<text name="Brand" value="Brand" />
+
+		<text name="Carts" value="Carts" />
+		<text name="Orders" value="Orders" />
+
+		<text name="Edit" value="Edit" />
+		<text name="CreateNewMobilePhone" value="Create New Mobile Phone" />
+
+		<!-- Flags / checkboxes -->
+		<text name="IsNew" value="Is New" />
+		<text name="IsOnSale" value="On Sale" />
+
+		<!-- Sale period -->
+		<text name="SaleStart" value="Sale Start Date" />
+		<text name="SaleEnd" value="Sale End Date" />
+
+		<!-- Common -->
+		<text name="Select" value="Select" />
+		<text name="Statistics" value="Statistics" />
+
+	</texts>
+</localizationDictionary>

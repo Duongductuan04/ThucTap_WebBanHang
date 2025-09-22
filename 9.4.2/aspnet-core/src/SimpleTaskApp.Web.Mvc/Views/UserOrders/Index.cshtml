@@ -1,0 +1,103 @@
+﻿@using SimpleTaskApp.MobilePhones.Dto
+@model List<OrderDto>
+@{
+    Layout = "~/Views/Shared/Layout/_LayoutFrontend.cshtml";
+    ViewBag.Title = "Đơn hàng của tôi";
+
+    int statusValue = ViewBag.StatusValue ?? -1;
+
+    string statusLabel = statusValue switch
+    {
+        0 => "🕒 Đang xử lý",
+        1 => "🚚 Đang giao",
+        2 => "✅ Hoàn thành",
+        3 => "❌ Đã hủy",
+        _ => "Tất cả đơn hàng"
+    };
+}
+
+<div class="container my-5">
+    <h2 class="mb-4 text-primary fw-bold">@statusLabel</h2>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info text-center shadow-sm rounded">
+            Không có đơn hàng nào.
+        </div>
+    }
+    else
+    {
+        @foreach (var order in Model)
+        {
+            string headerClass = order.Status switch
+            {
+                0 => "bg-warning text-dark",
+                1 => "bg-info text-white",
+                2 => "bg-success text-white",
+                3 => "bg-danger text-white",
+                _ => "bg-secondary text-white"
+            };
+
+            string orderStatusText = order.Status switch
+            {
+                0 => "🕒 Đang xử lý",
+                1 => "🚚 Đang giao",
+                2 => "✅ Hoàn thành",
+                3 => "❌ Đã hủy",
+                _ => "Không xác định"
+            };
+
+            <div class="card mb-4 shadow border-0 rounded-3">
+                <div class="card-header d-flex justify-content-between align-items-center @headerClass">
+                    <strong>Đơn hàng #@order.Id</strong>
+                    <span class="fw-bold">@orderStatusText</span>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-striped table-borderless mb-0 align-middle text-center">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Ảnh</th>
+                                <th>Sản phẩm</th>
+                                <th>Số lượng</th>
+                                <th>Đơn giá</th>
+                                <th>Thành tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in order.OrderDetails)
+                            {
+                                <tr>
+                                    <td>
+                                        <img src="@item.ImageUrl" width="70" class="rounded shadow-sm" />
+                                    </td>
+                                    <td class="text-start">@item.MobilePhoneName</td>
+                                    <td>@item.Quantity</td>
+                                    <td>
+                                        @item.UnitPrice.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))
+                                    </td>
+                                    <td class="fw-bold text-danger">
+                                        @((item.Quantity * item.UnitPrice).ToString("C0", new System.Globalization.CultureInfo("vi-VN")))
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer d-flex flex-column flex-md-row justify-content-between align-items-start bg-light">
+                    <div>
+                        <small class="d-block text-muted">Ngày đặt: @order.CreationTime.ToString("dd/MM/yyyy")</small>
+                        <small class="d-block"><strong>Người nhận:</strong> @order.RecipientName</small>
+                        <small class="d-block"><strong>SĐT:</strong> @order.RecipientPhone</small>
+                        <small class="d-block"><strong>Địa chỉ:</strong> @order.RecipientAddress</small>
+                    </div>
+                    <div class="mt-2 mt-md-0">
+                        <strong class="text-primary">
+                            Tổng cộng:
+                            @order.OrderDetails.Sum(x => x.Quantity * x.UnitPrice).ToString("C0", new System.Globalization.CultureInfo("vi-VN"))
+                        </strong>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
