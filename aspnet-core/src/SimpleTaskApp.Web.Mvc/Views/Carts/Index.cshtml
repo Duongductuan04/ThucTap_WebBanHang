@@ -1,0 +1,138 @@
+﻿@model List<SimpleTaskApp.MobilePhones.Dto.CartDto>
+
+@{
+    Layout = "~/Views/Shared/Layout/_LayoutFrontend.cshtml";
+    ViewBag.Title = "Giỏ hàng của bạn";
+}
+
+<div class="container my-5">
+    <h3 class="mb-3">Giỏ hàng của bạn</h3>
+
+    @if (Model != null && Model.Count > 0)
+    {
+        <div class="row">
+            <!-- Danh sách sản phẩm - Cột 8 -->
+            <div class="col-lg-8 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-success text-white py-3">
+                        <h4 class="mb-0"><i class="fas fa-shopping-cart me-2"></i>DANH SÁCH SẢN PHẨM</h4>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="text-center">
+                                            <input type="checkbox" id="selectAll" />
+                                        </th>
+                                        <th class="text-center">Ảnh</th>
+                                        <th class="text-center">Tên sản phẩm</th>
+                                        <th class="text-center">Đơn giá</th>
+                                        <th class="text-center">Số lượng</th>
+                                        <th class="text-end">Thành tiền</th>
+                                        <th class="text-center">Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr data-cart-id="@item.Id">
+                                            <td class="text-center align-middle">
+                                                <input type="checkbox" class="selectItem" name="cartIds" value="@item.Id" data-price="@item.DisplayPrice" />
+                                            </td>
+                                            <td class="text-center align-middle">
+                                                <img src="@item.ImageUrl" class="img-thumbnail" style="max-width:80px;" alt="@item.Name" />
+                                            </td>
+                                            <td class="align-middle">
+                                                <div class="fw-semibold">@item.Name</div>
+                                                <small class="text-muted">Tồn kho: @item.StockQuantity</small>
+                                            </td>
+                                            <td class="text-center align-middle">@String.Format("{0:N0} VNĐ", item.DisplayPrice)</td>
+                                            <td class="text-center align-middle">
+                                                <div class="quantity-control d-flex justify-content-center gap-2">
+                                                    <button type="button" class="btn btn-outline-secondary btn-sm btn-qty decrease">-</button>
+                                                    <input type="number" class="form-control text-center quantity-input cartQuantity"
+                                                           value="@item.Quantity" min="1" max="@item.StockQuantity"
+                                                           data-cart-id="@item.Id"
+                                                           data-price="@item.DisplayPrice" readonly/>
+                                                    <button type="button" class="btn btn-outline-secondary btn-sm btn-qty increase">+</button>
+                                                </div>
+                                            </td>
+                                            <td class="text-end align-middle fw-bold item-total" data-cart-id="@item.Id">
+                                                @String.Format("{0:N0} VNĐ", item.DisplayPrice * item.Quantity)
+                                            </td>
+                                            <td class="text-center align-middle">
+                                                <form asp-action="DeleteCartItem" asp-controller="Carts" method="post" onsubmit="return confirm('Bạn có chắc muốn xóa sản phẩm này?');">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="cartId" value="@item.Id" />
+                                                    <button type="submit" class="btn btn-danger btn-sm">
+                                                        <i class="fas fa-trash me-1"></i>Xóa
+                                                    </button>
+                                                </form>
+                                            </td>
+
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tổng thanh toán - Cột 4 -->
+            <div class="col-lg-4">
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+
+                            <hr>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="fw-bold fs-5">Tổng tất cả:</span>
+                                <span class="fw-bold fs-5 text-highlight" id="grandTotal">
+                                    @String.Format("{0:N0} VNĐ", Model.Sum(x => x.DisplayPrice * x.Quantity))
+                                </span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fw-bold fs-6">Tổng đã chọn:</span>
+                                <span class="fw-bold fs-6 text-primary" id="selectedTotal">0 VNĐ</span>
+                            </div>
+                        </div>
+
+                    <form id="checkoutForm" method="get" action="@Url.Action("CheckoutCart", "Orders")">
+                        <button type="submit" id="checkoutBtn" class="btn btn-success w-100 py-2">
+                            <i class="fas fa-shopping-bag me-2"></i>THANH TOÁN NGAY
+                        </button>
+                    </form>
+
+                        <div class="text-center mt-3">
+                            <a href="@Url.Action("Index", "Home")" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-arrow-left me-2"></i>TIẾP TỤC MUA SẮM
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-cart-x text-muted" style="font-size: 5rem;"></i>
+            <h3 class="mt-3">Giỏ hàng trống</h3>
+            <p class="text-muted">Bạn chưa thêm sản phẩm nào vào giỏ hàng.</p>
+            <a class="btn btn-primary btn-lg mt-3" href="@Url.Action("Index", "Home")">
+                <i class="fas fa-shopping-bag me-2"></i>Tiếp tục mua sắm
+            </a>
+        </div>
+    }
+</div>
+
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/abp/5.3.0/abp.js"></script>
+<script>
+    const checkoutUrl = '@Url.Action("CheckoutCart", "Orders")';
+    const updateQuantityUrl = '@Url.Action("UpdateQuantityAjax", "Carts")';
+</script>
+
+<script src="~/view-resources/Views/Carts/CheckOut.js" asp-append-version="true"></script>
+<script src="~/view-resources/Views/Carts/buyNowQuantity.js" asp-append-version="true"></script>

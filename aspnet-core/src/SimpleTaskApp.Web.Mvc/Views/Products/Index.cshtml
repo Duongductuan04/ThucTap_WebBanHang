@@ -1,0 +1,130 @@
+﻿@model List<SimpleTaskApp.MobilePhones.Dto.MobilePhoneDto>
+
+@{
+    ViewBag.Title = "Sản phẩm";
+    Layout = "~/Views/Shared/Layout/_LayoutFrontend.cshtml";
+
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int pageSize = ViewBag.PageSize ?? 10;
+    int totalCount = ViewBag.TotalCount ?? Model.Count;
+    int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+    if (totalPages < 1) totalPages = 1;
+    if (currentPage > totalPages) currentPage = totalPages;
+
+    string searchQuery = ViewBag.SearchQuery as string;
+}
+
+<div class="container my-5">
+
+    <!-- Tiêu đề -->
+    <div class="mb-3">
+        <h2 class="fw-bold">
+            @if (!string.IsNullOrEmpty(searchQuery))
+            {
+                <text>Kết quả tìm kiếm cho "@searchQuery"</text>
+            }
+            else
+            {
+                @ViewBag.SelectedCategoryName
+            }
+            <small class="text-muted">(@totalCount sản phẩm)</small>
+        </h2>
+    </div>
+
+    <!-- Lọc theo thương hiệu -->
+    <div class="mb-3">
+        <strong class="me-2">Thương hiệu:</strong>
+
+        <!-- Nút Tất cả -->
+        <a href="@Url.Action("Index", "Products", new { categoryId = ViewBag.SelectedCategoryId, sort = ViewBag.CurrentSort, query = searchQuery })"
+           class="btn btn-outline-secondary btn-sm mb-1 @(ViewBag.SelectedBrand == null ? "active" : "")">
+            Tất cả
+        </a>
+
+        @if (ViewBag.Brands != null)
+        {
+            foreach (var b in ViewBag.Brands as List<string>)
+            {
+                <a href="@Url.Action("Index", "Products", new { categoryId = ViewBag.SelectedCategoryId, brand = b, sort = ViewBag.CurrentSort, query = searchQuery })"
+                   class="btn btn-outline-secondary btn-sm mb-1 @(ViewBag.SelectedBrand == b ? "active" : "")">
+                    @b
+                </a>
+            }
+        }
+    </div>
+
+    <!-- Sắp xếp -->
+    <div class="mb-4">
+        <strong class="me-2">Lọc:</strong>
+        <a href="@Url.Action("Index", "Products", new { sort = "priceDesc", categoryId = ViewBag.SelectedCategoryId, brand = ViewBag.SelectedBrand, query = searchQuery })"
+           class="btn btn-outline-secondary btn-sm mb-1 @(ViewBag.CurrentSort == "priceDesc" ? "active" : "")">Giá cao → thấp</a>
+        <a href="@Url.Action("Index", "Products", new { sort = "priceAsc", categoryId = ViewBag.SelectedCategoryId, brand = ViewBag.SelectedBrand, query = searchQuery })"
+           class="btn btn-outline-secondary btn-sm mb-1 @(ViewBag.CurrentSort == "priceAsc" ? "active" : "")">Giá thấp → cao</a>
+        <a href="@Url.Action("Index", "Products", new { sort = "new", categoryId = ViewBag.SelectedCategoryId, brand = ViewBag.SelectedBrand, query = searchQuery })"
+           class="btn btn-outline-secondary btn-sm mb-1 @(ViewBag.CurrentSort == "new" ? "active" : "")">Hàng mới về</a>
+        <a href="@Url.Action("Index", "Products", new { sort = "sale", categoryId = ViewBag.SelectedCategoryId, brand = ViewBag.SelectedBrand, query = searchQuery })"
+           class="btn btn-outline-secondary btn-sm mb-1 @(ViewBag.CurrentSort == "sale" ? "active" : "")">Khuyến mãi</a>
+    </div>
+
+    <!-- Danh sách sản phẩm -->
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
+        @if (Model != null && Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm product-card border-0">
+                        <div class="position-relative">
+                            <img src="@item.ImageUrl" class="card-img-top p-3" alt="@item.Name" />
+                            @if (item.IsOnSale)
+                            {
+                                <span class="badge bg-danger position-absolute top-0 start-0 m-2">SALE</span>
+                            }
+                        </div>
+                        <div class="card-body text-center">
+                            <h6 class="card-title mb-2">@item.Name</h6>
+                            <p class="card-text mb-2">
+                                @if (item.IsOnSale && item.DiscountPrice.HasValue)
+                                {
+                                    <span class="text-muted text-decoration-line-through me-2">@item.Price.ToString("N0") đ</span>
+                                    <span class="text-danger fw-bold">@item.DiscountPrice.Value.ToString("N0") đ</span>
+                                }
+                                else
+                                {
+                                    <span class="fw-bold text-dark">@item.Price.ToString("N0") đ</span>
+                                }
+                            </p>
+                            <a asp-controller="Products" asp-action="Detail" asp-route-id="@item.Id" class="btn btn-outline-primary btn-sm w-100">Xem chi tiết</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <p class="text-muted text-center">Không có sản phẩm nào.</p>
+            </div>
+        }
+    </div>
+
+    <!-- Pagination -->
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                <a class="page-link" href="@Url.Action("Index", "Products", new { page = currentPage - 1, categoryId = ViewBag.SelectedCategoryId, brand = ViewBag.SelectedBrand, sort = ViewBag.CurrentSort, query = searchQuery })">Trước</a>
+            </li>
+
+            @for (int i = 1; i <= totalPages; i++)
+            {
+                <li class="page-item @(i == currentPage ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("Index", "Products", new { page = i, categoryId = ViewBag.SelectedCategoryId, brand = ViewBag.SelectedBrand, sort = ViewBag.CurrentSort, query = searchQuery })">@i</a>
+                </li>
+            }
+
+            <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                <a class="page-link" href="@Url.Action("Index", "Products", new { page = currentPage + 1, categoryId = ViewBag.SelectedCategoryId, brand = ViewBag.SelectedBrand, sort = ViewBag.CurrentSort, query = searchQuery })">Sau</a>
+            </li>
+        </ul>
+    </nav>
+</div>

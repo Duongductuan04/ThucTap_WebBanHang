@@ -1,0 +1,192 @@
+﻿@model SimpleTaskApp.MobilePhones.Dto.CreateOrderDto
+
+@{
+    Layout = "~/Views/Shared/Layout/_LayoutFrontend.cshtml";
+    ViewBag.Title = "Thanh toán";
+
+    var cartIdsQuery = Context.Request.Query["cartIds"];
+    ViewBag.CartIds = cartIdsQuery;
+}
+
+<div class="container my-5 checkout-page">
+    <form asp-action="CheckoutCart" asp-controller="Orders" method="post" class="needs-validation" novalidate>
+
+    <div class="row">
+        <!-- Form thanh toán - Cột 4 -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white py-3">
+                    <h4 class="mb-0"><i class="fas fa-user me-2"></i>THÔNG TIN THANH TOÁN</h4>
+                </div>
+                <div class="card-body p-4">
+                       
+                            @if (ViewBag.CartIds is Microsoft.Extensions.Primitives.StringValues cartIds && cartIds.Count > 0)
+                            {
+                                foreach (var id in cartIds)
+                                {
+                                    <input type="hidden" name="cartIds" value="@id" />
+                                }
+                            }
+                        
+
+                        <div class="mb-3">
+                            <label asp-for="RecipientName" class="form-label">Họ và tên *</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                <input asp-for="RecipientName" class="form-control" placeholder="Nhập họ và tên" required />
+                            </div>
+                            <span asp-validation-for="RecipientName" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="RecipientPhone" class="form-label">Số điện thoại *</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                <input asp-for="RecipientPhone" class="form-control" placeholder="Nhập số điện thoại" required />
+                            </div>
+                            <span asp-validation-for="RecipientPhone" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="RecipientAddress" class="form-label">Địa chỉ nhận hàng *</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                <input asp-for="RecipientAddress" class="form-control" placeholder="Nhập địa chỉ chi tiết" required />
+                            </div>
+                            <span asp-validation-for="RecipientAddress" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="PaymentMethod" class="form-label">Phương thức thanh toán</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-credit-card"></i></span>
+                                @Html.DropDownListFor(m => m.PaymentMethod, new List<SelectListItem>
+                                {
+                                new SelectListItem { Text = "Tiền mặt (COD)", Value = "0" },
+                                new SelectListItem { Text = "Chuyển khoản ngân hàng", Value = "1" },
+                                new SelectListItem { Text = "Ví điện tử", Value = "2" }
+                                }, new { @class = "form-select" })
+                            </div>
+                            <span asp-validation-for="PaymentMethod" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ShippingMethod" class="form-label">Phương thức vận chuyển</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-shipping-fast"></i></span>
+                                @Html.DropDownListFor(m => m.ShippingMethod, new List<SelectListItem>
+                                {
+                                new SelectListItem { Text = "Tiêu chuẩn", Value = "0" },
+                                new SelectListItem { Text = "Nhanh", Value = "1" },
+                                new SelectListItem { Text = "Siêu tốc", Value = "2" }
+                                }, new { @class = "form-select" })
+                            </div>
+                            <span asp-validation-for="ShippingMethod" class="text-danger"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 mt-3 py-2">
+                            <i class="fas fa-shopping-bag me-2"></i>ĐẶT HÀNG 
+                        </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Đơn hàng và thông tin - Cột 8 -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-success text-white py-3">
+                    <h4 class="mb-0"><i class="fas fa-shopping-cart me-2"></i>ĐƠN HÀNG CỦA BẠN</h4>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="text-center">Sản phẩm</th>
+                                    <th class="text-center">Số lượng</th>
+                                    <th class="text-end">Đơn giá</th>
+                                    <th class="text-end">Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.OrderDetails != null && Model.OrderDetails.Any())
+                                {
+                                    foreach (var item in Model.OrderDetails)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                                    {
+                                                        <img src="@item.ImageUrl" class="img-thumbnail me-3" width="60" alt="@item.MobilePhoneName" />
+                                                    }
+                                                    <div>
+                                                        <div class="fw-semibold">@item.MobilePhoneName</div>
+                                                        <small class="text-muted">Mã SP: @item.MobilePhoneId</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="text-center align-middle">
+                                                <span class="badge bg-secondary">@item.Quantity</span>
+                                            </td>
+                                            <td class="text-end align-middle">@item.UnitPrice.ToString("N0") đ</td>
+                                            <td class="text-end align-middle fw-bold">@((item.Quantity * item.UnitPrice).ToString("N0")) đ</td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="4" class="text-center py-4">
+                                            <i class="fas fa-shopping-cart fa-2x text-muted mb-2"></i>
+                                            <p class="text-muted">Đơn hàng trống</p>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="p-4 bg-light">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5 class="fw-semibold mb-3">Thông tin đơn hàng</h5>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Số sản phẩm:</span>
+                                    <span class="fw-semibold">@Model.OrderDetails?.Sum(x => x.Quantity)</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Loại sản phẩm:</span>
+                                    <span class="fw-semibold">@Model.OrderDetails?.Count</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h5 class="fw-semibold mb-3">Chi phí</h5>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Tạm tính:</span>
+                                    <span>@Model.OrderDetails?.Sum(x => x.Quantity * x.UnitPrice).ToString("N0") đ</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Phí vận chuyển:</span>
+                                    <span>Miễn phí</span>
+                                </div>
+                                <hr>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold fs-5 text-highlight">Tổng cộng:</span>
+                                    <span class="fw-bold fs-5 text-highlight">
+                                        @Model.OrderDetails?.Sum(x => x.Quantity * x.UnitPrice).ToString("N0") đ
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </form>
+
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

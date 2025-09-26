@@ -1,0 +1,58 @@
+﻿@using SimpleTaskApp.Web.Views.Shared.Components.RightNavbarUserArea
+@using SimpleTaskApp.Web.Views.Shared.Components.RightNavbarLanguageSwitch
+<header class="header">
+    <nav class="header-nav">
+        <!-- Logo / Trang chủ -->
+        <a class="logo" asp-controller="Home" asp-action="Index">
+            <img src="~/img/08Oct_Anis__Free_Upload_bbbb-removebg-preview.png" alt="Logo" />
+        </a>
+
+        <ul class="menu">
+            <li><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li><a asp-controller="Products" asp-action="Index" asp-route-categoryId="14">Điện thoại</a></li>
+            <li><a asp-controller="Products" asp-action="Index" asp-route-categoryId="15">Laptop</a></li>
+            <li><a asp-controller="Products" asp-action="Index" asp-route-categoryId="16">Phụ kiện</a></li>
+        </ul>
+
+
+        <!-- Thanh tìm kiếm -->
+        <form class="search-form" asp-controller="Products" asp-action="Index" method="get">
+            <input type="text" name="query" placeholder="Tìm kiếm sản phẩm..." />
+            <button type="submit">🔍</button>
+        </form>
+
+        <!-- Các phần tử bên phải -->
+        <div class="right-elements">
+            <!-- Giỏ hàng -->
+            <a class="cart" asp-controller="Carts" asp-action="Index">
+                🛒 Giỏ hàng
+                <span class="cart-count">0</span>
+            </a>
+            <!-- Đơn hàng -->
+            <div class="orders-dropdown">
+                <a class="orders-link" asp-controller="UserOrders" asp-action="Index">
+                    📦 Đơn hàng
+                </a>
+                <ul class="orders-menu">
+                    <li><a asp-controller="UserOrders" asp-action="Index" asp-route-status="0">🕒 Đang xử lý</a></li>
+                    <li><a asp-controller="UserOrders" asp-action="Index" asp-route-status="1">🚚 Đang giao</a></li>
+                    <li><a asp-controller="UserOrders" asp-action="Index" asp-route-status="2">✅ Hoàn thành</a></li>
+                    <li><a asp-controller="UserOrders" asp-action="Index" asp-route-status="3">❌ Đã hủy</a></li>
+                </ul>
+            </div>
+
+            <!-- User Area -->
+            <div class="navbar-right">
+                @* Language dropdown - Đảm bảo component không có dấu chấm *@
+                <div class="language-switcher">
+                    @await Component.InvokeAsync(typeof(RightNavbarLanguageSwitchViewComponent))
+                </div>
+
+                @* User dropdown - Đảm bảo component không có dấu chấm *@
+                <div class="user-area">
+                    @await Component.InvokeAsync(typeof(RightNavbarUserAreaViewComponent))
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>

@@ -1,0 +1,214 @@
+﻿/* CSS cho trang thanh toán */
+.checkout-page {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #000; /* chữ mặc định đen */
+}
+
+    /* Card */
+    .checkout-page .card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        animation: fadeInUp 0.5s ease-out;
+    }
+
+        .checkout-page .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.12);
+        }
+
+    /* Header card */
+    .checkout-page .card-header {
+        border-radius: 12px 12px 0 0 !important;
+        border: none;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        color: #000 !important; /* chữ header đen */
+    }
+
+        .checkout-page .card-header.bg-primary {
+            background: linear-gradient(135deg, #ffd700 0%, #ffae42 100%) !important; /* vàng -> cam */
+        }
+
+        .checkout-page .card-header.bg-success {
+            background: linear-gradient(135deg, #ffec8b 0%, #ffd700 100%) !important; /* vàng nhạt */
+        }
+
+    /* Label */
+    .checkout-page .form-label {
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #000; /* chữ đen */
+    }
+
+    /* Input group */
+    .checkout-page .input-group {
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .checkout-page .input-group-text {
+        background: #fff8e1;
+        border: 1px solid #e2e8f0;
+        border-right: none;
+        color: #b7791f;
+        padding: 12px 15px;
+    }
+
+    /* Form control + Select */
+    .checkout-page .form-control,
+    .checkout-page .form-select {
+        border: 1px solid #e2e8f0;
+        padding: 12px 15px;
+        border-radius: 0 8px 8px 0;
+        transition: all 0.3s ease;
+        background-color: #fffdf5;
+        color: #000; /* chữ input đen */
+    }
+
+    /* Select decor */
+    .checkout-page .form-select {
+        appearance: none; /* ẩn style mặc định */
+        background: #fffdf5 url("data:image/svg+xml;utf8,<svg fill='%23000' height='20' viewBox='0 0 24 24' width='20'><path d='M7 10l5 5 5-5z'/></svg>") no-repeat right 12px center/16px 16px;
+        padding-right: 40px;
+        cursor: pointer;
+    }
+
+        .checkout-page .form-control:focus,
+        .checkout-page .form-select:focus {
+            border-color: #ffae42;
+            box-shadow: 0 0 0 3px rgba(255, 174, 66, 0.2);
+        }
+
+    /* Khi focus input-group */
+    .checkout-page .input-group:focus-within .input-group-text {
+        background: #fff3cd;
+        border-color: #ffae42;
+        color: #975a16;
+    }
+
+    /* Button mặc định */
+    .checkout-page .btn-primary {
+        background: linear-gradient(135deg, #ffb703 0%, #fb8500 100%);
+        border: none;
+        border-radius: 12px;
+        padding: 16px 28px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        color: #000 !important; /* chữ đen */
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 20px rgba(251, 133, 0, 0.4);
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+        animation: pulse 2s infinite;
+    }
+
+    .checkout-page .btn-order-now:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(251, 133, 0, 0.55);
+        background: linear-gradient(135deg, #ffa500 0%, #ff6f00 100%);
+    }
+
+    .checkout-page .btn-order-now:active {
+        transform: translateY(0);
+        box-shadow: 0 4px 12px rgba(251, 133, 0, 0.4);
+    }
+
+    /* Table */
+    .checkout-page .table th {
+        background: linear-gradient(135deg, #fff9db 0%, #fff3cd 100%);
+        border: none;
+        font-weight: 600;
+        color: #000; /* chữ đen */
+        padding: 15px 12px;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+    }
+
+    .checkout-page .table td {
+        padding: 20px 12px;
+        border-color: #f1f5f9;
+        vertical-align: middle;
+        color: #000; /* chữ đen */
+    }
+
+    .checkout-page .table tbody tr:hover {
+        background-color: #fffdf0;
+    }
+
+    /* Badge */
+    .checkout-page .badge.bg-secondary {
+        background: linear-gradient(135deg, #f6ad55 0%, #dd6b20 100%) !important;
+        padding: 8px 12px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        color: #000 !important; /* chữ đen */
+    }
+
+    /* Footer area */
+    .checkout-page .bg-light {
+        background: linear-gradient(135deg, #fffdf0 0%, #fff9db 100%) !important;
+        border-top: 2px solid #e2e8f0;
+    }
+
+/* Animation */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(251, 133, 0, 0.6);
+    }
+
+    70% {
+        box-shadow: 0 0 0 15px rgba(251, 133, 0, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(251, 133, 0, 0);
+    }
+}
+
+/* Text highlight (dòng thông tin thanh toán và đơn hàng) */
+.checkout-page .text-highlight {
+    color: #000 !important; /* chữ đen */
+    font-weight: 700;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .checkout-page .card {
+        margin-bottom: 1rem;
+    }
+
+    .checkout-page .form-control,
+    .checkout-page .form-select {
+        font-size: 0.9rem;
+        padding: 10px 12px;
+    }
+
+    .checkout-page .btn-order-now {
+        font-size: 1rem;
+        padding: 12px 20px;
+    }
+
+    .checkout-page .table th,
+    .checkout-page .table td {
+        font-size: 0.8rem;
+        padding: 12px 8px;
+    }
+}

@@ -1,0 +1,200 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<localizationDictionary culture="vi">
+	<texts>
+		<!-- General -->
+		<text name="HomePage" value="Trang chủ" />
+		<text name="About" value="Giới thiệu" />
+		<text name="WelcomeMessage" value="Chào mừng đến với SimpleTaskApp!" />
+		<text name="FormIsNotValidMessage" value="Biểu mẫu không hợp lệ. Vui lòng kiểm tra và sửa lỗi." />
+		<text name="TenantNameCanNotBeEmpty" value="Tên tenant không được để trống" />
+		<text name="InvalidUserNameOrPassword" value="Tên đăng nhập hoặc mật khẩu không hợp lệ" />
+		<text name="ThereIsNoTenantDefinedWithName{0}" value="Không có tenant nào được định nghĩa với tên {0}" />
+		<text name="TenantIsNotActive" value="Tenant {0} không hoạt động." />
+		<text name="UserIsNotActiveAndCanNotLogin" value="Người dùng {0} không hoạt động và không thể đăng nhập." />
+		<text name="UserEmailIsNotConfirmedAndCanNotLogin" value="Địa chỉ email chưa được xác nhận. Không thể đăng nhập." />
+		<text name="UserLockedOutMessage" value="Tài khoản người dùng đã bị khóa. Vui lòng thử lại sau." />
+		<text name="PleaseEnterLoginInformation" value="Vui lòng nhập thông tin đăng nhập" />
+		<text name="TenancyName" value="Tên tenant" />
+		<text name="UserNameOrEmail" value="Tên đăng nhập hoặc email" />
+		<text name="Password" value="Mật khẩu" />
+		<text name="ResetPassword" value="Đặt lại mật khẩu" />
+		<text name="UpdatePassword" value="Cập nhật mật khẩu" />
+		<text name="RememberMe" value="Ghi nhớ đăng nhập" />
+		<text name="LogIn" value="Đăng nhập" />
+		<text name="LoginFailed" value="Đăng nhập thất bại!" />
+		<text name="FullName" value="Họ và tên" />
+		<text name="UserName" value="Tên đăng nhập" />
+		<text name="EmailAddress" value="Email" />
+		<text name="SavedSuccessfully" value="Lưu thành công" />
+		<text name="CreateNewTenant" value="Tạo tenant mới" />
+		<text name="AdminEmailAddress" value="Email quản trị" />
+		<text name="AdminPassword" value="Mật khẩu quản trị" />
+		<text name="TenantName_Regex_Description" value="Tên tenant phải từ 2 ký tự trở lên, bắt đầu bằng chữ cái và tiếp theo là chữ, số, dấu gạch ngang hoặc dấu gạch dưới." />
+		<text name="DefaultPasswordIs" value="Mật khẩu mặc định là {0}" />
+		<text name="CanBeEmptyToLoginAsHost" value="Có thể để trống để đăng nhập dưới quyền host." />
+		<text name="Register" value="Đăng ký" />
+		<text name="OrLoginWith" value="Hoặc đăng nhập với" />
+		<text name="WaitingForActivationMessage" value="Tài khoản của bạn đang chờ kích hoạt từ quản trị hệ thống." />
+		<text name="TenantSelection" value="Chọn tenant" />
+		<text name="TenantSelection_Detail" value="Vui lòng chọn một trong các tenant sau." />
+		<text name="Logout" value="Đăng xuất" />
+		<text name="DatabaseConnectionString" value="Chuỗi kết nối cơ sở dữ liệu" />
+		<text name="Users" value="Người dùng" />
+		<text name="IsActive" value="Hoạt động" />
+		<text name="CreateNewUser" value="Tạo người dùng mới" />
+		<text name="Yes" value="Có" />
+		<text name="No" value="Không" />
+		<text name="Optional" value="Tùy chọn" />
+		<text name="LeaveEmptyToSwitchToHost" value="Để trống để chuyển sang host" />
+		<text name="CurrentTenant" value="Tenant hiện tại" />
+		<text name="NotSelected" value="Chưa chọn" />
+		<text name="Change" value="Thay đổi" />
+		<text name="ChangeTenant" value="Thay đổi tenant" />
+		<text name="MultiLevelMenu" value="Menu nhiều cấp" />
+		<text name="Back" value="Quay lại" />
+		<text name="SuccessfullyRegistered" value="Đăng ký thành công" />
+		<text name="WaitingForEmailActivation" value="Địa chỉ email của bạn cần được kích hoạt" />
+		<text name="Roles" value="Vai trò" />
+		<text name="DisplayName" value="Tên hiển thị" />
+		<text name="CreateNewRole" value="Tạo vai trò mới" />
+		<text name="RoleName" value="Tên vai trò" />
+		<text name="Actions" value="Hành động" />
+		<text name="CouldNotCompleteLoginOperation" value="Không thể hoàn tất thao tác đăng nhập. Vui lòng thử lại sau." />
+		<text name="CouldNotValidateExternalUser" value="Không thể xác thực người dùng bên ngoài" />
+		<text name="EditRole" value="Sửa vai trò" />
+		<text name="EditTenant" value="Sửa tenant" />
+		<text name="EditUser" value="Sửa người dùng" />
+		<text name="TenantIdIsNotActive{0}" value="TenantId {0} không hoạt động" />
+		<text name="UnknownTenantId{0}" value="TenantId {0} không xác định" />
+		<text name="ThisFieldIsRequired" value="Trường này là bắt buộc" />
+		<text name="PleaseWait" value="Vui lòng đợi..." />
+		<text name="Administration" value="Quản trị" />
+		<text name="ClearAll" value="Xóa tất cả" />
+		<text name="ClearOthers" value="Xóa các mục khác" />
+		<text name="LabelOptions" value="Tùy chọn nhãn" />
+		<text name="Permissions" value="Quyền" />
+		<text name="RoleDescription" value="Mô tả vai trò" />
+		<text name="Refresh" value="Làm mới" />
+		<text name="UserDetails" value="Chi tiết người dùng" />
+		<text name="UserRoles" value="Vai trò người dùng" />
+		<text name="ConfirmPassword" value="Xác nhận mật khẩu" />
+		<text name="Version" value="Phiên bản" />
+		<text name="On" value="Bật" />
+		<text name="Off" value="Tắt" />
+		<text name="AreYouSureWantToDelete" value="Bạn có chắc chắn muốn xóa {0}?" />
+		<text name="SuccessfullyDeleted" value="Xóa thành công" />
+		<text name="StartTyping" value="Bắt đầu gõ..." />
+		<text name="Skins" value="Giao diện" />
+		<text name="Settings" value="Cài đặt" />
+		<text name="Filter" value="Bộ lọc" />
+		<text name="CurrentPassword" value="Mật khẩu hiện tại" />
+		<text name="NewPassword" value="Mật khẩu mới" />
+		<text name="ConfirmNewPassword" value="Xác nhận mật khẩu mới" />
+		<text name="PasswordsDoNotMatch" value="Mật khẩu không khớp" />
+		<text name="PasswordsMustBeAtLeast8CharactersContainLowercaseUppercaseNumber" value="Mật khẩu phải ít nhất 8 ký tự, bao gồm chữ thường, chữ hoa và số" />
+		<text name="SearchWithThreeDot" value="Tìm kiếm..." />
+		<text name="PleaseEnterAtLeastNCharacter" value="Vui lòng nhập ít nhất {0} ký tự" />
+		<text name="PleaseEnterNoMoreThanNCharacter" value="Vui lòng nhập không quá {0} ký tự" />
+		<text name="InvalidEmailAddress" value="Địa chỉ email không hợp lệ" />
+		<text name="InvalidPattern" value="Không hợp lệ" />
+		<text name="PairsDoNotMatch" value="Không khớp" />
+		<text name="TotalRecordsCount" value="Tổng: {0}" />
+		<text name="Search" value="Tìm kiếm" />
+		<text name="403PageHeader" value="Bị cấm" />
+		<text name="403PageDescription" value="Bạn không có quyền truy cập tài nguyên này. Vui lòng liên hệ quản trị viên." />
+		<text name="403PageButton" value="Quay về Dashboard" />
+
+
+
+		<!-- MobilePhone -->
+		<text name="MobilePhone" value="Điện thoại" />
+		<text name="MobilePhones" value="Danh sách điện thoại" />
+		<text name="MobilePhoneDetail" value="Chi tiết" />
+		<text name="CreateMobilePhone" value="Thêm mới" />
+		<text name="EditMobilePhone" value="Sửa" />
+		<text name="CurrentImage" value="Ảnh hiện tại" />
+		<text name="NewImage" value="Ảnh mới" />
+		<text name="Image" value="Ảnh" />
+		<text name="ImageUploadHint" value="Chọn file ảnh (jpg, png, webp)" />
+		<text name="NameRequired" value="Bắt buộc" />
+		<text name="NameInvalid" value="Không hợp lệ" />
+		<text name="Description" value="Mô tả" />
+		<text name="DescriptionRequired" value="Bắt buộc" />
+		<text name="DescriptionMaxLength" value="Tối đa 500 ký tự" />
+		<text name="Price" value="Giá" />
+		<text name="PriceRequired" value="Bắt buộc" />
+		<text name="StockQuantity" value="Tồn kho" />
+		<text name="StockQuantityRequired" value="Bắt buộc" />
+		<text name="StockQuantityInvalid" value="Không hợp lệ" />
+		<text name="Category" value="Danh mục" />
+		<text name="CategoryRequired" value="Chọn danh mục" />
+		<text name="Create" value="Thêm" />
+		<text name="Delete" value="Xóa" />
+		<text name="ConfirmDelete" value="Bạn có chắc chắn?" />
+		<text name="NoImage" value="Chưa có ảnh" />
+		<text name="Detail" value="Chi tiết" />
+		<text name="Cancel" value="Hủy" />
+		<text name="Save" value="Lưu" />
+
+		<!-- Cart -->
+		<text name="Cart" value="Giỏ hàng" />
+		<text name="ProductName" value="Tên sản phẩm" />
+		<text name="DiscountPrice" value="Giá giảm" />
+		<text name="DisplayPrice" value="Giá hiển thị" />
+		<text name="Quantity" value="Số lượng" />
+		<text name="Total" value="Tổng" />
+		<text name="EditCart" value="Sửa giỏ hàng" />
+		<text name="QuantityRequired" value="Bắt buộc" />
+
+		<!-- Order -->
+		<text name="Order" value="Đơn hàng" />
+		<text name="OrderDetail" value="Chi tiết đơn hàng" />
+		<text name="RecipientName" value="Tên người nhận" />
+		<text name="RecipientPhone" value="Số điện thoại" />
+		<text name="RecipientAddress" value="Địa chỉ" />
+		<text name="Status" value="Trạng thái" />
+		<text name="PaymentMethod" value="Phương thức thanh toán" />
+		<text name="ShippingMethod" value="Phương thức vận chuyển" />
+		<text name="TotalAmount" value="Tổng tiền" />
+		<text name="Products" value="Sản phẩm" />
+		<text name="Name" value="Tên" />
+		<text name="Close" value="Đóng" />
+		<text name="EditOrder" value="Sửa đơn hàng" />
+		<text name="RecipientNameRequired" value="Bắt buộc" />
+		<text name="RecipientAddressRequired" value="Bắt buộc" />
+		<text name="RecipientPhoneRequired" value="Bắt buộc" />
+		<text name="Pending" value="Chờ xử lý" />
+		<text name="Shipping" value="Đang vận chuyển" />
+		<text name="Completed" value="Hoàn thành" />
+		<text name="Cancelled" value="Đã hủy" />
+		<text name="Cash" value="Tiền mặt" />
+		<text name="BankTransfer" value="Chuyển khoản" />
+		<text name="EWallet" value="Ví điện tử" />
+		<text name="Standard" value="Tiêu chuẩn" />
+		<text name="Express" value="Nhanh" />
+		<text name="SuperFast" value="Siêu tốc" />
+		<!-- Thiếu fields -->
+		<text name="Recipient" value="Người nhận" />
+		<text name="Phone" value="Số điện thoại" />
+		<text name="Brand" value="Thương hiệu" />
+
+		<text name="Carts" value="Giỏ hàng" />
+		<text name="Orders" value="Đơn hàng" />
+
+		<text name="Edit" value="Sửa" />
+		<text name="CreateNewMobilePhone" value="Thêm điện thoại mới" />
+
+		<!-- Flags / checkboxes -->
+		<text name="IsNew" value="Mới" />
+		<text name="IsOnSale" value="Đang giảm giá" />
+
+		<!-- Sale period -->
+		<text name="SaleStart" value="Ngày bắt đầu giảm giá" />
+		<text name="SaleEnd" value="Ngày kết thúc giảm giá" />
+
+		<!-- Common -->
+		<text name="Select" value="Chọn" />
+		<text name="Statistics" value="Thống kê" />
+
+	</texts>
+</localizationDictionary>

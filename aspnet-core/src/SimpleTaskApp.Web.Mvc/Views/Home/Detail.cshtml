@@ -1,0 +1,167 @@
+﻿@model SimpleTaskApp.MobilePhones.Dto.MobilePhoneDto
+
+@{
+    Layout = "~/Views/Shared/Layout/_LayoutFrontend.cshtml";
+    ViewBag.Title = Model?.Name ?? "Chi tiết sản phẩm";
+    var relatedProducts = ViewBag.RelatedProducts as List<SimpleTaskApp.MobilePhones.Dto.MobilePhoneDto> ?? new List<SimpleTaskApp.MobilePhones.Dto.MobilePhoneDto>();
+    int relatedPage = ViewBag.RelatedPage ?? 1;
+    int relatedPageSize = ViewBag.RelatedPageSize ?? 8;
+    int relatedTotalCount = ViewBag.RelatedTotalCount ?? 0;
+}
+
+<div class="container my-5">
+    <h3 class=" mb-3">Chi Tiết Sản Phẩm</h3>
+
+    <div class="row">
+        <!-- Ảnh sản phẩm -->
+        <div class="col-lg-6 col-md-6 mb-4 position-relative">
+            <div class="card border-0 shadow-sm">
+                <img src="@Model.ImageUrl" class="card-img-top img-fluid" alt="@Model.Name" style="object-fit: contain; max-height: 500px;" />
+             
+                @if (Model.IsOnSale)
+                {
+                    <span class="badge bg-danger position-absolute top-0 end-0 m-2">SALE</span>
+                }
+            </div>
+        </div>
+
+        <!-- Thông tin sản phẩm -->
+        <div class="col-lg-6 col-md-6">
+            <h1 class="fw-bold">@Model.Name</h1>
+            <h5 class="text-muted mb-3">@Model.Brand</h5>
+
+            <div class="mb-3">
+                @if (Model.DiscountPrice.HasValue && Model.DiscountPrice.Value < Model.Price)
+                {
+                    <span class="h4 text-danger fw-bold">@String.Format("{0:N0} VNĐ", Model.DiscountPrice)</span>
+                    <span class="text-muted text-decoration-line-through ms-2">@String.Format("{0:N0} VNĐ", Model.Price)</span>
+                }
+                else
+                {
+                    <span class="h4 fw-bold">@String.Format("{0:N0} VNĐ", Model.Price)</span>
+                }
+            </div>
+
+            <p class="mb-4">@Model.Description</p>
+            <div class="d-flex flex-column align-items-start gap-3 mt-4">
+
+                <!-- Form Thêm vào giỏ -->
+                <form id="addToCartForm" asp-controller="Carts" asp-action="AddToCart" method="post" class="d-flex flex-column gap-2" style="max-width: 200px;">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="mobilePhoneId" value="@Model.Id" />
+
+                    <!-- Nút Thêm vào giỏ -->
+                    <button type="submit" class="btn btn-add fw-bold w-100">
+                        🛒 Thêm vào giỏ
+                    </button>
+                </form>
+
+                <form id="buyNowForm" method="get" action="@Url.Action("CheckoutBuyNow", "Orders")" class="d-flex flex-column gap-2" style="max-width: 200px;">
+                    <input type="hidden" name="mobilePhoneId" value="@Model.Id" />
+
+                    <div class="quantity-control d-flex gap-2">
+                        <button type="button" class="btn-qty decrease">-</button>
+                        <input type="number" id="buyNowQuantity" name="quantity" value="1" min="1"
+                               max="@Model.StockQuantity" class="text-center" readonly />
+                        <button type="button" class="btn-qty increase">+</button>
+                    </div>
+
+                    <button type="submit" class="btn btn-buy fw-bold w-100 mt-2">
+                        ⚡ Mua Ngay
+                    </button>
+                </form>
+
+
+            </div>
+            <ul class="list-unstyled mt-4">
+                <li><strong>Kho hàng:</strong> @Model.StockQuantity</li>
+                <li><strong>Danh mục:</strong> @Model.CategoryName</li>
+                <li><strong>Ngày ra mắt:</strong> @Model.CreationTime.ToString("dd/MM/yyyy")</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Sản phẩm liên quan -->
+    <h3 class=" mb-3">Sản phẩm liên quan</h3>
+    @if (relatedProducts != null && relatedProducts.Any())
+    {
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
+            @foreach (var item in relatedProducts)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm product-card border-0">
+                        <div class="position-relative">
+                            <img src="@item.ImageUrl" class="card-img-top p-3" alt="@item.Name"
+                                 style="object-fit: contain; height: 200px;" />
+
+
+
+                            @* Badge SALE *@
+                            @if (item.IsOnSale && item.DiscountPrice.HasValue)
+                            {
+                                <span class="badge bg-danger position-absolute top-0 end-0 m-2">SALE</span>
+                            }
+                        </div>
+                        <div class="card-body text-center">
+                            <h6 class="card-title mb-2">@item.Name</h6>
+                            <p class="card-text mb-2">
+                                @if (item.IsOnSale && item.DiscountPrice.HasValue)
+                                {
+                                    <span class="text-muted text-decoration-line-through me-2">
+                                        @item.Price.ToString("N0") đ
+                                    </span>
+                                    <span class="text-danger fw-bold">
+                                        @item.DiscountPrice.Value.ToString("N0") đ
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="fw-bold text-dark">@item.Price.ToString("N0") đ</span>
+                                }
+                            </p>
+                            <a asp-controller="Products" asp-action="Detail" asp-route-id="@item.Id"
+                               class="btn btn-outline-primary btn-sm w-100">Xem chi tiết</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Pagination -->
+        @if (relatedTotalCount > 0)  // hoặc >= 1
+        {
+            var totalPages = (int)Math.Ceiling((double)relatedTotalCount / relatedPageSize);
+            if (totalPages < 1) totalPages = 1;
+
+            <nav>
+                <ul class="pagination justify-content-center">
+                    <li class="page-item @(relatedPage == 1 ? "disabled" : "")">
+                        <a class="page-link" href="@Url.Action("Detail", "Products", new { id = Model.Id, relatedPage = relatedPage - 1 })">Trước</a>
+                    </li>
+
+                    @for (int i = 1; i <= totalPages; i++)
+                    {
+                        <li class="page-item @(i == relatedPage ? "active" : "")">
+                            <a class="page-link" href="@Url.Action("Detail", "Products", new { id = Model.Id, relatedPage = i })">@i</a>
+                        </li>
+                    }
+
+                    <li class="page-item @(relatedPage == totalPages ? "disabled" : "")">
+                        <a class="page-link" href="@Url.Action("Detail", "Products", new { id = Model.Id, relatedPage = relatedPage + 1 })">Sau</a>
+                    </li>
+                </ul>
+            </nav>
+        }
+
+    }
+    else
+    {
+        <p class="text-muted">Không có sản phẩm liên quan</p>
+    }
+</div>
+
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/abp/5.3.0/abp.js"></script>
+<script src="~/view-resources/Views/Carts/_Add-to-Cart.js" asp-append-version="true"></script>
+<script src="~/view-resources/Views/Carts/buyNowQuantity.js" asp-append-version="true"></script>
