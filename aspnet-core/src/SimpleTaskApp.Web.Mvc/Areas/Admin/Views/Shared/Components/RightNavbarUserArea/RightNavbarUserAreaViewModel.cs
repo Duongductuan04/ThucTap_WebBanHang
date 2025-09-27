@@ -23,4 +23,3 @@ namespace SimpleTaskApp.Areas.Admin.Views.Shared.Components.RightNavbarUserArea
         }
     }
 }
-

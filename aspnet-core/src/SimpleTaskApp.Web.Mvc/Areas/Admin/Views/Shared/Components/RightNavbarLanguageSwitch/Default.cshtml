@@ -11,14 +11,11 @@
         {
             if (languageInfo.Name != Model.CurrentLanguage.Name)
             {
-                <a href="@Url.Action("ChangeCulture", "AbpLocalization", new {
-        area = (string)null,
-        cultureName = languageInfo.Name,
-        returnUrl = Context.Request.Path + Context.Request.QueryString
-    })">
-                    <span class="@(languageInfo.Name == Model.CurrentLanguage.Name ? "current-language-icon" : "")" title="@languageInfo.DisplayName">
-                        <i class="@languageInfo.Icon"></i>
-                    </span>
+                <a class="dropdown-item" href="@Url.Action(
+        "ChangeCulture",
+        "AbpLocalization",
+        new { cultureName = languageInfo.Name, returnUrl = Context.Request.Path + Context.Request.QueryString, area = "" })">
+                    <i class="mr-2 @languageInfo.Icon"></i> @languageInfo.DisplayName
                 </a>
             }
         }

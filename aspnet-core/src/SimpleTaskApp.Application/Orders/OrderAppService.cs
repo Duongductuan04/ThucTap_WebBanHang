@@ -5,6 +5,7 @@ using Abp.Domain.Repositories;
 using Abp.UI;
 using Microsoft.EntityFrameworkCore;
 using SimpleTaskApp.Authorization;
+using SimpleTaskApp.Authorization.Users;
 using SimpleTaskApp.MobilePhones.Dto;
 using System.Collections.Generic;
 using System.Linq;
@@ -117,16 +118,35 @@ namespace SimpleTaskApp.MobilePhones
         // Lấy danh sách phân trang đơn hàng
         public async Task<PagedResultDto<OrderDto>> GetAllAsync(PagedOrderResultRequestDto input)
         {
-            var query = _orderRepository.GetAllIncluding(o => o.OrderDetails);
+            var query = _orderRepository
+                            .GetAll()
+                            .Include(o => o.OrderDetails)
+                            .ThenInclude(od => od.MobilePhone)
+                            .AsQueryable();// ép về IQueryable<Order>
 
+            // 🔹 Lọc theo UserId (nếu có)
+            if (input.UserId.HasValue)
+            {
+                query = query.Where(o => o.UserId == input.UserId.Value);
+            }
+
+            // 🔹 Lọc theo Status (nếu có, và >= 0)
+            if (input.Status.HasValue && input.Status.Value >= 0)
+            {
+                query = query.Where(o => o.Status == input.Status.Value);
+            }
+
+            // 🔹 Tổng số bản ghi
             var totalCount = await query.CountAsync();
 
+            // 🔹 Phân trang + sắp xếp
             var items = await query
                 .OrderByDescending(o => o.CreationTime)
                 .Skip(input.SkipCount)
                 .Take(input.MaxResultCount)
                 .ToListAsync();
 
+            // 🔹 Map sang DTO
             var dtoList = items.Select(MapToOrderDto).ToList();
 
             return new PagedResultDto<OrderDto>(totalCount, dtoList);

@@ -90,16 +90,7 @@
         updateCartTotals();
     });
 
-    $("input.cartQuantity, #buyNowQuantity").on("input", function () {
-        let val = parseInt($(this).val()) || 1;
-        const max = parseInt($(this).attr("max")) || 100;
-        const min = parseInt($(this).attr("min")) || 1;
-        if (val > max) val = max;
-        if (val < min) val = min;
-        $(this).val(val);
-        updateCartTotals();
-    });
-
+  
     // ================== Checkbox ==================
     $("input.selectItem").change(updateCartTotals);
 

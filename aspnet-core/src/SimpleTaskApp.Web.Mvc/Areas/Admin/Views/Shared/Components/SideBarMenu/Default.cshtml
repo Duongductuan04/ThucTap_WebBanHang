@@ -1,6 +1,6 @@
-﻿@using SimpleTaskApp.Areas.Admin.Views.Shared.Components.SideBarMenu
+﻿﻿@using SimpleTaskApp.Areas.Admin.Views.Shared.Components.SideBarMenu
 @model SideBarMenuViewModel
-@{ 
+@{
     var orderedMenuItems = Model.MainMenu.Items.Where(x => x.IsVisible).ToList();
 }
 

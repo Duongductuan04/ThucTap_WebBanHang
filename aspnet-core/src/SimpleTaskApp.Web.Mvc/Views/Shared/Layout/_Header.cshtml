@@ -26,19 +26,13 @@
             <!-- Giỏ hàng -->
             <a class="cart" asp-controller="Carts" asp-action="Index">
                 🛒 Giỏ hàng
-                <span class="cart-count">0</span>
+                @await Component.InvokeAsync("CartCount")
             </a>
             <!-- Đơn hàng -->
             <div class="orders-dropdown">
                 <a class="orders-link" asp-controller="UserOrders" asp-action="Index">
                     📦 Đơn hàng
                 </a>
-                <ul class="orders-menu">
-                    <li><a asp-controller="UserOrders" asp-action="Index" asp-route-status="0">🕒 Đang xử lý</a></li>
-                    <li><a asp-controller="UserOrders" asp-action="Index" asp-route-status="1">🚚 Đang giao</a></li>
-                    <li><a asp-controller="UserOrders" asp-action="Index" asp-route-status="2">✅ Hoàn thành</a></li>
-                    <li><a asp-controller="UserOrders" asp-action="Index" asp-route-status="3">❌ Đã hủy</a></li>
-                </ul>
             </div>
 
             <!-- User Area -->

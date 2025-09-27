@@ -2,6 +2,7 @@
 using Abp.Application.Navigation;
 using Abp.Runtime.Session;
 using Microsoft.AspNetCore.Mvc;
+using SimpleTaskApp.Areas.Admin.Views.Shared.Components.SideBarMenu;
 
 namespace SimpleTaskApp.Areas.Admin.Views.Shared.Components.SideBarMenu
 {

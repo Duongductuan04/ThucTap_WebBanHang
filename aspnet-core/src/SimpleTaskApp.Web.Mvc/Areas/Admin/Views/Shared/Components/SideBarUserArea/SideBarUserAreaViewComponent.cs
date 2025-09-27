@@ -2,6 +2,7 @@
 using Abp.Configuration.Startup;
 using SimpleTaskApp.Sessions;
 using Microsoft.AspNetCore.Mvc;
+using SimpleTaskApp.Areas.Admin.Views.Shared.Components.SideBarUserArea;
 
 namespace SimpleTaskApp.Areas.Admin.Views.Shared.Components.SideBarUserArea
 {

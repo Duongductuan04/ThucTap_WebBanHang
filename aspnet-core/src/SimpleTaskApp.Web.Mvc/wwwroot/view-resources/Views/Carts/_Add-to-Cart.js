@@ -20,8 +20,12 @@
             },
             success: function (response) {
                 if (response.success) {
-                    abp.notify.success(response.message);
+                    abp.notify.success(response.message || 'Thêm vào giỏ hàng thành công.');
+                    setTimeout(function () {
+                        location.reload(); // reload sau 500ms
+                    }, 500);
                     abp.event.trigger('cart.updated');
+
                 } else {
                     abp.notify.error(response.message || 'Thêm vào giỏ hàng thất bại.');
                 }

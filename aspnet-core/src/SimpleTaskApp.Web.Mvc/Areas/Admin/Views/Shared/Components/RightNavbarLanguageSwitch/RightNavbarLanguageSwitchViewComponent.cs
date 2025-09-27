@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Abp.Localization;
 using Microsoft.AspNetCore.Mvc;
+using SimpleTaskApp.Areas.Admin.Views.Shared.Components.RightNavbarLanguageSwitch;
 
 namespace SimpleTaskApp.Areas.Admin.Views.Shared.Components.RightNavbarLanguageSwitch
 {

@@ -73,9 +73,12 @@ html {
 }
 
 
+
+
 .pie-chart {
-    display: block;
-    margin: auto;
+    max-width: 300px; /* Biểu đồ tròn không bị quá to */
+    height: 300px !important;
+    margin: 20px auto;
 }
 
 
