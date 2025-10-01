@@ -34,6 +34,12 @@
 
 
         public const string Pages_Statistics = "Pages.Statistics";   // Xem
+                                                                     // Khuyến mãi / Discounts
+        public const string Pages_Discount = "Pages.Discount";                  // Xem
+        public const string Pages_Discount_Create = "Pages.Discount.Create";    // Thêm
+        public const string Pages_Discount_Edit = "Pages.Discount.Edit";        // Sửa
+        public const string Pages_Discount_Delete = "Pages.Discount.Delete";    // Xóa
+
 
     }
 }

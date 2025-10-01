@@ -7,9 +7,9 @@
 }
 
 @await Html.PartialAsync(
-            "~/Areas/Admin/Views/Shared/Modals/_ModalHeader.cshtml",
-            new ModalHeaderViewModel(L("OrderDetail"))
-        )
+                "~/Areas/Admin/Views/Shared/Modals/_ModalHeader.cshtml",
+                new ModalHeaderViewModel(L("OrderDetail"))
+            )
 
 <div class="modal-body">
     <div class="row">
@@ -29,6 +29,13 @@
                         <div class="col-sm-4 text-muted">@L("RecipientAddress")</div>
                         <div class="col-sm-8 font-weight-bold">@Model.RecipientAddress</div>
                     </div>
+                    <div class="row mb-2">
+                        <div class="col-sm-4 text-muted">@L("Note")</div>
+                        <div class="col-sm-8 font-weight-bold">
+                            @(!string.IsNullOrEmpty(Model.Note) ? Model.Note : "-")
+                        </div>
+                    </div>
+
                     <div class="row mb-2">
                         <div class="col-sm-4 text-muted">@L("Status")</div>
                         <div class="col-sm-8 font-weight-bold">
@@ -75,9 +82,31 @@
                             @shippingText
                         </div>
                     </div>
+
+                    <!-- Tổng tiền sản phẩm -->
                     <div class="row mb-2">
                         <div class="col-sm-4 text-muted">@L("TotalAmount")</div>
-                        <div class="col-sm-8 font-weight-bold">@Model.TotalAmount.ToString("0.00")</div>
+                        <div class="col-sm-8 font-weight-bold">
+                            @Model.TotalAmount.ToString("N0", new System.Globalization.CultureInfo("vi-VN")) đ
+                        </div>
+                    </div>
+
+                    <!-- Phí vận chuyển -->
+                    <div class="row mb-2">
+                        <div class="col-sm-4 text-muted">@L("ShippingFee")</div>
+                        <div class="col-sm-8 font-weight-bold">
+                            @Model.ShippingFee.ToString("N0", new System.Globalization.CultureInfo("vi-VN")) đ
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <!-- Tổng thanh toán cuối cùng -->
+                    <div class="row mb-2">
+                        <div class="col-sm-4 text-muted">@L("FinalAmount")</div>
+                        <div class="col-sm-8 font-weight-bold text-danger fs-5">
+                            @Model.FinalAmount.ToString("N0", new System.Globalization.CultureInfo("vi-VN")) đ
+                        </div>
                     </div>
 
                     <!-- Nếu muốn hiển thị danh sách sản phẩm trong đơn hàng -->
@@ -100,8 +129,8 @@
                                     <tr>
                                         <td>@item.MobilePhoneName</td>
                                         <td>@item.Quantity</td>
-                                        <td>@item.UnitPrice.ToString("0.00")</td>
-                                        <td>@item.ItemTotal.ToString("0.00")</td>
+                                        <td>@item.UnitPrice.ToString("N0", new System.Globalization.CultureInfo("vi-VN")) đ</td>
+                                        <td>@item.ItemTotal.ToString("N0", new System.Globalization.CultureInfo("vi-VN")) đ</td>
                                     </tr>
                                 }
                             </tbody>

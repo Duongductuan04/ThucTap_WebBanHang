@@ -52,7 +52,17 @@ namespace SimpleTaskApp.Web.Startup
                         )
                     )
                 )
-                .AddItem(
+                 .AddItem(
+                    new MenuItemDefinition(
+                        "DiscountsAdmin",
+                        L("Discounts"),
+                        url: "/Admin/Discounts", // đường dẫn tới trang quản lý Discounts
+                        icon: "fas fa-tags",
+                        permissionDependency: new SimplePermissionDependency(
+                            PermissionNames.Pages_Discount // 👈 nhớ khai báo permission cho Discounts
+                        )
+                    )
+                ).AddItem(
                     new MenuItemDefinition(
                         "OrdersAdmin",
                         L("Orders"),

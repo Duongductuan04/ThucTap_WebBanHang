@@ -28,10 +28,10 @@
                 title: l('Status'),
                 render: function (data) {
                     switch (data) {
-                        case 0: return l('Pending');
-                        case 1: return l('Shipping');
-                        case 2: return l('Completed');
-                        case 3: return l('Cancelled');
+                        case 0: return `<span class="badge bg-warning">${l('Pending')}</span>`;
+                        case 1: return `<span class="badge bg-info">${l('Shipping')}</span>`;
+                        case 2: return `<span class="badge bg-success">${l('Completed')}</span>`;
+                        case 3: return `<span class="badge bg-danger">${l('Cancelled')}</span>`;
                         default: return '-';
                     }
                 }
@@ -40,10 +40,28 @@
                 targets: 4,
                 data: 'totalAmount',
                 title: l('TotalAmount'),
-                render: (data) => data ? data.toFixed(2) : ''
+                render: (data) => data
+                    ? data.toLocaleString('vi-VN') + ' đ'
+                    : '0 đ'
             },
             {
                 targets: 5,
+                data: 'shippingFee',
+                title: l('ShippingFee'),
+                render: (data) => data
+                    ? data.toLocaleString('vi-VN') + ' đ'
+                    : '0 đ'
+            },
+            {
+                targets: 6,
+                data: 'finalAmount',
+                title: l('FinalAmount'),
+                render: (data) => data
+                    ? `<strong class="text-danger">${data.toLocaleString('vi-VN')} đ</strong>`
+                    : '0 đ'
+            },
+            {
+                targets: 7,
                 data: null,
                 sortable: false,
                 title: l('Actions'),

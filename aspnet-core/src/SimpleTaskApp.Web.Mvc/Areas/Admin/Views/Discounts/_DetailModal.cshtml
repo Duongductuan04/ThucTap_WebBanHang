@@ -1,0 +1,139 @@
+﻿@using SimpleTaskApp.MobilePhones.Dto
+@using SimpleTaskApp.Areas.Admin.Models.Common.Modals
+@using SimpleTaskApp.Areas.Admin.Models.Discounts
+
+@model DiscountDto
+
+@{
+    Layout = null;
+}
+
+@await Html.PartialAsync(
+        "~/Areas/Admin/Views/Shared/Modals/_ModalHeader.cshtml",
+        new ModalHeaderViewModel(L("DiscountDetail"))
+    )
+
+<div class="modal-body">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+
+                    <!-- Name & Code -->
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">@L("Name")</div>
+                        <div class="col-sm-8 font-weight-bold">@Model.Name</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">@L("Code")</div>
+                        <div class="col-sm-8 font-weight-bold">@Model.Code</div>
+                    </div>
+
+                    <!-- Percentage & Amount -->
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">@L("Percentage")</div>
+                        <div class="col-sm-8">
+                            @if (Model.Percentage.HasValue)
+                            {
+                                <span>@Model.Percentage.Value.ToString("0.##") %</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">@L("Amount")</div>
+                        <div class="col-sm-8">
+                            @if (Model.Amount.HasValue)
+                            {
+                                <span>@Model.Amount.Value.ToString("0.00")</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Apply Type -->
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">@L("ApplyType")</div>
+                        <div class="col-sm-8">
+                            <span>
+                                @(Model.ApplyType == 0 ? L("All") :
+                                    Model.ApplyType == 1 ? L("Category") :
+                                    L("Product"))
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Categories / Products -->
+                    @if (Model.ApplyType == 1 && Model.Categories != null && Model.Categories.Any())
+                    {
+                        <div class="row mb-3">
+                            <div class="col-sm-4 text-muted">@L("Category")</div>
+                            <div class="col-sm-8">
+                                @string.Join(", ", Model.Categories.Select(c => c.CategoryName))
+                            </div>
+                        </div>
+                    }
+                    @if (Model.ApplyType == 2 && Model.Products != null && Model.Products.Any())
+                    {
+                        <div class="row mb-3">
+                            <div class="col-sm-4 text-muted">@L("Products")</div>
+                            <div class="col-sm-8">
+                                @string.Join(", ", Model.Products.Select(p => p.MobilePhoneName))
+                            </div>
+                        </div>
+                    }
+                    <!-- MinOrderValue & MaxUsage -->
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">@L("MinOrderValue")</div>
+                        <div class="col-sm-8">
+                            <span>@(Model.MinOrderValue != 0 ? Model.MinOrderValue.ToString("0.00") : "-")</span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">@L("MaxUsage")</div>
+                        <div class="col-sm-8">
+                            <span>@(Model.MaxUsage != 0 ? Model.MaxUsage.ToString() : "-")</span>
+                        </div>
+                    </div>
+
+                    <!-- Start & End Date -->
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">@L("StartDate")</div>
+                        <div class="col-sm-8">
+                            @Model.StartDate.ToString("dd/MM/yyyy HH:mm")
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">@L("EndDate")</div>
+                        <div class="col-sm-8">
+                            @Model.EndDate.ToString("dd/MM/yyyy HH:mm") 
+                        </div>
+                    </div>
+
+                    <!-- IsActive -->
+                    <div class="row">
+                        <div class="col-sm-4 text-muted">@L("IsActive")</div>
+                        <div class="col-sm-8">
+                            <span class="badge @(Model.IsActive ? "badge-success" : "badge-secondary")">
+                                @(Model.IsActive ? L("Active") : L("Inactive"))
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-footer border-0">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+        <i class="fa fa-times"></i> @L("Close")
+    </button>
+</div>

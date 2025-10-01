@@ -48,6 +48,11 @@ public class OrdersController : AbpController
             }
         };
 
+        // Tính tổng tiền tạm thời để hiển thị
+        orderDto.TotalAmount = orderDto.OrderDetails.Sum(od => od.Quantity * od.UnitPrice);
+        orderDto.ShippingFee = 20000; // Mặc định
+        orderDto.FinalAmount = orderDto.TotalAmount + orderDto.ShippingFee;
+
         return View("CheckoutBuyNow", orderDto);
     }
 
@@ -74,6 +79,10 @@ public class OrdersController : AbpController
                 ImageUrl = c.ImageUrl
             }).ToList()
         };
+
+        orderDto.TotalAmount = orderDto.OrderDetails.Sum(od => od.Quantity * od.UnitPrice);
+        orderDto.ShippingFee = 20000;
+        orderDto.FinalAmount = orderDto.TotalAmount + orderDto.ShippingFee;
 
         return View("CheckoutCart", orderDto);
     }
@@ -105,9 +114,7 @@ public class OrdersController : AbpController
             }
         };
 
-        input.TotalAmount = input.OrderDetails.Sum(od => od.Quantity * od.UnitPrice);
-
-        await _orderAppService.CreateAsync(input);
+        await _orderAppService.CreateAsync(input); // Voucher xử lý ở service
 
         return RedirectToAction("Success");
     }
@@ -116,27 +123,14 @@ public class OrdersController : AbpController
     // 4. XỬ LÝ THANH TOÁN GIỎ HÀNG
     // ==========================
     [HttpPost]
-    public async Task<IActionResult> CheckoutCart(CreateOrderDto input,
-      [FromForm] List<int> cartIds)
+    public async Task<IActionResult> CheckoutCart(CreateOrderDto input, [FromForm] List<int> cartIds)
     {
-        // Khởi tạo cartIds nếu null
         cartIds ??= new List<int>();
-
-        List<CartDto> cartItems = new List<CartDto>();
-
-        // Lấy giỏ hàng của user
         var myCart = await _cartAppService.GetMyCartAsync() ?? new List<CartDto>();
-
-        // Nếu có chọn sản phẩm cụ thể trong giỏ
         if (cartIds.Any())
-        {
             myCart = myCart.Where(c => cartIds.Contains(c.Id)).ToList();
-        }
 
-        cartItems = myCart;
-
-        // Map sang OrderDetails
-        input.OrderDetails = cartItems
+        input.OrderDetails = myCart
             .Where(x => x.Quantity > 0)
             .Select(x => new CreateOrderDetailDto
             {
@@ -153,23 +147,14 @@ public class OrdersController : AbpController
             return View("CheckoutCart", input);
         }
 
-        // Tính tổng tiền
-        input.TotalAmount = input.OrderDetails.Sum(od => od.Quantity * od.UnitPrice);
+        await _orderAppService.CreateAsync(input); // Voucher xử lý ở service
 
-        await _orderAppService.CreateAsync(input);
-
-        // Xóa khỏi giỏ hàng sau khi đặt hàng thành công
-        if (cartIds.Any())
-        {
-            foreach (var cartId in cartIds)
-            {
-                await _cartAppService.DeleteAsync(new EntityDto<int>(cartId));
-            }
-        }
+        // Xóa sản phẩm khỏi giỏ hàng sau khi đặt
+        foreach (var cartId in cartIds)
+            await _cartAppService.DeleteAsync(new EntityDto<int>(cartId));
 
         return RedirectToAction("Success");
     }
-
 
     // ==========================
     // 5. TRANG THÀNH CÔNG

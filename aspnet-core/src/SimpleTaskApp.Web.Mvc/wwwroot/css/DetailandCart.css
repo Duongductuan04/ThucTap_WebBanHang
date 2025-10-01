@@ -648,3 +648,17 @@ p.mb-4 {
 .form-control {
     padding: 0.4rem 0.6rem !important;
 }
+.card {
+    border-radius: 10px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 8px;
+}
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }

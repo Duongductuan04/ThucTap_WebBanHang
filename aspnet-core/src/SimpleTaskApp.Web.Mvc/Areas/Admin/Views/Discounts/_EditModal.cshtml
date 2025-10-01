@@ -1,0 +1,174 @@
+﻿@using SimpleTaskApp.MobilePhones.Dto
+@using SimpleTaskApp.Areas.Admin.Models.Common.Modals
+@using SimpleTaskApp.Areas.Admin.Models.Discounts
+
+@model EditDiscountViewModel
+
+@{
+    Layout = null;
+}
+
+@await Html.PartialAsync(
+        "~/Areas/Admin/Views/Shared/Modals/_ModalHeader.cshtml",
+        new ModalHeaderViewModel(L("EditDiscount"))
+    )
+
+<form id="DiscountEditForm" role="form" class="form-horizontal" method="post">
+    <input type="hidden" name="Id" value="@Model.Discount.Id" />
+    <div class="modal-body">
+
+        <!-- Name -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="Name">@L("Name")</label>
+            <div class="col-md-9">
+                <input id="Name" name="Name" type="text" class="form-control" maxlength="256" required
+                       value="@Model.Discount.Name"
+                       data-val="true" data-val-required="@L("Name_Required")" />
+                <span class="text-danger" data-valmsg-for="Name"></span>
+            </div>
+        </div>
+
+        <!-- Code -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="Code">@L("Code")</label>
+            <div class="col-md-9">
+                <input id="Code" name="Code" type="text" class="form-control" maxlength="50" required
+                       value="@Model.Discount.Code"
+                       data-val="true" data-val-required="@L("Code_Required")" />
+                <span class="text-danger" data-valmsg-for="Code"></span>
+            </div>
+        </div>
+
+        <!-- Percentage -->
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="Percentage">@L("Percentage")</label>
+            <div class="col-md-9">
+                <input id="Percentage" name="Percentage" type="number" class="form-control" step="0.01" min="0" max="100"
+                       value="@(Model.Discount.Percentage.HasValue ? Model.Discount.Percentage.Value.ToString(System.Globalization.CultureInfo.InvariantCulture) : "")" />
+
+            </div>
+        </div>
+
+        <!-- Amount -->
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="Amount">@L("Amount")</label>
+            <div class="col-md-9">
+                <input id="Amount" name="Amount" type="number" class="form-control" step="0.01" min="0"
+                       value="@(Model.Discount.Amount.HasValue ? Model.Discount.Amount.Value.ToString(System.Globalization.CultureInfo.InvariantCulture) : "")" />
+            </div>
+        </div>
+
+        <!-- ApplyType -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="ApplyType">@L("ApplyType")</label>
+            <div class="col-md-9">
+                @{
+                    var applyTypes = new List<SelectListItem>
+                {
+                new SelectListItem { Value = "0", Text = L("All"), Selected = Model.Discount.ApplyType == 0 },
+                new SelectListItem { Value = "1", Text = L("Category"), Selected = Model.Discount.ApplyType == 1 },
+                new SelectListItem { Value = "2", Text = L("Product"), Selected = Model.Discount.ApplyType == 2 }
+                };
+                }
+                @Html.DropDownList("ApplyType", applyTypes, new { @class = "form-control", id = "ApplyType", required = "required" })
+            </div>
+        </div>
+
+        <!-- Category Select -->
+        <div class="form-group row category-select" style="display:@(Model.Discount.ApplyType == 1 ? "block" : "none");">
+            <label class="col-md-3 col-form-label">@L("SelectCategories")</label>
+            <div class="col-md-9">
+                <select name="Categories" class="form-control" multiple>
+                    @foreach (var c in Model.Categories)
+                    {
+                        var selected = Model.SelectedCategoryIds != null && Model.SelectedCategoryIds.Contains(int.Parse(c.Value));
+                        if (selected)
+                        {
+                            <option value="@c.Value" selected>@c.Text</option>
+                        }
+                        else
+                        {
+                            <option value="@c.Value">@c.Text</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+
+        <!-- Product Select -->
+        <div class="form-group row product-select" style="display:@(Model.Discount.ApplyType == 2 ? "block" : "none");">
+            <label class="col-md-3 col-form-label">@L("SelectProducts")</label>
+            <div class="col-md-9">
+                <select name="Products" class="form-control" multiple>
+                    @foreach (var p in Model.Products)
+                    {
+                        var selected = Model.SelectedProductIds != null && Model.SelectedProductIds.Contains(int.Parse(p.Value));
+                        if (selected)
+                        {
+                            <option value="@p.Value" selected>@p.Text</option>
+                        }
+                        else
+                        {
+                            <option value="@p.Value">@p.Text</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+
+
+        <!-- MinOrderValue -->
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="MinOrderValue">@L("MinOrderValue")</label>
+            <div class="col-md-9">
+
+                <input id="MinOrderValue" name="MinOrderValue" type="number" class="form-control" step="0.01" min="0"
+                       value="@(Model.Discount.MinOrderValue.ToString(System.Globalization.CultureInfo.InvariantCulture))" />
+            </div>
+        </div>
+        <!--InvariantCulture sẽ đảm bảo dấu chấm thay vì dấu phẩy, và trình duyệt sẽ hiển thị đúng.-->
+        <!-- MaxUsage -->
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="MaxUsage">@L("MaxUsage")</label>
+            <div class="col-md-9">
+                <input id="MaxUsage" name="MaxUsage" type="number" class="form-control" min="0"
+                       value="@(Model.Discount.MaxUsage.ToString())" />
+            </div>
+        </div>
+
+        <!-- StartDate -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="StartDate">@L("StartDate")</label>
+            <div class="col-md-9">
+                <input id="StartDate" name="StartDate" type="datetime-local" class="form-control"
+                       value="@(Model.Discount.StartDate != null ? Model.Discount.StartDate.ToString("yyyy-MM-ddTHH:mm") : "")" required />
+            </div>
+        </div>
+
+        <!-- EndDate -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="EndDate">@L("EndDate")</label>
+            <div class="col-md-9">
+                <input id="EndDate" name="EndDate" type="datetime-local" class="form-control"
+                       value="@(Model.Discount.EndDate != null ? Model.Discount.EndDate.ToString("yyyy-MM-ddTHH:mm") : "")" required />
+            </div>
+        </div>
+
+        <!-- IsActive -->
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="IsActive">@L("IsActive")</label>
+            <div class="col-md-9">
+                <input type="hidden" name="IsActive" value="false" />
+                <input id="IsActive" name="IsActive" type="checkbox" value="true" @(Model.Discount.IsActive ? "checked" : "") />
+            </div>
+        </div>
+
+    </div>
+
+    @await Html.PartialAsync("~/Areas/Admin/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml")
+</form>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+<script src="~/view-resources/Views/Discounts/_EditModal.js" asp-append-version="true"></script>

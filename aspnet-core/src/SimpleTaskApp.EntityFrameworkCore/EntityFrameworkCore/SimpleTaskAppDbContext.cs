@@ -15,7 +15,10 @@ namespace SimpleTaskApp.EntityFrameworkCore
         public DbSet<Cart> Carts { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
-
+        // ==== Thêm bảng voucher / discount ====
+        public DbSet<Discount> Discounts { get; set; }
+        public DbSet<DiscountCategory> DiscountCategories { get; set; }
+        public DbSet<DiscountProduct> DiscountProducts { get; set; }
         public SimpleTaskAppDbContext(DbContextOptions<SimpleTaskAppDbContext> options)
             : base(options)
         {

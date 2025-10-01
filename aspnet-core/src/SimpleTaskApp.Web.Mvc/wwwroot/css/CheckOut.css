@@ -557,3 +557,34 @@
     .product-table tbody tr:nth-child(3) {
         animation-delay: 0.3s;
     }
+
+
+.text-highlight {
+    color: #198754 !important;
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+}
+
+.card-header {
+    border-radius: 15px 15px 0 0 !important;
+}
+
+.btn {
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+    background-color: #f8f9fa;
+}
+
+@@media print {
+    .btn {
+        display: none !important;
+    }
+}

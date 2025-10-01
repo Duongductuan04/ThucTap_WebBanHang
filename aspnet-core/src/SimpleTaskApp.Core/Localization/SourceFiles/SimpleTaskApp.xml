@@ -193,5 +193,39 @@
 		<text name="Select" value="Select" />
 		<text name="Statistics" value="Statistics" />
 
+		<text name="Discount" value="Discount" />
+		<text name="Discounts" value="Discount List" />
+		<text name="CreateNewDiscount" value="Create New Discount" />
+		<text name="EditDiscount" value="Edit Discount" />
+		<text name="DiscountDetail" value="Discount Detail" />
+		<text name="Name_Required" value="Name is required" />
+		<text name="Name_Invalid" value="Invalid name" />
+		<text name="Code" value="Code" />
+		<text name="Code_Required" value="Code is required" />
+		<text name="Code_Invalid" value="Invalid code" />
+		<text name="Percentage" value="Percentage (%)" />
+		<text name="Percentage_Invalid" value="Percentage must be between 0 and 100" />
+		<text name="Percentage_Decimal_Invalid" value="Maximum 2 decimal places" />
+		<text name="Amount" value="Amount" />
+		<text name="Amount_Invalid" value="Invalid amount" />
+		<text name="Amount_Decimal_Invalid" value="Maximum 2 decimal places" />
+		<text name="ApplyType" value="Apply To" />
+		<text name="All" value="All" />
+		<text name="Product" value="Product" />
+		<text name="SelectCategories" value="Select Categories" />
+		<text name="SelectProducts" value="Select Products" />
+		<text name="MinOrderValue" value="Minimum Order Value" />
+		<text name="MinOrderValue_Invalid" value="Invalid value" />
+		<text name="MinOrderValue_Decimal_Invalid" value="Maximum 2 decimal places" />
+		<text name="MaxUsage" value="Maximum Usage" />
+		<text name="MaxUsage_Invalid" value="Invalid usage value" />
+		<text name="StartDate" value="Start Date" />
+		<text name="EndDate" value="End Date" />
+		<text name="Duration" value="Duration" />
+		<text name="Active" value="Active" />
+		<text name="Inactive" value="Inactive" />
+		<text name="Note" value="Note" />
+		<text name="ShippingFee" value="ShippingFee" />
+		<text name="FinalAmount" value="FinalAmount" />
 	</texts>
 </localizationDictionary>

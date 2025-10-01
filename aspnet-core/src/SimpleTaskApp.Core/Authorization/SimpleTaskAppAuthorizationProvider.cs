@@ -35,6 +35,13 @@ namespace SimpleTaskApp.Authorization
             order.CreateChildPermission(PermissionNames.Pages_Order_Edit, L("EditOrder"));
             order.CreateChildPermission(PermissionNames.Pages_Order_Delete, L("DeleteOrder"));
 
+            // Permissions cho Discounts
+            var discount = context.CreatePermission(PermissionNames.Pages_Discount, L("Discount"));
+            discount.CreateChildPermission(PermissionNames.Pages_Discount_Create, L("CreateDiscount"));
+            discount.CreateChildPermission(PermissionNames.Pages_Discount_Edit, L("EditDiscount"));
+            discount.CreateChildPermission(PermissionNames.Pages_Discount_Delete, L("DeleteDiscount"));
+
+
             var statistics = context.CreatePermission(PermissionNames.Pages_Statistics, L("Statistics"));
 
         }

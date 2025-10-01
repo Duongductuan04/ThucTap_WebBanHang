@@ -121,18 +121,32 @@
 
                 <div class="order-footer d-flex justify-content-between flex-wrap mt-3">
                     <div class="order-info">
-                        <div><strong>Ngày đặt:</strong> @order.CreationTime.ToString("dd/MM/yyyy HH:mm")</div>
-                        <div><strong>Người nhận:</strong> @order.RecipientName</div>
-                        <div><strong>Điện thoại:</strong> @order.RecipientPhone</div>
-                        <div><strong>Địa chỉ:</strong> @order.RecipientAddress</div>
+                        <div><strong>Ngày đặt: </strong> @order.CreationTime.ToString("dd/MM/yyyy HH:mm")</div>
+                        <div><strong>Người nhận: </strong> @order.RecipientName</div>
+                        <div><strong>Điện thoại: </strong> @order.RecipientPhone</div>
+                        <div><strong>Địa chỉ: </strong> @order.RecipientAddress</div>
+                        @if (!string.IsNullOrEmpty(order.Note))
+                        {
+                            <div><strong>Ghi chú: </strong> @order.Note</div>
+                        }
                     </div>
-                    <div class="order-total text-end">
-                        <div class="fw-bold">Tổng cộng:</div>
-                        <div class="fs-5 text-danger fw-bold">
-                            @order.OrderDetails.Sum(x => x.Quantity * x.UnitPrice).ToString("C0", new System.Globalization.CultureInfo("vi-VN"))
+
+                <div class="order-total text-end">
+                    <div><strong>Tạm tính: </strong>
+                        @((order.OrderDetails?.Sum(x => x.Quantity * x.UnitPrice) ?? 0m)
+                            .ToString("C0", new System.Globalization.CultureInfo("vi-VN")))
+                    </div>
+                    <div><strong>Phí vận chuyển: </strong>
+                        @( (order.ShippingFee).ToString("C0", new System.Globalization.CultureInfo("vi-VN")) )
+                    </div>
+                        <hr class="my-2" />
+                        <div class="fw-bold fs-3">
+                            <strong>Tổng tiền: </strong> <span class="text-danger fw-bold">@(order.FinalAmount.ToString("N0", new System.Globalization.CultureInfo("vi-VN"))) đ</span>
                         </div>
-                    </div>
+
                 </div>
+                </div>
+
             </div>
         }
 

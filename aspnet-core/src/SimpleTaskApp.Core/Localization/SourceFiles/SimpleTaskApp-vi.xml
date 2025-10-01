@@ -195,6 +195,41 @@
 		<!-- Common -->
 		<text name="Select" value="Chọn" />
 		<text name="Statistics" value="Thống kê" />
-
+		<!-- Discount -->
+		<text name="Discount" value="Giảm giá" />
+		<text name="Discounts" value="Danh sách giảm giá" />
+		<text name="CreateNewDiscount" value="Tạo giảm giá mới" />
+		<text name="EditDiscount" value="Sửa giảm giá" />
+		<text name="DiscountDetail" value="Chi tiết giảm giá" />
+		<text name="Name_Required" value="Bắt buộc nhập tên" />
+		<text name="Name_Invalid" value="Tên không hợp lệ" />
+		<text name="Code" value="Mã" />
+		<text name="Code_Required" value="Bắt buộc nhập mã" />
+		<text name="Code_Invalid" value="Mã không hợp lệ" />
+		<text name="Percentage" value="Phần trăm (%)" />
+		<text name="Percentage_Invalid" value="Phần trăm phải từ 0 đến 100" />
+		<text name="Percentage_Decimal_Invalid" value="Tối đa 2 chữ số thập phân" />
+		<text name="Amount" value="Số tiền" />
+		<text name="Amount_Invalid" value="Số tiền không hợp lệ" />
+		<text name="Amount_Decimal_Invalid" value="Tối đa 2 chữ số thập phân" />
+		<text name="ApplyType" value="Áp dụng cho" />
+		<text name="All" value="Tất cả" />
+		<text name="Product" value="Sản phẩm" />
+		<text name="SelectCategories" value="Chọn danh mục" />
+		<text name="SelectProducts" value="Chọn sản phẩm" />
+		<text name="MinOrderValue" value="Giá trị đơn tối thiểu" />
+		<text name="MinOrderValue_Invalid" value="Giá trị không hợp lệ" />
+		<text name="MinOrderValue_Decimal_Invalid" value="Tối đa 2 chữ số thập phân" />
+		<text name="MaxUsage" value="Số lần sử dụng tối đa" />
+		<text name="MaxUsage_Invalid" value="Số lần sử dụng không hợp lệ" />
+		<text name="StartDate" value="Ngày bắt đầu" />
+		<text name="EndDate" value="Ngày kết thúc" />
+		<text name="Duration" value="Thời gian áp dụng" />
+		<text name="Active" value="Hoạt động" />
+		<text name="Inactive" value="Không hoạt động" />
+		<text name="Note" value="Ghi chú" />
+		<text name="ShippingFee" value="Phí vận chuyển" />
+		<text name="FinalAmount" value="Tổng cộng" />
+		
 	</texts>
 </localizationDictionary>

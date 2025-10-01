@@ -78,3 +78,33 @@ if (checkoutBtn) {
 
 // Cập nhật tổng tiền khi tải trang
 document.addEventListener('DOMContentLoaded', updateTotalAmount);
+
+document.addEventListener("DOMContentLoaded", function () {
+    const shippingSelect = document.getElementById("ShippingMethod");
+    const shippingFeeEl = document.getElementById("shippingFee");
+    const subtotalEl = document.getElementById("subtotal");
+    const finalAmountEl = document.getElementById("finalAmount");
+
+    if (!shippingSelect || !shippingFeeEl || !subtotalEl || !finalAmountEl) {
+        return; // không tìm thấy phần tử
+    }
+
+    // Lấy subtotal từ attribute data
+    const subtotal = parseInt(subtotalEl.getAttribute("data-value"));
+
+    function formatCurrency(num) {
+        return num.toLocaleString("vi-VN") + " đ";
+    }
+
+    function updateTotal() {
+        let shippingFee = 20000; // mặc định tiêu chuẩn
+        if (shippingSelect.value === "1") shippingFee = 40000; // nhanh
+        if (shippingSelect.value === "2") shippingFee = 60000; // siêu tốc
+
+        shippingFeeEl.textContent = formatCurrency(shippingFee);
+        finalAmountEl.textContent = formatCurrency(subtotal + shippingFee);
+    }
+
+    updateTotal(); // khi load trang
+    shippingSelect.addEventListener("change", updateTotal);
+});

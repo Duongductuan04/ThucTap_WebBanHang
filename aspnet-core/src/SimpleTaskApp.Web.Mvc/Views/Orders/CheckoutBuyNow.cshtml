@@ -48,7 +48,14 @@
                             </div>
                             <span asp-validation-for="RecipientAddress" class="text-danger"></span>
                         </div>
-
+                        <div class="mb-3">
+                            <label asp-for="Note" class="form-label">Ghi chú đơn hàng</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-sticky-note"></i></span>
+                                <textarea asp-for="Note" class="form-control" placeholder="Ví dụ: Giao buổi chiều, gọi trước khi giao..."></textarea>
+                            </div>
+                            <span asp-validation-for="Note" class="text-danger"></span>
+                        </div>
                         <div class="mb-3">
                             <label asp-for="PaymentMethod" class="form-label">Phương thức thanh toán</label>
                             <div class="input-group">
@@ -157,19 +164,24 @@
                                     <h5 class="fw-semibold mb-3">Chi phí</h5>
                                     <div class="d-flex justify-content-between mb-2">
                                         <span>Tạm tính:</span>
-                                        <span>@Model.OrderDetails?.Sum(x => x.Quantity * x.UnitPrice).ToString("N0") đ</span>
+                                        <span id="subtotal" data-value="@Model.TotalAmount">
+                                            @Model.TotalAmount.ToString("N0") đ
+                                        </span>
                                     </div>
                                     <div class="d-flex justify-content-between mb-2">
                                         <span>Phí vận chuyển:</span>
-                                        <span>Miễn phí</span>
+                                        <span id="shippingFee" data-value="@Model.ShippingFee">
+                                            @Model.ShippingFee.ToString("N0") đ
+                                        </span>
                                     </div>
                                     <hr>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <span class="fw-bold fs-5 text-highlight">Tổng cộng:</span>
-                                        <span class="fw-bold fs-5 text-highlight">
-                                            @Model.OrderDetails?.Sum(x => x.Quantity * x.UnitPrice).ToString("N0") đ
+                                        <span class="fw-bold fs-5 text-highlight" id="finalAmount" data-value="@Model.FinalAmount">
+                                            @Model.FinalAmount.ToString("N0") đ
                                         </span>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
@@ -182,4 +194,9 @@
 </div>
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/abp/5.3.0/abp.js"></script>
+    <script src="~/view-resources/Views/Carts/CheckOut.js" asp-append-version="true"></script>
 }

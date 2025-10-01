@@ -1609,6 +1609,101 @@ namespace SimpleTaskApp.Migrations
                     b.ToTable("AppCarts");
                 });
 
+            modelBuilder.Entity("SimpleTaskApp.MobilePhones.Discount", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal?>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ApplyType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CurrentUsage")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MaxUsage")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("MinOrderValue")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("Percentage")
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AppDiscounts");
+                });
+
+            modelBuilder.Entity("SimpleTaskApp.MobilePhones.DiscountCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DiscountId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("DiscountId");
+
+                    b.ToTable("AppDiscountCategories");
+                });
+
+            modelBuilder.Entity("SimpleTaskApp.MobilePhones.DiscountProduct", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DiscountId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MobilePhoneId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DiscountId");
+
+                    b.HasIndex("MobilePhoneId");
+
+                    b.ToTable("AppDiscountProducts");
+                });
+
             modelBuilder.Entity("SimpleTaskApp.MobilePhones.MobilePhone", b =>
                 {
                     b.Property<int>("Id")
@@ -1690,6 +1785,18 @@ namespace SimpleTaskApp.Migrations
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<decimal>("DiscountAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("DiscountId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("FinalAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
@@ -1705,6 +1812,9 @@ namespace SimpleTaskApp.Migrations
                     b.Property<string>("RecipientPhone")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal>("ShippingFee")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<int>("ShippingMethod")
                         .HasColumnType("int");
 
@@ -1718,6 +1828,8 @@ namespace SimpleTaskApp.Migrations
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DiscountId");
 
                     b.HasIndex("UserId");
 
@@ -2054,6 +2166,44 @@ namespace SimpleTaskApp.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("SimpleTaskApp.MobilePhones.DiscountCategory", b =>
+                {
+                    b.HasOne("SimpleTaskApp.MobilePhones.MobilePhoneCategory", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SimpleTaskApp.MobilePhones.Discount", "Discount")
+                        .WithMany()
+                        .HasForeignKey("DiscountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Discount");
+                });
+
+            modelBuilder.Entity("SimpleTaskApp.MobilePhones.DiscountProduct", b =>
+                {
+                    b.HasOne("SimpleTaskApp.MobilePhones.Discount", "Discount")
+                        .WithMany()
+                        .HasForeignKey("DiscountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SimpleTaskApp.MobilePhones.MobilePhone", "MobilePhone")
+                        .WithMany()
+                        .HasForeignKey("MobilePhoneId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Discount");
+
+                    b.Navigation("MobilePhone");
+                });
+
             modelBuilder.Entity("SimpleTaskApp.MobilePhones.MobilePhone", b =>
                 {
                     b.HasOne("SimpleTaskApp.MobilePhones.MobilePhoneCategory", "Category")
@@ -2067,11 +2217,17 @@ namespace SimpleTaskApp.Migrations
 
             modelBuilder.Entity("SimpleTaskApp.MobilePhones.Order", b =>
                 {
+                    b.HasOne("SimpleTaskApp.MobilePhones.Discount", "Discount")
+                        .WithMany()
+                        .HasForeignKey("DiscountId");
+
                     b.HasOne("SimpleTaskApp.Authorization.Users.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Discount");
 
                     b.Navigation("User");
                 });

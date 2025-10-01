@@ -181,5 +181,11 @@
     "inputFiles": [
       "wwwroot/view-resources/Views/Statistics/statistics-pie.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/view-resources/Views/Discounts/Index.min.js",
+    "inputFiles": [
+      "wwwroot/view-resources/Views/Discounts/Index.js"
+    ]
   }
 ]

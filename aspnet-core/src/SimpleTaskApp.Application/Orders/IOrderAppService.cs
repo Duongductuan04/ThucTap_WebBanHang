@@ -19,9 +19,9 @@ namespace SimpleTaskApp.MobilePhones
 
         // Lấy order theo Id, bao gồm chi tiết
         Task<OrderDto> GetAsync(EntityDto<int> input);
-        Task<List<OrderDto>> GetOrdersByUserAndStatusAsync(long userId, int? status);
 
         // Lấy danh sách order có phân trang
         Task<PagedResultDto<OrderDto>> GetAllAsync(PagedOrderResultRequestDto input);
+
     }
 }

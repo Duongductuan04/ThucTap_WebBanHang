@@ -115,14 +115,64 @@
     }
     else
     {
-        <div class="text-center py-5">
-            <i class="bi bi-cart-x text-muted" style="font-size: 5rem;"></i>
-            <h3 class="mt-3">Giỏ hàng trống</h3>
-            <p class="text-muted">Bạn chưa thêm sản phẩm nào vào giỏ hàng.</p>
-            <a class="btn btn-primary btn-lg mt-3" href="@Url.Action("Index", "Home")">
-                <i class="fas fa-shopping-bag me-2"></i>Tiếp tục mua sắm
-            </a>
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-lg border-0">
+                    <div class="card-header bg-light py-4">
+                        <div class="text-center">
+                            <i class="bi bi-cart-x text-muted display-1 mb-3"></i>
+                            <h3 class="fw-bold text-dark mb-2">GIỎ HÀNG TRỐNG</h3>
+                            <p class="text-muted mb-0">Bạn chưa thêm sản phẩm nào vào giỏ hàng</p>
+                        </div>
+                    </div>
+
+                    <div class="card-body p-5">
+                        <!-- Thống kê cửa hàng -->
+                        <div class="row mb-4">
+                            <div class="col-md-4 text-center">
+                                <div class="border-end pe-3">
+                                    <div class="fw-bold text-primary fs-4">1000+</div>
+                                    <small class="text-muted">Sản phẩm</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <div class="border-end pe-3">
+                                    <div class="fw-bold text-success fs-4">99%</div>
+                                    <small class="text-muted">Hài lòng</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <div>
+                                    <div class="fw-bold text-warning fs-4">24/7</div>
+                                    <small class="text-muted">Hỗ trợ</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Nút hành động chính -->
+                        <div class="text-center mb-4">
+                            <a class="btn btn-primary btn-lg px-5 py-3 fw-semibold" href="@Url.Action("Index", "Home")">
+                                <i class="fas fa-shopping-bag me-2"></i>TIẾP TỤC MUA SẮM
+                            </a>
+                        </div>
+
+                   
+
+                        <!-- Hỗ trợ khách hàng -->
+                        <div class="text-center mt-4 pt-4 border-top">
+                            <small class="text-muted">
+                                <i class="bi bi-headset me-1"></i>
+                                Cần hỗ trợ? Gọi ngay <strong class="text-primary">0797183943</strong>
+                                hoặc <a href="#" class="text-decoration-none">chat với chúng tôi</a>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
         </div>
+   
     }
 </div>
 

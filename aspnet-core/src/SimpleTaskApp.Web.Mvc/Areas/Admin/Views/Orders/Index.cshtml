@@ -32,17 +32,21 @@
             <div class="card-body">
                 <div class="table-responsive">
                     <table id="OrdersTable" class="table table-striped table-bordered" aria-label="@L("Orders")">
-                        <thead>
+                        <thead class="table-light">
                             <tr>
                                 <th style="width:30px"></th>
                                 <th>@L("Recipient")</th>
                                 <th>@L("Phone")</th>
                                 <th>@L("Status")</th>
                                 <th>@L("TotalAmount")</th>
+                                <th>@L("ShippingFee")</th>
+                                <th>@L("FinalAmount")</th>
                                 <th style="width:150px">@L("Actions")</th>
                             </tr>
                         </thead>
-                        <tbody></tbody>
+                        <tbody>
+                            @* Dữ liệu load qua AJAX trong Index.js *@
+                        </tbody>
                     </table>
                 </div>
             </div>

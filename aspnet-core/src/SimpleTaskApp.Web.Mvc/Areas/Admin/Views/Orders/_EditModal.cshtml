@@ -98,6 +98,15 @@
                 <span class="text-danger" data-valmsg-for="ShippingMethod"></span>
             </div>
         </div>
+        <!-- Note -->
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="Note">@L("Note")</label>
+            <div class="col-md-9">
+                <textarea id="Note" name="Note" class="form-control" rows="3"
+                          placeholder="@L("EnterNote")">@Model.Order.Note</textarea>
+                <span class="text-danger" data-valmsg-for="Note"></span>
+            </div>
+        </div>
 
 
 
