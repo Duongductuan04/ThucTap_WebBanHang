@@ -10,22 +10,21 @@ namespace SimpleTaskApp.MobilePhones.Dto
         // ================== THÔNG TIN NGƯỜI NHẬN ==================
         [Required(ErrorMessage = "Vui lòng nhập tên người nhận")]
         [StringLength(100, ErrorMessage = "Tên người nhận tối đa 100 ký tự")]
+        [RegularExpression(@"^[a-zA-ZÀ-ỹ\s]+$", ErrorMessage = "Tên người nhận chỉ được chứa chữ cái và khoảng trắng")]
         public string RecipientName { get; set; }
 
         [Required(ErrorMessage = "Vui lòng nhập địa chỉ")]
         [StringLength(255, ErrorMessage = "Địa chỉ tối đa 255 ký tự")]
+        [RegularExpression(@"^[a-zA-Z0-9À-ỹ\s,.\-]+$", ErrorMessage = "Địa chỉ không hợp lệ")]
         public string RecipientAddress { get; set; }
 
         [Required(ErrorMessage = "Vui lòng nhập số điện thoại")]
-        [Phone(ErrorMessage = "Số điện thoại không hợp lệ")]
-        [StringLength(20)]
+        [RegularExpression(@"^\d{10}$", ErrorMessage = "Số điện thoại phải gồm đúng 10 chữ số")]
         public string RecipientPhone { get; set; }
 
         // ================== PHƯƠNG THỨC ==================
-        [Range(0, 2, ErrorMessage = "Phương thức thanh toán không hợp lệ")]
         public int PaymentMethod { get; set; }   // 0 = Tiền mặt, 1 = Chuyển khoản, 2 = Ví điện tử
 
-        [Range(0, 2, ErrorMessage = "Phương thức vận chuyển không hợp lệ")]
         public int ShippingMethod { get; set; }  // 0 = Tiêu chuẩn, 1 = Nhanh, 2 = Siêu tốc
 
         // ================== TRẠNG THÁI ==================
@@ -42,25 +41,18 @@ namespace SimpleTaskApp.MobilePhones.Dto
         public string Note { get; set; }
 
         // ================== TỔNG TIỀN ==================
-        [Range(0, double.MaxValue, ErrorMessage = "Tổng tiền không hợp lệ")]
         public decimal TotalAmount { get; set; }
 
-        [Range(0, double.MaxValue, ErrorMessage = "Số tiền giảm không hợp lệ")]
         public decimal? DiscountAmount { get; set; }
 
-        [Range(0, 100, ErrorMessage = "Phần trăm giảm phải từ 0 - 100")]
         public decimal? DiscountPercentage { get; set; }
 
         public decimal ShippingFee { get; set; }
 
         public decimal FinalAmount { get; set; }
 
-   
-
-
         // ================== DANH SÁCH SẢN PHẨM ==================
-        public List<CreateOrderDetailDto> OrderDetails { get; set; }
-            = new List<CreateOrderDetailDto>();
+        public List<CreateOrderDetailDto> OrderDetails { get; set; } = new List<CreateOrderDetailDto>();
     }
 
     [AutoMapTo(typeof(OrderDetail))]

@@ -15,6 +15,8 @@ namespace SimpleTaskApp.MobilePhones.Dto
         public int ShippingMethod { get; set; }   // 0 = Tiêu chuẩn, 1 = Nhanh, 2 = Siêu tốc
 
         public int? DiscountId { get; set; }      // Nếu cần thay đổi voucher
+        public string DiscountCode { get; set; }  // Nếu cần thay đổi voucher theo Code
+
         public string Note { get; set; }          // Ghi chú mới
     }
 }

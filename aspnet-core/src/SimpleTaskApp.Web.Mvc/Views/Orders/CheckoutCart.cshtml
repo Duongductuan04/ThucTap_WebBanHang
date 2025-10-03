@@ -10,24 +10,23 @@
 
 <div class="container my-5 checkout-page">
     <form asp-action="CheckoutCart" asp-controller="Orders" method="post" class="needs-validation" novalidate>
+        <input type="hidden" id="DiscountId" name="DiscountId" value="@Model.DiscountId" />
 
-    <div class="row">
-        <!-- Form thanh toán - Cột 4 -->
-        <div class="col-lg-4 mb-4">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white py-3">
-                    <h4 class="mb-0"><i class="fas fa-user me-2"></i>THÔNG TIN THANH TOÁN</h4>
-                </div>
-                <div class="card-body p-4">
-                       
-                            @if (ViewBag.CartIds is Microsoft.Extensions.Primitives.StringValues cartIds && cartIds.Count > 0)
+        <div class="row">
+            <!-- Form thanh toán - Cột 4 -->
+            <div class="col-lg-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white py-3">
+                        <h4 class="mb-0"><i class="fas fa-user me-2"></i>THÔNG TIN THANH TOÁN</h4>
+                    </div>
+                    <div class="card-body p-4">
+                        @if (ViewBag.CartIds is Microsoft.Extensions.Primitives.StringValues cartIds && cartIds.Count > 0)
+                        {
+                            foreach (var id in cartIds)
                             {
-                                foreach (var id in cartIds)
-                                {
-                                    <input type="hidden" name="cartIds" value="@id" />
-                                }
+                                <input type="hidden" name="cartIds" value="@id" />
                             }
-                        
+                        }
 
                         <div class="mb-3">
                             <label asp-for="RecipientName" class="form-label">Họ và tên *</label>
@@ -55,6 +54,7 @@
                             </div>
                             <span asp-validation-for="RecipientAddress" class="text-danger"></span>
                         </div>
+
                         <div class="mb-3">
                             <label asp-for="Note" class="form-label">Ghi chú đơn hàng</label>
                             <div class="input-group">
@@ -71,8 +71,7 @@
                                 @Html.DropDownListFor(m => m.PaymentMethod, new List<SelectListItem>
                                 {
                                 new SelectListItem { Text = "Tiền mặt (COD)", Value = "0" },
-                                new SelectListItem { Text = "Chuyển khoản ngân hàng", Value = "1" },
-                                new SelectListItem { Text = "Ví điện tử", Value = "2" }
+                                new SelectListItem { Text = "Ví điện tử", Value = "1" }
                                 }, new { @class = "form-select" })
                             </div>
                             <span asp-validation-for="PaymentMethod" class="text-danger"></span>
@@ -87,87 +86,131 @@
                                 new SelectListItem { Text = "Tiêu chuẩn", Value = "0" },
                                 new SelectListItem { Text = "Nhanh", Value = "1" },
                                 new SelectListItem { Text = "Siêu tốc", Value = "2" }
-                                }, new { @class = "form-select" })
+                                }, new { @class = "form-select", id = "ShippingMethod" })
                             </div>
                             <span asp-validation-for="ShippingMethod" class="text-danger"></span>
                         </div>
+                        <!-- Mã giảm giá -->
+                        <div class="mb-3">
+                            <label for="DiscountCode" class="form-label">Mã giảm giá (Voucher)</label>
 
+                            <!-- Input + nút Áp dụng -->
+                            <div class="input-group mb-2">
+                                <span class="input-group-text"><i class="fas fa-ticket-alt"></i></span>
+
+                                <input type="text" class="form-control" id="DiscountCode" name="DiscountCode" placeholder="Nhập Voucher" value="@Model.DiscountCode" />
+
+                                <button class="btn btn-discount btn-sm" type="button" id="applyDiscountBtn">
+                                    <i class="fas fa-check me-1"></i> Áp dụng
+                                </button>
+                            </div>
+
+                            <!-- Nút Hủy và Chọn voucher -->
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-discount btn-sm flex-fill" id="clearDiscountBtn">
+                                    <i class="fas fa-times me-1"></i> Hủy voucher
+                                </button>
+                                <button type="button" class="btn btn-discount btn-sm flex-fill" id="btnChooseVoucher">
+                                    <i class="fas fa-ticket-alt me-1"></i> Chọn voucher
+                                </button>
+                            </div>
+
+                            <span id="discountMessage" class="text-success mt-1 d-block"></span>
+                        </div>
                         <button type="submit" class="btn btn-primary w-100 mt-3 py-2">
-                            <i class="fas fa-shopping-bag me-2"></i>ĐẶT HÀNG 
+                            <i class="fas fa-shopping-bag me-2"></i>ĐẶT HÀNG
                         </button>
+                    </div>
+                </div>
+                <!-- Modal để hiển thị danh sách voucher -->
+                <div class="modal fade" id="voucherModal" tabindex="-1" aria-labelledby="voucherModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="voucherModalLabel">Chọn Voucher</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Đưa nội dung partial view vào đây -->
+                                @await Html.PartialAsync("~/Views/Discount/_AvailableDiscountsPartial.cshtml", ViewBag.AvailableDiscounts as List<SimpleTaskApp.MobilePhones.Dto.DiscountDto>)
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Đơn hàng và thông tin - Cột 8 -->
-        <div class="col-lg-8">
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-success text-white py-3">
-                    <h4 class="mb-0"><i class="fas fa-shopping-cart me-2"></i>ĐƠN HÀNG CỦA BẠN</h4>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th class="text-center">Sản phẩm</th>
-                                    <th class="text-center">Số lượng</th>
-                                    <th class="text-end">Đơn giá</th>
-                                    <th class="text-end">Thành tiền</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @if (Model.OrderDetails != null && Model.OrderDetails.Any())
-                                {
-                                    foreach (var item in Model.OrderDetails)
+            <!-- Đơn hàng và thông tin - Cột 8 -->
+            <div class="col-lg-8">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-success text-white py-3">
+                        <h4 class="mb-0"><i class="fas fa-shopping-cart me-2"></i>ĐƠN HÀNG CỦA BẠN</h4>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="text-center">Sản phẩm</th>
+                                        <th class="text-center">Số lượng</th>
+                                        <th class="text-end">Đơn giá</th>
+                                        <th class="text-end">Thành tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.OrderDetails != null && Model.OrderDetails.Any())
+                                    {
+                                        foreach (var item in Model.OrderDetails)
+                                        {
+                                            <tr class="cart-item" data-product-id="@item.MobilePhoneId" data-unit-price="@item.UnitPrice">
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                                        {
+                                                            <img src="@item.ImageUrl" class="img-thumbnail me-3" width="60" alt="@item.MobilePhoneName" />
+                                                        }
+                                                        <div>
+                                                            <div class="fw-semibold">@item.MobilePhoneName</div>
+                                                            <small class="text-muted">Mã SP: @item.MobilePhoneId</small>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="text-center align-middle">
+                                                    <span class="badge bg-secondary">@item.Quantity</span>
+                                                </td>
+                                                <td class="text-end align-middle">@item.UnitPrice.ToString("N0") đ</td>
+                                                <td class="text-end align-middle fw-bold">@((item.Quantity * item.UnitPrice).ToString("N0")) đ</td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
                                     {
                                         <tr>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    @if (!string.IsNullOrEmpty(item.ImageUrl))
-                                                    {
-                                                        <img src="@item.ImageUrl" class="img-thumbnail me-3" width="60" alt="@item.MobilePhoneName" />
-                                                    }
-                                                    <div>
-                                                        <div class="fw-semibold">@item.MobilePhoneName</div>
-                                                        <small class="text-muted">Mã SP: @item.MobilePhoneId</small>
-                                                    </div>
-                                                </div>
+                                            <td colspan="4" class="text-center py-4">
+                                                <i class="fas fa-shopping-cart fa-2x text-muted mb-2"></i>
+                                                <p class="text-muted">Đơn hàng trống</p>
                                             </td>
-                                            <td class="text-center align-middle">
-                                                <span class="badge bg-secondary">@item.Quantity</span>
-                                            </td>
-                                            <td class="text-end align-middle">@item.UnitPrice.ToString("N0") đ</td>
-                                            <td class="text-end align-middle fw-bold">@((item.Quantity * item.UnitPrice).ToString("N0")) đ</td>
                                         </tr>
                                     }
-                                }
-                                else
-                                {
-                                    <tr>
-                                        <td colspan="4" class="text-center py-4">
-                                            <i class="fas fa-shopping-cart fa-2x text-muted mb-2"></i>
-                                            <p class="text-muted">Đơn hàng trống</p>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
+                                </tbody>
+                            </table>
+                        </div>
 
-                    <div class="p-4 bg-light">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h5 class="fw-semibold mb-3">Thông tin đơn hàng</h5>
-                                <div class="d-flex justify-content-between mb-2">
-                                    <span>Số sản phẩm:</span>
-                                    <span class="fw-semibold">@Model.OrderDetails?.Sum(x => x.Quantity)</span>
+                        <div class="p-4 bg-light">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h5 class="fw-semibold mb-3">Thông tin đơn hàng</h5>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Số sản phẩm:</span>
+                                        <span class="fw-semibold">@Model.OrderDetails?.Sum(x => x.Quantity)</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>Loại sản phẩm:</span>
+                                        <span class="fw-semibold">@Model.OrderDetails?.Count</span>
+                                    </div>
                                 </div>
-                                <div class="d-flex justify-content-between mb-2">
-                                    <span>Loại sản phẩm:</span>
-                                    <span class="fw-semibold">@Model.OrderDetails?.Count</span>
-                                </div>
-                            </div>
                                 <div class="col-md-6">
                                     <h5 class="fw-semibold mb-3">Chi phí</h5>
                                     <div class="d-flex justify-content-between mb-2">
@@ -182,6 +225,12 @@
                                             @Model.ShippingFee.ToString("N0") đ
                                         </span>
                                     </div>
+
+                                    <div class="d-flex justify-content-between mb-2" id="discountRow" style="display:none;">
+                                        <span>Giảm giá:</span>
+                                        <span id="discountAmount" data-value="0">0 đ</span>
+                                    </div>
+
                                     <hr>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <span class="fw-bold fs-5 text-highlight">Tổng cộng:</span>
@@ -189,24 +238,22 @@
                                             @Model.FinalAmount.ToString("N0") đ
                                         </span>
                                     </div>
-
                                 </div>
-
-
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
     </form>
-
 </div>
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 
-    <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- Thêm Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/abp/5.3.0/abp.js"></script>
     <script src="~/view-resources/Views/Carts/CheckOut.js" asp-append-version="true"></script>
 }

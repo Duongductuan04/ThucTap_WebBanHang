@@ -49,4 +49,29 @@ namespace SimpleTaskApp.MobilePhones.Dto
         // Có thể thêm thuộc tính tính toán (không map DB)
         public decimal CalculatedTotal => OrderDetails?.Sum(od => od.ItemTotal) ?? 0;
     }
+    // ================== DTOs ==================
+    public class ApplyDiscountInputDto
+    {
+        public string DiscountCode { get; set; }
+        public decimal TotalAmount { get; set; }
+        public List<OrderItemDto> OrderItems { get; set; } = new List<OrderItemDto>();
+    }
+
+    public class ApplyDiscountResultDto
+    {
+        public int DiscountId { get; set; }
+        public string DiscountCode { get; set; }
+        public decimal DiscountAmount { get; set; }
+        public decimal? DiscountPercentage { get; set; }
+        public decimal EligibleAmount { get; set; }
+    }
+
+    public class OrderItemDto
+    {
+        public int ProductId { get; set; }
+        public int Quantity { get; set; }
+        public decimal UnitPrice { get; set; }
+    }
+
 }
+

@@ -28,6 +28,48 @@ namespace SimpleTaskApp.MobilePhones.Dto
 
         public int TotalCategories => Categories?.Count ?? 0;
         public int TotalProducts => Products?.Count ?? 0;
-    }
+    
+     // THÊM PROPERTY NÀY - đây là nguyên nhân lỗi
+    public string ApplyScopeInfo { get; set; }
 
+        // Property helper để hiển thị thông tin
+        public string DiscountInfo
+        {
+            get
+            {
+                if (Percentage.HasValue && Percentage.Value > 0)
+                    return $"Giảm {Percentage}%";
+                else if (Amount.HasValue && Amount.Value > 0)
+                    return $"Giảm {Amount.Value.ToString("N0")} đ";
+                return "Không có giảm giá";
+            }
+        }
+
+        public string ConditionInfo
+        {
+            get
+            {
+                return $"Đơn tối thiểu: {MinOrderValue.ToString("N0")} đ";
+            }
+        }
+
+        public string ValidityInfo
+        {
+            get
+            {
+                return $"HSD: {StartDate:dd/MM/yyyy} - {EndDate:dd/MM/yyyy}";
+            }
+        }
+
+        // Property helper để hiển thị trạng thái
+        public string StatusInfo
+        {
+            get
+            {
+                if (MaxUsage > 0)
+                    return $"Đã dùng: {CurrentUsage}/{MaxUsage}";
+                return "Không giới hạn";
+            }
+        }
+    }
 }

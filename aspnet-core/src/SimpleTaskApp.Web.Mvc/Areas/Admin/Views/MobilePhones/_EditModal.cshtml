@@ -1,167 +1,166 @@
 ﻿@using SimpleTaskApp.MobilePhones.Dto
 @using SimpleTaskApp.Areas.Admin.Models.Common.Modals
-@using SimpleTaskApp.Areas.Admin.Models.Discounts
-@model EditDiscountViewModel
+@using Microsoft.AspNetCore.Mvc.Rendering
+@using SimpleTaskApp.Areas.Admin.Models.MobilePhones
+@model EditMobilePhoneViewModel
 
 @{
     Layout = null;
 }
 
 @await Html.PartialAsync(
-        "~/Areas/Admin/Views/Shared/Modals/_ModalHeader.cshtml",
-        new ModalHeaderViewModel(L("EditDiscount"))
-)
+            "~/Areas/Admin/Views/Shared/Modals/_ModalHeader.cshtml",
+            new ModalHeaderViewModel(L("EditMobilePhone"))
+        )
+<form id="MobilePhoneEditForm" role="form" class="form-horizontal" enctype="multipart/form-data">
+    <input type="hidden" name="Id" value="@Model.MobilePhone.Id" />
 
-<form id="DiscountEditForm" role="form" class="form-horizontal" method="post">
-    <input type="hidden" name="Discount.Id" value="@Model.Discount.Id" />
     <div class="modal-body">
-
         <!-- Name -->
         <div class="form-group row required">
             <label class="col-md-3 col-form-label" for="Name">@L("Name")</label>
             <div class="col-md-9">
-                <input id="Name" name="Discount.Name" type="text" class="form-control" maxlength="256" required
-                       value="@Model.Discount.Name"
-                       data-val="true" data-val-required="@L("Name_Required")"
-                       data-val-maxlength="@L("Name_MaxLength")" data-val-maxlength-max="256"
-                       data-val-regex="@L("Name_Invalid")" data-val-regex-pattern="^[a-zA-Z0-9\s]+$" />
-                <span class="text-danger field-validation-valid" data-valmsg-for="Discount.Name" data-valmsg-replace="true"></span>
+                <input id="Name" name="Name" type="text" class="form-control"
+                       value="@Model.MobilePhone.Name"
+                       maxlength="256"
+                       data-val="true"
+                       data-val-required="@L("Name_Required")" />
+                <span class="text-danger" data-valmsg-for="Name"></span>
             </div>
         </div>
 
-        <!-- Code -->
+        <!-- Brand -->
         <div class="form-group row required">
-            <label class="col-md-3 col-form-label" for="Code">@L("Code")</label>
+            <label class="col-md-3 col-form-label" for="Brand">@L("Brand")</label>
             <div class="col-md-9">
-                <input id="Code" name="Discount.Code" type="text" class="form-control" maxlength="50" required
-                       value="@Model.Discount.Code"
-                       data-val="true" data-val-required="@L("Code_Required")"
-                       data-val-maxlength="@L("Code_MaxLength")" data-val-maxlength-max="50" />
-                <span class="text-danger field-validation-valid" data-valmsg-for="Discount.Code" data-valmsg-replace="true"></span>
+                <input id="Brand" name="Brand" type="text" class="form-control"
+                       value="@Model.MobilePhone.Brand"
+                       maxlength="128"
+                       data-val="true"
+                       data-val-required="@L("Brand_Required")" />
+                <span class="text-danger" data-valmsg-for="Brand"></span>
             </div>
         </div>
 
-        <!-- Percentage -->
+        <!-- Description -->
         <div class="form-group row">
-            <label class="col-md-3 col-form-label" for="Percentage">@L("Percentage")</label>
+            <label class="col-md-3 col-form-label" for="Description">@L("Description")</label>
             <div class="col-md-9">
-                <input id="Percentage" name="Discount.Percentage" type="number" class="form-control" step="0.01" min="0" max="100"
-                       value="@(Model.Discount.Percentage.HasValue ? Model.Discount.Percentage.Value.ToString("0.00") : "")"
-                       data-val="true" data-val-range="@L("Percentage_Invalid")" data-val-range-min="0" data-val-range-max="100" />
-                <span class="text-danger field-validation-valid" data-valmsg-for="Discount.Percentage" data-valmsg-replace="true"></span>
+                <textarea id="Description" name="Description" class="form-control"
+                          maxlength="500">@Model.MobilePhone.Description</textarea>
+                <span class="text-danger" data-valmsg-for="Description"></span>
             </div>
         </div>
 
-        <!-- Amount -->
-        <div class="form-group row">
-            <label class="col-md-3 col-form-label" for="Amount">@L("Amount")</label>
-            <div class="col-md-9">
-                <input id="Amount" name="Discount.Amount" type="number" class="form-control" step="0.01" min="0"
-                       value="@(Model.Discount.Amount.HasValue ? Model.Discount.Amount.Value.ToString("0.00") : "")"
-                       data-val="true" data-val-range="@L("Amount_Invalid")" data-val-range-min="0" />
-                <span class="text-danger field-validation-valid" data-valmsg-for="Discount.Amount" data-valmsg-replace="true"></span>
-            </div>
-        </div>
-
-        <!-- ApplyType -->
+        <!-- Price -->
         <div class="form-group row required">
-            <label class="col-md-3 col-form-label" for="ApplyType">@L("ApplyType")</label>
+            <label class="col-md-3 col-form-label" for="Price">@L("Price")</label>
             <div class="col-md-9">
-                @{
-                    var applyTypes = new List<SelectListItem>
-                    {
-                        new SelectListItem { Value = "0", Text = L("All"), Selected = Model.Discount.ApplyType == 0 },
-                        new SelectListItem { Value = "1", Text = L("Category"), Selected = Model.Discount.ApplyType == 1 },
-                        new SelectListItem { Value = "2", Text = L("Product"), Selected = Model.Discount.ApplyType == 2 }
-                    };
+                <input id="Price" name="Price" type="number" class="form-control" step="0.01"
+                       value="@Model.MobilePhone.Price.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)"
+                       data-val="true"
+                       data-val-required="@L("Price_Required")" />
+                <span class="text-danger" data-valmsg-for="Price"></span>
+            </div>
+        </div>
+
+        <!-- DiscountPrice -->
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="DiscountPrice">@L("DiscountPrice")</label>
+            <div class="col-md-9">
+                <input id="DiscountPrice" name="DiscountPrice" type="number" class="form-control" step="0.01"
+                       value="@(Model.MobilePhone.DiscountPrice.HasValue
+                           ? Model.MobilePhone.DiscountPrice.Value.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)
+                           : string.Empty)" min="0" />
+                <span class="text-danger" data-valmsg-for="DiscountPrice"></span>
+            </div>
+        </div>
+
+        <!-- StockQuantity -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="StockQuantity">@L("StockQuantity")</label>
+            <div class="col-md-9">
+                <input id="StockQuantity" name="StockQuantity" type="number" class="form-control"
+                       value="@Model.MobilePhone.StockQuantity" min="0"
+                       data-val="true"
+                       data-val-required="@L("StockQuantity_Required")" />
+                <span class="text-danger" data-valmsg-for="StockQuantity"></span>
+            </div>
+        </div>
+
+        <!-- Category -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="CategoryId">@L("Category")</label>
+            <div class="col-md-9">
+                @Html.DropDownList("CategoryId", Model.Categories, L("Select"),
+                         new { @class = "form-control", id = "CategoryId", required = "required" })
+                <span class="text-danger" data-valmsg-for="CategoryId"></span>
+            </div>
+        </div>
+
+        <!-- IsNew & IsOnSale -->
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label">@L("Flags")</label>
+            <div class="col-md-9">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="IsNew" name="IsNew" value="true" @(Model.MobilePhone.IsNew ? "checked" : "") />
+                    <label class="form-check-label" for="IsNew">@L("New")</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="IsOnSale" name="IsOnSale" value="true" @(Model.MobilePhone.IsOnSale ? "checked" : "") />
+                    <label class="form-check-label" for="IsOnSale">@L("OnSale")</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- SaleStart & SaleEnd -->
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="SaleStart">@L("SaleStart")</label>
+            <div class="col-md-9">
+                <input id="SaleStart" name="SaleStart" type="datetime-local" class="form-control"
+                       value="@(Model.MobilePhone.SaleStart?.ToString("yyyy-MM-ddTHH:mm"))"
+                       pattern="\d{4}-\d{2}-\d{2}T\d{2}:\d{2}" />
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="SaleEnd">@L("SaleEnd")</label>
+            <div class="col-md-9">
+                <input id="SaleEnd" name="SaleEnd" type="datetime-local" class="form-control"
+                       value="@(Model.MobilePhone.SaleEnd?.ToString("yyyy-MM-ddTHH:mm"))"
+                       pattern="\d{4}-\d{2}-\d{2}T\d{2}:\d{2}" />
+            </div>
+        </div>
+
+        <!-- Current Image -->
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label">@L("CurrentImage")</label>
+            <div class="col-md-9">
+                @if (!string.IsNullOrEmpty(Model.MobilePhone.ImageUrl))
+                {
+                    <img src="@Model.MobilePhone.ImageUrl" alt="@L("CurrentImage")"
+                         style="max-width: 100px; max-height: 100px; border: 1px solid #ddd; padding: 5px;" />
+                    <input type="hidden" name="ImageUrl" value="@Model.MobilePhone.ImageUrl" />
                 }
-                @Html.DropDownList("Discount.ApplyType", applyTypes, new { @class = "form-control", id = "ApplyType", required = "required", data_val = "true", data_val_required = L("ApplyType_Required") })
+                else
+                {
+                    <span>@L("NoImage")</span>
+                }
             </div>
         </div>
 
-        <!-- Category Select -->
-        <div class="form-group row category-select" style="display:@(Model.Discount.ApplyType == 1 ? "block" : "none");">
-            <label class="col-md-3 col-form-label">@L("SelectCategories")</label>
-            <div class="col-md-9">
-                <select name="Discount.Categories" class="form-control" multiple data-val="true" data-val-required="@L("Category_Required")">
-                    @foreach (var c in Model.Categories)
-                    {
-                        var isSelected = Model.SelectedCategoryIds != null && Model.SelectedCategoryIds.Contains(int.Parse(c.Value));
-                        <option value="@c.Value" selected="@(isSelected ? "selected" : null)">@c.Text</option>
-                    }
-                </select>
-                <span class="text-danger field-validation-valid" data-valmsg-for="Discount.Categories" data-valmsg-replace="true"></span>
-            </div>
-        </div>
-
-        <!-- Product Select -->
-        <div class="form-group row product-select" style="display:@(Model.Discount.ApplyType == 2 ? "block" : "none");">
-            <label class="col-md-3 col-form-label">@L("SelectProducts")</label>
-            <div class="col-md-9">
-                <select name="Discount.Products" class="form-control" multiple data-val="true" data-val-required="@L("Product_Required")">
-                    @foreach (var p in Model.Products)
-                    {
-                        var isSelected = Model.SelectedProductIds != null && Model.SelectedProductIds.Contains(int.Parse(p.Value));
-                        <option value="@p.Value" selected="@(isSelected ? "selected" : null)">@p.Text</option>
-                    }
-                </select>
-                <span class="text-danger field-validation-valid" data-valmsg-for="Discount.Products" data-valmsg-replace="true"></span>
-            </div>
-        </div>
-
-        <!-- MinOrderValue -->
+        <!-- Upload New Image -->
         <div class="form-group row">
-            <label class="col-md-3 col-form-label" for="MinOrderValue">@L("MinOrderValue")</label>
+            <label class="col-md-3 col-form-label" for="ImageFile">@L("NewImage")</label>
             <div class="col-md-9">
-                <input id="MinOrderValue" name="Discount.MinOrderValue" type="number" class="form-control" step="0.01" min="0"
-                       value="@(Model.Discount.MinOrderValue.ToString("0.00"))"
-                       data-val="true" data-val-range="@L("MinOrderValue_Invalid")" data-val-range-min="0" />
-                <span class="text-danger field-validation-valid" data-valmsg-for="Discount.MinOrderValue" data-valmsg-replace="true"></span>
+                <input id="ImageFile" name="ImageFile" type="file" class="form-control" />
+                <small class="form-text text-muted">@L("ImageUploadHint")</small>
             </div>
         </div>
-
-        <!-- MaxUsage -->
-        <div class="form-group row">
-            <label class="col-md-3 col-form-label" for="MaxUsage">@L("MaxUsage")</label>
-            <div class="col-md-9">
-                <input id="MaxUsage" name="Discount.MaxUsage" type="number" class="form-control" min="0"
-                       value="@(Model.Discount.MaxUsage.ToString())"
-                       data-val="true" data-val-range="@L("MaxUsage_Invalid")" data-val-range-min="0" />
-                <span class="text-danger field-validation-valid" data-valmsg-for="Discount.MaxUsage" data-valmsg-replace="true"></span>
-            </div>
-        </div>
-
-        <!-- StartDate -->
-        <div class="form-group row required">
-            <label class="col-md-3 col-form-label" for="StartDate">@L("StartDate")</label>
-            <div class="col-md-9">
-                <input id="StartDate" name="Discount.StartDate" type="datetime-local" class="form-control"
-                       value="@(Model.Discount.StartDate != null ? Model.Discount.StartDate.ToString("yyyy-MM-ddTHH:mm") : "")" />
-            </div>
-        </div>
-
-        <!-- EndDate -->
-        <div class="form-group row required">
-            <label class="col-md-3 col-form-label" for="EndDate">@L("EndDate")</label>
-            <div class="col-md-9">
-                <input id="EndDate" name="Discount.EndDate" type="datetime-local" class="form-control"
-                       value="@(Model.Discount.EndDate != null ? Model.Discount.EndDate.ToString("yyyy-MM-ddTHH:mm") : "")" />
-            </div>
-        </div>
-
-        <!-- IsActive -->
-        <div class="form-group row">
-            <label class="col-md-3 col-form-label" for="IsActive">@L("IsActive")</label>
-            <div class="col-md-9">
-                <input type="hidden" name="Discount.IsActive" value="false" />
-                <input id="IsActive" name="Discount.IsActive" type="checkbox" value="true" @(Model.Discount.IsActive ? "checked" : "") />
-            </div>
-        </div>
-
     </div>
 
     @await Html.PartialAsync("~/Areas/Admin/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml")
 </form>
+
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>

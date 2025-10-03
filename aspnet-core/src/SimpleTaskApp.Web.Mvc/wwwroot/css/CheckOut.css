@@ -588,3 +588,14 @@
         display: none !important;
     }
 }
+.btn-discount {
+    border: 1px solid #ffc107; /* khung vàng */
+    color: #000; /* chữ đen */
+    background-color: transparent;
+}
+
+    /* Hover: nền vàng nhạt, chữ đen */
+    .btn-discount:hover {
+        background-color: #fff3cd; /* vàng nhạt */
+        color: #000;
+    }

@@ -541,3 +541,55 @@ h2.fw-bold small.text-muted {
     background: var(--tgdd-orange);
     color: #fff;
 }
+.available-discounts-container h5 {
+    font-weight: 600;
+    color: #333;
+}
+
+.discount-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.discount-item {
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+    .discount-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+.discount-card {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+}
+
+    .discount-card input[type="radio"] {
+        margin-right: 0.75rem;
+        accent-color: #ffc107; /* chọn radio vàng */
+    }
+
+.discount-code {
+    color: #ffc107;
+    font-size: 1rem;
+}
+
+.discount-name {
+    color: #555;
+    font-size: 0.85rem;
+}
+
+.discount-item .badge {
+    font-size: 0.75rem;
+    padding: 0.3em 0.5em;
+}
+
+.discount-card small.text-muted {
+    font-size: 0.75rem;
+    color: #888 !important;
+}

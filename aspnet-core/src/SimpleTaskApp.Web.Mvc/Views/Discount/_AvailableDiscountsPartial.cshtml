@@ -1,0 +1,51 @@
+﻿@model List<SimpleTaskApp.MobilePhones.Dto.DiscountDto>
+
+<div class="available-discounts-container">
+    <h5 class="mb-3">Voucher khả dụng</h5>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info">
+            <small>Không có voucher khả dụng cho đơn hàng hiện tại</small>
+        </div>
+    }
+    else
+    {
+        <div class="discount-list">
+            @foreach (var discount in Model)
+            {
+                <div class="discount-item card mb-2 p-2">
+                    <div class="card-body p-2">
+                        <div class="form-check discount-card">
+                            <input class="form-check-input discount-radio" type="radio"
+                                   name="selectedDiscount" value="@discount.Id"
+                                   data-discount-code="@discount.Code" id="discount_@discount.Id">
+                            <label class="form-check-label w-100" for="discount_@discount.Id">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong class="discount-code">@discount.Code</strong>
+                                        <small class="d-block discount-name">@discount.Name</small>
+                                        @if (!string.IsNullOrEmpty(discount.DiscountInfo))
+                                        {
+                                            <span class="badge bg-success">@discount.DiscountInfo</span>
+                                        }
+                                    </div>
+                                    <div class="text-end">
+                                        @if (!string.IsNullOrEmpty(discount.ConditionInfo))
+                                        {
+                                            <small class="text-muted d-block">@discount.ConditionInfo</small>
+                                        }
+                                        @if (!string.IsNullOrEmpty(discount.ValidityInfo))
+                                        {
+                                            <small class="text-muted">@discount.ValidityInfo</small>
+                                        }
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

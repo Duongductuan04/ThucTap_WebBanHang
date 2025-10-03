@@ -131,20 +131,31 @@
                         }
                     </div>
 
-                <div class="order-total text-end">
-                    <div><strong>Tạm tính: </strong>
-                        @((order.OrderDetails?.Sum(x => x.Quantity * x.UnitPrice) ?? 0m)
-                            .ToString("C0", new System.Globalization.CultureInfo("vi-VN")))
-                    </div>
-                    <div><strong>Phí vận chuyển: </strong>
-                        @( (order.ShippingFee).ToString("C0", new System.Globalization.CultureInfo("vi-VN")) )
-                    </div>
+                    <div class="order-total text-end">
+                        <div>
+                            <strong>Tạm tính: </strong>
+                            @((order.OrderDetails?.Sum(x => x.Quantity * x.UnitPrice) ?? 0m)
+                                .ToString("C0", new System.Globalization.CultureInfo("vi-VN")))
+                        </div>
+                        <div>
+                            <strong>Phí vận chuyển: </strong>
+                            @(order.ShippingFee.ToString("C0", new System.Globalization.CultureInfo("vi-VN")))
+                        </div>
+                        @if (order.DiscountAmount.HasValue && order.DiscountAmount.Value > 0)
+                        {
+                            <div>
+                                <strong>Giảm giá: </strong>
+                                -@order.DiscountAmount.Value.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))
+                            </div>
+                        }
                         <hr class="my-2" />
                         <div class="fw-bold fs-3">
-                            <strong>Tổng tiền: </strong> <span class="text-danger fw-bold">@(order.FinalAmount.ToString("N0", new System.Globalization.CultureInfo("vi-VN"))) đ</span>
+                            <strong>Tổng tiền: </strong>
+                            <span class="text-danger fw-bold">
+                                @(order.FinalAmount.ToString("N0", new System.Globalization.CultureInfo("vi-VN"))) đ
+                            </span>
                         </div>
-
-                </div>
+                    </div>
                 </div>
 
             </div>

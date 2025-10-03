@@ -1,12 +1,17 @@
-﻿@model SimpleTaskApp.MobilePhones.Dto.CreateOrderDto
+﻿
+@model SimpleTaskApp.MobilePhones.Dto.CreateOrderDto
 
 @{
     Layout = "~/Views/Shared/Layout/_LayoutFrontend.cshtml";
     ViewBag.Title = "Thanh toán";
+
+    var cartIdsQuery = Context.Request.Query["cartIds"];
+    ViewBag.CartIds = cartIdsQuery;
 }
 
 <div class="container my-5 checkout-page">
     <form asp-action="BuyNow" asp-controller="Orders" method="post" class="needs-validation" novalidate>
+        <input type="hidden" id="DiscountId" name="DiscountId" value="@Model.DiscountId" />
 
         <div class="row">
             <!-- Form thanh toán - Cột 4 -->
@@ -48,6 +53,7 @@
                             </div>
                             <span asp-validation-for="RecipientAddress" class="text-danger"></span>
                         </div>
+
                         <div class="mb-3">
                             <label asp-for="Note" class="form-label">Ghi chú đơn hàng</label>
                             <div class="input-group">
@@ -56,6 +62,7 @@
                             </div>
                             <span asp-validation-for="Note" class="text-danger"></span>
                         </div>
+
                         <div class="mb-3">
                             <label asp-for="PaymentMethod" class="form-label">Phương thức thanh toán</label>
                             <div class="input-group">
@@ -63,8 +70,7 @@
                                 @Html.DropDownListFor(m => m.PaymentMethod, new List<SelectListItem>
                                 {
                                 new SelectListItem { Text = "Tiền mặt (COD)", Value = "0" },
-                                new SelectListItem { Text = "Chuyển khoản ngân hàng", Value = "1" },
-                                new SelectListItem { Text = "Ví điện tử", Value = "2" }
+                                new SelectListItem { Text = "Ví điện tử", Value = "1" }
                                 }, new { @class = "form-select" })
                             </div>
                             <span asp-validation-for="PaymentMethod" class="text-danger"></span>
@@ -79,14 +85,60 @@
                                 new SelectListItem { Text = "Tiêu chuẩn", Value = "0" },
                                 new SelectListItem { Text = "Nhanh", Value = "1" },
                                 new SelectListItem { Text = "Siêu tốc", Value = "2" }
-                                }, new { @class = "form-select" })
+                                }, new { @class = "form-select", id = "ShippingMethod" })
                             </div>
                             <span asp-validation-for="ShippingMethod" class="text-danger"></span>
                         </div>
+                        <!-- Mã giảm giá -->
+                        <div class="mb-3">
+                            <label for="DiscountCode" class="form-label">Mã giảm giá (Voucher)</label>
 
-                        <button type="submit" class="btn btn-primary w-100 mt-3 py-2">
+                            <!-- Input + nút Áp dụng -->
+                            <div class="input-group mb-2">
+                                <span class="input-group-text"><i class="fas fa-ticket-alt"></i></span>
+
+                                <input type="text" class="form-control" id="DiscountCode" name="DiscountCode" placeholder="Nhập Voucher" value="@Model.DiscountCode" />
+
+                                <button class="btn btn-discount btn-sm" type="button" id="applyDiscountBtn">
+                                    <i class="fas fa-check me-1"></i> Áp dụng
+                                </button>
+                            </div>
+
+                            <!-- Nút Hủy và Chọn voucher -->
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-discount btn-sm flex-fill" id="clearDiscountBtn">
+                                    <i class="fas fa-times me-1"></i> Hủy voucher
+                                </button>
+                                <button type="button" class="btn btn-discount btn-sm flex-fill" id="btnChooseVoucher">
+                                    <i class="fas fa-ticket-alt me-1"></i> Chọn voucher
+                                </button>
+                            </div>
+
+                            <span id="discountMessage" class="text-success mt-1 d-block"></span>
+                        </div>
+
+
+                             <button type="submit" class="btn btn-primary w-100 mt-3 py-2">
                             <i class="fas fa-shopping-bag me-2"></i>ĐẶT HÀNG
                         </button>
+                    </div>
+                </div>
+                <!-- Modal để hiển thị danh sách voucher -->
+                <div class="modal fade" id="voucherModal" tabindex="-1" aria-labelledby="voucherModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="voucherModalLabel">Chọn Voucher</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Đưa nội dung partial view vào đây -->
+                                @await Html.PartialAsync("~/Views/Discount/_AvailableDiscountsPartial.cshtml", ViewBag.AvailableDiscounts as List<SimpleTaskApp.MobilePhones.Dto.DiscountDto>)
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -113,7 +165,7 @@
                                     {
                                         foreach (var item in Model.OrderDetails)
                                         {
-                                            <tr>
+                                            <tr class="cart-item" data-product-id="@item.MobilePhoneId" data-unit-price="@item.UnitPrice">
                                                 <td>
                                                     <div class="d-flex align-items-center">
                                                         @if (!string.IsNullOrEmpty(item.ImageUrl))
@@ -174,6 +226,12 @@
                                             @Model.ShippingFee.ToString("N0") đ
                                         </span>
                                     </div>
+
+                                    <div class="d-flex justify-content-between mb-2" id="discountRow" style="display:none;">
+                                        <span>Giảm giá:</span>
+                                        <span id="discountAmount" data-value="0">0 đ</span>
+                                    </div>
+
                                     <hr>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <span class="fw-bold fs-5 text-highlight">Tổng cộng:</span>
@@ -181,7 +239,6 @@
                                             @Model.FinalAmount.ToString("N0") đ
                                         </span>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
@@ -190,13 +247,13 @@
             </div>
         </div>
     </form>
-
 </div>
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 
-    <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- Thêm Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/abp/5.3.0/abp.js"></script>
     <script src="~/view-resources/Views/Carts/CheckOut.js" asp-append-version="true"></script>
 }

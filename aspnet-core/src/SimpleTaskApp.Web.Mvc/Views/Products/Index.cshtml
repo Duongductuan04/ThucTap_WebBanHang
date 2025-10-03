@@ -5,7 +5,7 @@
     Layout = "~/Views/Shared/Layout/_LayoutFrontend.cshtml";
 
     int currentPage = ViewBag.CurrentPage ?? 1;
-    int pageSize = ViewBag.PageSize ?? 10;
+    int pageSize = ViewBag.PageSize ?? 12;
     int totalCount = ViewBag.TotalCount ?? Model.Count;
     int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
     if (totalPages < 1) totalPages = 1;

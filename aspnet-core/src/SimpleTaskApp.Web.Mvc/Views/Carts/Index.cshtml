@@ -98,17 +98,19 @@
                             </div>
                         </div>
 
-                    <form id="checkoutForm" method="get" action="@Url.Action("CheckoutCart", "Orders")">
-                        <button type="submit" id="checkoutBtn" class="btn btn-success w-100 py-2">
+                    <!-- Nút Thanh Toán Ngay -->
+                    <form id="checkoutForm" method="get" action="@Url.Action("CheckoutCart", "Orders")" class="text-center mb-3">
+                        <button type="submit" id="checkoutBtn" class="btn btn-primary btn-lg px-5 py-3 fw-semibold">
                             <i class="fas fa-shopping-bag me-2"></i>THANH TOÁN NGAY
                         </button>
                     </form>
 
-                        <div class="text-center mt-3">
-                            <a href="@Url.Action("Index", "Home")" class="btn btn-outline-primary w-100">
-                                <i class="fas fa-arrow-left me-2"></i>TIẾP TỤC MUA SẮM
-                            </a>
-                        </div>
+                    <!-- Nút Tiếp Tục Mua Sắm -->
+                    <div class="text-center">
+                        <a href="@Url.Action("Index", "Home")" class="btn btn-primary btn-lg px-5 py-3 fw-semibold">
+                            <i class="fas fa-arrow-left me-2"></i>TIẾP TỤC MUA SẮM
+                        </a>
+                    </div>
                     </div>
                 </div>
             </div>

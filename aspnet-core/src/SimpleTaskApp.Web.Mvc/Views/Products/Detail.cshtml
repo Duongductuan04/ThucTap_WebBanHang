@@ -42,19 +42,21 @@
 
             <p class="mb-4">@Model.Description</p>
             <div class="d-flex flex-column align-items-start gap-3 mt-4">
-
                 <!-- Form Thêm vào giỏ -->
-                <form id="addToCartForm" asp-controller="Carts" asp-action="AddToCart" method="post" class="d-flex flex-column gap-2" style="max-width: 200px;">
+                <form id="addToCartForm" asp-controller="Carts" asp-action="AddToCart" method="post"
+                      class="d-flex flex-column gap-2" style="max-width: 250px;">
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="mobilePhoneId" value="@Model.Id" />
 
                     <!-- Nút Thêm vào giỏ -->
-                    <button type="submit" class="btn btn-add fw-bold w-100">
-                        🛒 Thêm vào giỏ
+                    <button type="submit" class="btn btn-primary btn-lg px-5 py-3 fw-semibold w-100">
+                        <i class="fas fa-cart-plus me-2"></i>THÊM VÀO GIỎ
                     </button>
                 </form>
 
-                <form id="buyNowForm" asp-controller="Orders" asp-action="CheckoutBuyNow" method="get" class="d-flex flex-column gap-2" style="max-width: 200px;">
+                <!-- Form Mua Ngay -->
+                <form id="buyNowForm" method="get" action="@Url.Action("CheckoutBuyNow", "Orders")"
+                      class="d-flex flex-column gap-2" style="max-width: 250px;">
                     <input type="hidden" name="mobilePhoneId" value="@Model.Id" />
 
                     <div class="quantity-control d-flex gap-2">
@@ -64,10 +66,11 @@
                         <button type="button" class="btn-qty increase">+</button>
                     </div>
 
-                    <button type="submit" class="btn btn-buy fw-bold w-100 mt-2">
-                        ⚡ Mua Ngay
+                    <button type="submit" class="btn btn-primary btn-lg px-5 py-3 fw-semibold w-100 mt-2">
+                        <i class="fas fa-bolt me-2"></i>MUA NGAY
                     </button>
                 </form>
+
 
 
             </div>

@@ -12,14 +12,19 @@ public class OrdersController : AbpController
     private readonly IOrderAppService _orderAppService;
     private readonly ICartAppService _cartAppService;
     private readonly IMobilePhoneAppService _mobilePhoneAppService;
+    private readonly IDiscountAppService _discountAppService;
 
     public OrdersController(
         IOrderAppService orderAppService,
         ICartAppService cartAppService,
+            IDiscountAppService discountAppService,// thêm vào
+
         IMobilePhoneAppService mobilePhoneAppService)
     {
         _orderAppService = orderAppService;
         _cartAppService = cartAppService;
+        _discountAppService = discountAppService; // gán
+
         _mobilePhoneAppService = mobilePhoneAppService;
     }
 
@@ -48,11 +53,22 @@ public class OrdersController : AbpController
             }
         };
 
-        // Tính tổng tiền tạm thời để hiển thị
+        // Tạm tính tổng tiền để hiển thị
         orderDto.TotalAmount = orderDto.OrderDetails.Sum(od => od.Quantity * od.UnitPrice);
-        orderDto.ShippingFee = 20000; // Mặc định
-        orderDto.FinalAmount = orderDto.TotalAmount + orderDto.ShippingFee;
-
+        orderDto.ShippingFee = 20000; // Mặc định phí ship tiêu chuẩn
+        orderDto.DiscountAmount = 0m; // Chưa áp dụng mã giảm giá lúc hiển thị
+        orderDto.FinalAmount = orderDto.TotalAmount - (orderDto.DiscountAmount ?? 0m) + orderDto.ShippingFee;
+        // Lấy danh sách voucher áp dụng đúng giỏ hàng
+        var availableDiscounts = await _orderAppService.GetAvailableDiscountsAsync(
+            orderDto.OrderDetails.Select(od => new OrderItemDto
+            {
+                ProductId = od.MobilePhoneId,
+                Quantity = od.Quantity,
+                UnitPrice = od.UnitPrice
+            }).ToList(),
+            orderDto.TotalAmount
+        );
+        ViewBag.AvailableDiscounts = availableDiscounts;
         return View("CheckoutBuyNow", orderDto);
     }
 
@@ -80,10 +96,22 @@ public class OrdersController : AbpController
             }).ToList()
         };
 
+        // Tạm tính tổng tiền để hiển thị
         orderDto.TotalAmount = orderDto.OrderDetails.Sum(od => od.Quantity * od.UnitPrice);
-        orderDto.ShippingFee = 20000;
-        orderDto.FinalAmount = orderDto.TotalAmount + orderDto.ShippingFee;
-
+        orderDto.ShippingFee = 20000; // Mặc định phí ship tiêu chuẩn
+        orderDto.DiscountAmount = 0m; // Chưa áp dụng mã giảm giá lúc hiển thị
+        orderDto.FinalAmount = orderDto.TotalAmount - (orderDto.DiscountAmount ?? 0m) + orderDto.ShippingFee;
+        // Lấy danh sách voucher áp dụng đúng giỏ hàng
+        var availableDiscounts = await _orderAppService.GetAvailableDiscountsAsync(
+            orderDto.OrderDetails.Select(od => new OrderItemDto
+            {
+                ProductId = od.MobilePhoneId,
+                Quantity = od.Quantity,
+                UnitPrice = od.UnitPrice
+            }).ToList(),
+            orderDto.TotalAmount
+        );
+        ViewBag.AvailableDiscounts = availableDiscounts;
         return View("CheckoutCart", orderDto);
     }
 
@@ -93,7 +121,8 @@ public class OrdersController : AbpController
     [HttpPost]
     public async Task<IActionResult> BuyNow(CreateOrderDto input,
         [FromForm] int MobilePhoneId,
-        [FromForm] int Quantity)
+        [FromForm] int Quantity,
+        [FromForm] string DiscountCode)  // <-- thêm mã giảm giá
     {
         var mobilePhone = await _mobilePhoneAppService.GetAsync(new EntityDto<int>(MobilePhoneId));
         if (mobilePhone == null)
@@ -114,6 +143,8 @@ public class OrdersController : AbpController
             }
         };
 
+        input.DiscountCode = DiscountCode; // <-- gán mã giảm giá
+
         await _orderAppService.CreateAsync(input); // Voucher xử lý ở service
 
         return RedirectToAction("Success");
@@ -123,7 +154,9 @@ public class OrdersController : AbpController
     // 4. XỬ LÝ THANH TOÁN GIỎ HÀNG
     // ==========================
     [HttpPost]
-    public async Task<IActionResult> CheckoutCart(CreateOrderDto input, [FromForm] List<int> cartIds)
+    public async Task<IActionResult> CheckoutCart(CreateOrderDto input,
+        [FromForm] List<int> cartIds,
+        [FromForm] string DiscountCode) // <-- thêm mã giảm giá
     {
         cartIds ??= new List<int>();
         var myCart = await _cartAppService.GetMyCartAsync() ?? new List<CartDto>();
@@ -146,6 +179,8 @@ public class OrdersController : AbpController
             ModelState.AddModelError("", "Không có sản phẩm hợp lệ để tạo đơn hàng.");
             return View("CheckoutCart", input);
         }
+
+        input.DiscountCode = DiscountCode; // <-- gán mã giảm giá
 
         await _orderAppService.CreateAsync(input); // Voucher xử lý ở service
 

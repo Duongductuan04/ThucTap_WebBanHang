@@ -101,7 +101,13 @@
                             <span>@(Model.MaxUsage != 0 ? Model.MaxUsage.ToString() : "-")</span>
                         </div>
                     </div>
-
+                    <!-- Thêm CurrentUsage -->
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">@L("CurrentUsage")</div>
+                        <div class="col-sm-8">
+                            <span>@(Model.CurrentUsage != 0 ? Model.CurrentUsage.ToString() : "0")</span>
+                        </div>
+                    </div>
                     <!-- Start & End Date -->
                     <div class="row mb-3">
                         <div class="col-sm-4 text-muted">@L("StartDate")</div>
