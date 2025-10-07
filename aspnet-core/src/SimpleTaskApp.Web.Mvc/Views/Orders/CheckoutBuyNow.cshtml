@@ -70,8 +70,8 @@
                                 @Html.DropDownListFor(m => m.PaymentMethod, new List<SelectListItem>
                                 {
                                 new SelectListItem { Text = "Tiền mặt (COD)", Value = "0" },
-                                new SelectListItem { Text = "Ví điện tử", Value = "1" }
-                                }, new { @class = "form-select" })
+                                    new SelectListItem { Text = "Ví điện tử (VNPAY)", Value = "1" }
+                                }, new { @class = "form-select", id = "PaymentMethod" })
                             </div>
                             <span asp-validation-for="PaymentMethod" class="text-danger"></span>
                         </div>
@@ -117,12 +117,13 @@
                             <span id="discountMessage" class="text-success mt-1 d-block"></span>
                         </div>
 
-
-                             <button type="submit" class="btn btn-primary w-100 mt-3 py-2">
+                        <button type="submit" id="btnPlaceOrder" class="btn btn-primary w-100 mt-3 py-2">
                             <i class="fas fa-shopping-bag me-2"></i>ĐẶT HÀNG
                         </button>
                     </div>
                 </div>
+              
+
                 <!-- Modal để hiển thị danh sách voucher -->
                 <div class="modal fade" id="voucherModal" tabindex="-1" aria-labelledby="voucherModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
@@ -247,6 +248,7 @@
             </div>
         </div>
     </form>
+
 </div>
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

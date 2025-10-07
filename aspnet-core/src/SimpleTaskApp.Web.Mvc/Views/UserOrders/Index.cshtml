@@ -16,8 +16,8 @@
 
     string statusLabel = statusValue switch
     {
-        0 => "🕒 Đang xử lý",
-        1 => "🚚 Đang giao",
+        0 => "🕒 Đang xử lí",
+        1 => "🚚 Đang vận chuyển",
         2 => "✅ Hoàn thành",
         3 => "❌ Đã hủy",
         _ => "Tất cả đơn hàng"
@@ -37,11 +37,11 @@
         </a>
         <a href="@Url.Action("Index", "UserOrders", new { status = 0, page = 1, pageSize = pageSize })"
            class="btn btn-outline-secondary btn-sm mb-1 @(statusValue == 0 ? "active" : "")">
-            🕒 Đang xử lý
+            🕒 Đang xử lí
         </a>
         <a href="@Url.Action("Index", "UserOrders", new { status = 1, page = 1, pageSize = pageSize })"
            class="btn btn-outline-secondary btn-sm mb-1 @(statusValue == 1 ? "active" : "")">
-            🚚 Đang giao
+            🚚 Đang vận chuyển
         </a>
         <a href="@Url.Action("Index", "UserOrders", new { status = 2, page = 1, pageSize = pageSize })"
            class="btn btn-outline-secondary btn-sm mb-1 @(statusValue == 2 ? "active" : "")">
@@ -77,9 +77,10 @@
 
             string orderStatusText = order.Status switch
             {
-                0 => "🕒 Đang xử lý",
-                1 => "🚚 Đang giao hàng",
-                2 => "✅ Đã hoàn thành",
+
+                0 => "🕒 Đang xử lí",
+                1 => "🚚 Đang vận chuyển",
+                2 => "✅ Hoàn thành",
                 3 => "❌ Đã hủy",
                 _ => "Không xác định"
             };

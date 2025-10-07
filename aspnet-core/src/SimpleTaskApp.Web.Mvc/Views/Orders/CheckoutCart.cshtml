@@ -71,8 +71,8 @@
                                 @Html.DropDownListFor(m => m.PaymentMethod, new List<SelectListItem>
                                 {
                                 new SelectListItem { Text = "Tiền mặt (COD)", Value = "0" },
-                                new SelectListItem { Text = "Ví điện tử", Value = "1" }
-                                }, new { @class = "form-select" })
+                                new SelectListItem { Text = "Ví điện tử (VNPAY)", Value = "1" }
+                                }, new { @class = "form-select", id = "PaymentMethod" } )
                             </div>
                             <span asp-validation-for="PaymentMethod" class="text-danger"></span>
                         </div>
@@ -117,7 +117,7 @@
 
                             <span id="discountMessage" class="text-success mt-1 d-block"></span>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100 mt-3 py-2">
+                        <button type="submit" id="btnPlaceOrder" class="btn btn-primary w-100 mt-3 py-2">
                             <i class="fas fa-shopping-bag me-2"></i>ĐẶT HÀNG
                         </button>
                     </div>
@@ -245,6 +245,14 @@
                 </div>
             </div>
         </div>
+    </form>
+    <!-- Form VNPAY (ẩn) - ĐÃ SỬA -->
+    <form id="vnpayForm" method="POST" asp-action="CreatePaymentUrlVnpay" asp-controller="Payment" style="display:none;">
+        <input type="hidden" name="Name" value="@(!string.IsNullOrEmpty(User.Identity?.Name) ? User.Identity.Name : "Khach hang VNPAY")" />
+        <input type="hidden" name="Amount" id="vnpayAmount"
+               value="@Model.FinalAmount.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
+        <input type="hidden" name="OrderDescription" value="Thanh toan qua Vnpay tai TuanTech" />
+        <input type="hidden" name="OrderType" value="other" />
     </form>
 </div>
 

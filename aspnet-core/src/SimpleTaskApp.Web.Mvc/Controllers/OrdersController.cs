@@ -3,6 +3,7 @@ using Abp.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using SimpleTaskApp.MobilePhones;
 using SimpleTaskApp.MobilePhones.Dto;
+using SimpleTaskApp.Vnpay;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,30 +14,28 @@ public class OrdersController : AbpController
     private readonly ICartAppService _cartAppService;
     private readonly IMobilePhoneAppService _mobilePhoneAppService;
     private readonly IDiscountAppService _discountAppService;
+    private readonly IVnPayService _vnPayService;
 
     public OrdersController(
         IOrderAppService orderAppService,
         ICartAppService cartAppService,
-            IDiscountAppService discountAppService,// thêm vào
-
+        IDiscountAppService discountAppService,
+        IVnPayService vnPayService,
         IMobilePhoneAppService mobilePhoneAppService)
     {
         _orderAppService = orderAppService;
         _cartAppService = cartAppService;
-        _discountAppService = discountAppService; // gán
-
+        _discountAppService = discountAppService;
+        _vnPayService = vnPayService;
         _mobilePhoneAppService = mobilePhoneAppService;
     }
 
-    // ==========================
-    // 1. HIỂN THỊ CHECKOUT MUA NGAY
-    // ==========================
+    // ========================== Checkout mua ngay ==========================
     [HttpGet]
     public async Task<IActionResult> CheckoutBuyNow(int mobilePhoneId, int quantity)
     {
         var mobilePhone = await _mobilePhoneAppService.GetAsync(new EntityDto<int>(mobilePhoneId));
-        if (mobilePhone == null)
-            return RedirectToAction("Index", "Home");
+        if (mobilePhone == null) return RedirectToAction("Index", "Home");
 
         var orderDto = new CreateOrderDto
         {
@@ -53,12 +52,11 @@ public class OrdersController : AbpController
             }
         };
 
-        // Tạm tính tổng tiền để hiển thị
         orderDto.TotalAmount = orderDto.OrderDetails.Sum(od => od.Quantity * od.UnitPrice);
-        orderDto.ShippingFee = 20000; // Mặc định phí ship tiêu chuẩn
-        orderDto.DiscountAmount = 0m; // Chưa áp dụng mã giảm giá lúc hiển thị
-        orderDto.FinalAmount = orderDto.TotalAmount - (orderDto.DiscountAmount ?? 0m) + orderDto.ShippingFee;
-        // Lấy danh sách voucher áp dụng đúng giỏ hàng
+        orderDto.ShippingFee = 20000;
+        orderDto.DiscountAmount = 0m;
+        orderDto.FinalAmount = orderDto.TotalAmount + orderDto.ShippingFee;
+
         var availableDiscounts = await _orderAppService.GetAvailableDiscountsAsync(
             orderDto.OrderDetails.Select(od => new OrderItemDto
             {
@@ -68,21 +66,18 @@ public class OrdersController : AbpController
             }).ToList(),
             orderDto.TotalAmount
         );
+
         ViewBag.AvailableDiscounts = availableDiscounts;
         return View("CheckoutBuyNow", orderDto);
     }
 
-    // ==========================
-    // 2. HIỂN THỊ CHECKOUT GIỎ HÀNG
-    // ==========================
+    // ========================== Checkout giỏ hàng ==========================
     [HttpGet]
     public async Task<IActionResult> CheckoutCart(List<int> cartIds)
     {
         var myCart = await _cartAppService.GetMyCartAsync() ?? new List<CartDto>();
         var selectedItems = myCart.Where(c => cartIds.Contains(c.Id)).ToList();
-
-        if (!selectedItems.Any())
-            return RedirectToAction("Index", "Cart");
+        if (!selectedItems.Any()) return RedirectToAction("Index", "Cart");
 
         var orderDto = new CreateOrderDto
         {
@@ -96,12 +91,11 @@ public class OrdersController : AbpController
             }).ToList()
         };
 
-        // Tạm tính tổng tiền để hiển thị
         orderDto.TotalAmount = orderDto.OrderDetails.Sum(od => od.Quantity * od.UnitPrice);
-        orderDto.ShippingFee = 20000; // Mặc định phí ship tiêu chuẩn
-        orderDto.DiscountAmount = 0m; // Chưa áp dụng mã giảm giá lúc hiển thị
-        orderDto.FinalAmount = orderDto.TotalAmount - (orderDto.DiscountAmount ?? 0m) + orderDto.ShippingFee;
-        // Lấy danh sách voucher áp dụng đúng giỏ hàng
+        orderDto.ShippingFee = 20000;
+        orderDto.DiscountAmount = 0m;
+        orderDto.FinalAmount = orderDto.TotalAmount + orderDto.ShippingFee;
+
         var availableDiscounts = await _orderAppService.GetAvailableDiscountsAsync(
             orderDto.OrderDetails.Select(od => new OrderItemDto
             {
@@ -111,58 +105,81 @@ public class OrdersController : AbpController
             }).ToList(),
             orderDto.TotalAmount
         );
+
         ViewBag.AvailableDiscounts = availableDiscounts;
         return View("CheckoutCart", orderDto);
     }
 
-    // ==========================
-    // 3. XỬ LÝ MUA NGAY
-    // ==========================
     [HttpPost]
     public async Task<IActionResult> BuyNow(CreateOrderDto input,
-        [FromForm] int MobilePhoneId,
-        [FromForm] int Quantity,
-        [FromForm] string DiscountCode)  // <-- thêm mã giảm giá
+      [FromForm] int MobilePhoneId,
+      [FromForm] int Quantity,
+      [FromForm] string DiscountCode,
+      [FromForm] int PaymentMethod)
     {
         var mobilePhone = await _mobilePhoneAppService.GetAsync(new EntityDto<int>(MobilePhoneId));
         if (mobilePhone == null)
-        {
-            ModelState.AddModelError("", "Sản phẩm không tồn tại.");
             return RedirectToAction("CheckoutBuyNow", new { mobilePhoneId = MobilePhoneId, quantity = Quantity });
+
+        // Gán OrderDetails
+        input.OrderDetails = new List<CreateOrderDetailDto>
+    {
+        new CreateOrderDetailDto
+        {
+            MobilePhoneId = mobilePhone.Id,
+            Quantity = Quantity,
+            UnitPrice = mobilePhone.DiscountPrice ?? mobilePhone.Price,
+            MobilePhoneName = mobilePhone.Name,
+            ImageUrl = mobilePhone.ImageUrl
+        }
+    };
+
+        input.DiscountCode = DiscountCode;
+        input.PaymentMethod = PaymentMethod;
+
+        // Lưu đơn hàng vào DB với trạng thái 0
+        input.Status = 0; // chờ thanh toán
+        var createdOrder = await _orderAppService.CreateAsync(input);
+
+        if (PaymentMethod == 1) // VNPAY
+        {
+            // Tạo Payment URL
+            var paymentInfo = new PaymentInformationModel
+            {
+                Amount = (long)createdOrder.FinalAmount,
+                OrderDescription = "Thanh toán đơn hàng qua VNPAY",
+                OrderType = "other",
+                Name = input.RecipientName ?? User.Identity?.Name ?? "Khách hàng",
+                OrderId = createdOrder.Id.ToString() // ép thành string nếu cần
+            };
+
+            var paymentUrl = _vnPayService.CreatePaymentUrl(paymentInfo, HttpContext);
+
+            // Redirect sang VNPAY để thanh toán
+            return Redirect(paymentUrl);
         }
 
-        input.OrderDetails = new List<CreateOrderDetailDto>
-        {
-            new CreateOrderDetailDto
-            {
-                MobilePhoneId = mobilePhone.Id,
-                Quantity = Quantity,
-                UnitPrice = mobilePhone.DiscountPrice ?? mobilePhone.Price,
-                MobilePhoneName = mobilePhone.Name,
-                ImageUrl = mobilePhone.ImageUrl
-            }
-        };
 
-        input.DiscountCode = DiscountCode; // <-- gán mã giảm giá
-
-        await _orderAppService.CreateAsync(input); // Voucher xử lý ở service
-
-        return RedirectToAction("Success");
+            return RedirectToAction("Success");
+        
     }
 
-    // ==========================
-    // 4. XỬ LÝ THANH TOÁN GIỎ HÀNG
-    // ==========================
+
     [HttpPost]
     public async Task<IActionResult> CheckoutCart(CreateOrderDto input,
-        [FromForm] List<int> cartIds,
-        [FromForm] string DiscountCode) // <-- thêm mã giảm giá
+     [FromForm] List<int> cartIds,
+     [FromForm] string DiscountCode,
+     [FromForm] int PaymentMethod)
     {
         cartIds ??= new List<int>();
         var myCart = await _cartAppService.GetMyCartAsync() ?? new List<CartDto>();
         if (cartIds.Any())
             myCart = myCart.Where(c => cartIds.Contains(c.Id)).ToList();
 
+        if (!myCart.Any())
+            return View("CheckoutCart", input);
+
+        // Gán OrderDetails
         input.OrderDetails = myCart
             .Where(x => x.Quantity > 0)
             .Select(x => new CreateOrderDetailDto
@@ -174,28 +191,56 @@ public class OrdersController : AbpController
                 ImageUrl = x.ImageUrl
             }).ToList();
 
-        if (!input.OrderDetails.Any())
-        {
-            ModelState.AddModelError("", "Không có sản phẩm hợp lệ để tạo đơn hàng.");
-            return View("CheckoutCart", input);
-        }
+        input.DiscountCode = DiscountCode;
+        input.PaymentMethod = PaymentMethod;
 
-        input.DiscountCode = DiscountCode; // <-- gán mã giảm giá
+        // Lưu đơn hàng với trạng thái 0 (chờ thanh toán)
+        input.Status = 0;
+        var createdOrder = await _orderAppService.CreateAsync(input);
 
-        await _orderAppService.CreateAsync(input); // Voucher xử lý ở service
-
-        // Xóa sản phẩm khỏi giỏ hàng sau khi đặt
+        // Xóa sản phẩm trong giỏ hàng đã thanh toán
         foreach (var cartId in cartIds)
             await _cartAppService.DeleteAsync(new EntityDto<int>(cartId));
 
-        return RedirectToAction("Success");
+        if (PaymentMethod == 1) // VNPAY
+        {
+            // Tạo Payment URL
+            var paymentInfo = new PaymentInformationModel
+            {
+                Amount = (long)createdOrder.FinalAmount,
+                OrderDescription = "Thanh toán đơn hàng qua VNPAY",
+                OrderType = "other",
+                Name = input.RecipientName ?? User.Identity?.Name ?? "Khách hàng",
+                OrderId = createdOrder.Id.ToString() // giữ kiểu string
+            };
+
+            var paymentUrl = _vnPayService.CreatePaymentUrl(paymentInfo, HttpContext);
+            return Redirect(paymentUrl);
+        }
+        
+            return RedirectToAction("Success");
+        
     }
 
-    // ==========================
-    // 5. TRANG THÀNH CÔNG
-    // ==========================
-    public IActionResult Success()
+
+    [HttpGet]
+    public async Task<IActionResult> PaymentCallbackVnpay()
     {
-        return View();
+        var response = _vnPayService.PaymentExecute(Request.Query);
+
+        if (response.Success) // nếu thanh toán thành công
+        {
+
+
+            return RedirectToAction("Success");
+        }
+        else
+        {
+            return RedirectToAction("Fail");
+        }
     }
+
+    // ========================== Trạng thái thành công / thất bại ==========================
+    public IActionResult Success() => View();
+    public IActionResult Fail() => View();
 }

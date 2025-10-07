@@ -23,6 +23,7 @@ namespace SimpleTaskApp.MobilePhones
 
         // Lấy danh sách order có phân trang
         Task<PagedResultDto<OrderDto>> GetAllAsync(PagedOrderResultRequestDto input);
+        Task UpdateStatusAsync(int orderId, int status);
 
         Task<List<DiscountDto>> GetAvailableDiscountsAsync(List<OrderItemDto> cartItems, decimal cartTotalAmount);
 

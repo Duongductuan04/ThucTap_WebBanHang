@@ -596,5 +596,15 @@ namespace SimpleTaskApp.MobilePhones
 
             return $"Áp dụng cho: {productNames}";
         }
+        public async Task UpdateStatusAsync(int orderId, int status)
+        {
+            var order = await _orderRepository.FirstOrDefaultAsync(orderId);
+            if (order != null)
+            {
+                order.Status = status;
+                await _orderRepository.UpdateAsync(order);
+                CurrentUnitOfWork.SaveChanges();
+            }
+        }
     }
 }

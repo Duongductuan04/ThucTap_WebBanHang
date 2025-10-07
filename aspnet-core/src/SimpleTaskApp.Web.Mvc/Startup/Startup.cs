@@ -18,6 +18,8 @@ using Abp.AspNetCore.SignalR.Hubs;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.WebEncoders;
 using Microsoft.Extensions.FileProviders;
+using SimpleTaskApp.Vnpay;
+using System;
 
 namespace SimpleTaskApp.Web.Startup
 {
@@ -36,22 +38,22 @@ namespace SimpleTaskApp.Web.Startup
         {
             // MVC
             services.AddControllersWithViews(
-                    options =>
-                    {
-                        options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
-                        options.Filters.Add(new AbpAutoValidateAntiforgeryTokenAttribute());
-                    }
-                );
+                options =>
+                {
+                    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+                    options.Filters.Add(new AbpAutoValidateAntiforgeryTokenAttribute());
+                }
+            );
+
             services.AddAuthentication("Cookies")
-       .AddCookie("Cookies", options =>
-       {
-           options.LoginPath = "/Account/Login";  // Trang login
-           options.AccessDeniedPath = "/Account/AccessDenied"; // Trang chặn quyền
-       });
+                .AddCookie("Cookies", options =>
+                {
+                    options.LoginPath = "/Account/Login";
+                    options.AccessDeniedPath = "/Account/AccessDenied";
+                });
 
             services.AddAuthorization();
 
-            services.AddControllersWithViews();
             IdentityRegistrar.Register(services);
             AuthConfigurer.Configure(services, _appConfiguration);
 
@@ -62,16 +64,27 @@ namespace SimpleTaskApp.Web.Startup
 
             services.AddScoped<IWebResourceManager, WebResourceManager>();
             services.AddSignalR();
+            services.AddScoped<IVnPayService, VnPayService>();
+
+            // =====================
+            // Session
+            // =====================
+            services.AddDistributedMemoryCache(); // cần để lưu session tạm
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30); // thời gian tồn tại session
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true; // bắt buộc
+            });
 
             // Configure Abp and Dependency Injection
             services.AddAbpWithoutCreatingServiceProvider<SimpleTaskAppWebMvcModule>(
-                // Configure Log4Net logging
                 options => options.IocManager.IocContainer.AddFacility<LoggingFacility>(
                     f => f.UseAbpLog4Net().WithConfig(
                         _hostingEnvironment.IsDevelopment()
                             ? "log4net.config"
                             : "log4net.Production.config"
-                        )
+                    )
                 )
             );
         }
@@ -94,16 +107,20 @@ namespace SimpleTaskApp.Web.Startup
             app.UseRouting();
 
             app.UseAuthentication();
+            app.UseAuthorization();
+
+            // =====================
+            // Bật session
+            // =====================
+            app.UseSession();
 
             app.UseJwtTokenMiddleware();
-            app.UseAuthentication();  // phải đặt trước UseAuthorization
-
-            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapHub<AbpCommonHub>("/signalr");
-                // Route cho areas - quan trọng phải đặt trước default route
+
+                // Route cho areas
                 endpoints.MapControllerRoute(
                     name: "areas",
                     pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
@@ -115,6 +132,7 @@ namespace SimpleTaskApp.Web.Startup
                     pattern: "{controller=Home}/{action=Index}/{id?}"
                 );
             });
+
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(@"E:\ImageUpload"),

@@ -48,4 +48,10 @@
     <Folder Include="wwwroot\libs\" />
     <Folder Include="wwwroot\view-resources\Views\_Bundles\" />
   </ItemGroup>
+  <ItemGroup>
+    <EditorConfigFiles Remove="E:\SimpleTaskApp\9.4.2\aspnet-core\src\SimpleTaskApp.Web.Mvc\Models\.editorconfig" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="E:\SimpleTaskApp\9.4.2\aspnet-core\src\SimpleTaskApp.Web.Mvc\Models\.editorconfig" />
+  </ItemGroup>
 </Project>

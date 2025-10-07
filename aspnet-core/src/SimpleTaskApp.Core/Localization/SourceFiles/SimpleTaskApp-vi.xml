@@ -163,7 +163,7 @@
 		<text name="RecipientNameRequired" value="Bắt buộc" />
 		<text name="RecipientAddressRequired" value="Bắt buộc" />
 		<text name="RecipientPhoneRequired" value="Bắt buộc" />
-		<text name="Pending" value="Chờ xử lý" />
+		<text name="Pending" value="Đang xử lí" />
 		<text name="Shipping" value="Đang vận chuyển" />
 		<text name="Completed" value="Hoàn thành" />
 		<text name="Cancelled" value="Đã hủy" />

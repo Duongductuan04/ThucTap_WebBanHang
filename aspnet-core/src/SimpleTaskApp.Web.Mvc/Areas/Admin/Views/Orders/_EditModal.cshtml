@@ -78,7 +78,7 @@
                 @Html.DropDownList("PaymentMethod", new List<SelectListItem>
                 {
                 new SelectListItem { Text = L("Cash"),         Value = "0", Selected = (Model.Order.PaymentMethod == 0) },
-                new SelectListItem { Text = L("EWallet"),      Value = "1", Selected = (Model.Order.PaymentMethod == 2) }
+                new SelectListItem { Text = L("EWallet"),      Value = "1", Selected = (Model.Order.PaymentMethod == 1) }
                 }, new { @class = "form-control", id = "PaymentMethod", required = "required" })
                 <span class="text-danger" data-valmsg-for="PaymentMethod"></span>
             </div>

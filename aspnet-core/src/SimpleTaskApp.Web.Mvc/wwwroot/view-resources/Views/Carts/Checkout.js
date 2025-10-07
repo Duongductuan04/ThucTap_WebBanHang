@@ -3,27 +3,7 @@ const items = document.querySelectorAll('.selectItem');
 const checkoutBtn = document.getElementById('checkoutBtn');
 const totalAmountElement = document.getElementById('totalAmount');
 
-// Hàm cập nhật tổng tiền
-function updateTotalAmount() {
-    let total = 0;
-
-    items.forEach(item => {
-        if (item.checked) {
-            const row = item.closest('tr');
-            const priceText = row.querySelector('td:nth-child(4)').textContent;
-            const quantity = parseInt(row.querySelector('.quantity-input').value) || 1;
-            const price = parseFloat(priceText.replace(/[^0-9]/g, '')) || 0;
-
-            total += price * quantity;
-        }
-    });
-
-    if (totalAmountElement) {
-        totalAmountElement.textContent = formatCurrency(total);
-    }
-}
-
-// Hàm định dạng tiền tệ
+// ----------------- Hàm chung -----------------
 function formatCurrency(amount) {
     return new Intl.NumberFormat('vi-VN', {
         style: 'currency',
@@ -31,39 +11,50 @@ function formatCurrency(amount) {
     }).format(amount);
 }
 
-// Xử lý khi click nút Thanh toán
+// Cập nhật tổng tiền dựa trên checkbox và số lượng
+function updateTotalAmount() {
+    let total = 0;
+    items.forEach(item => {
+        if (item.checked) {
+            const row = item.closest('tr');
+            const priceText = row.querySelector('td:nth-child(4)').textContent;
+            const quantity = parseInt(row.querySelector('.quantity-input')?.value || 1);
+            const price = parseFloat(priceText.replace(/[^0-9]/g, '')) || 0;
+            total += price * quantity;
+        }
+    });
+    if (totalAmountElement) {
+        totalAmountElement.textContent = formatCurrency(total);
+    }
+}
+
+// ----------------- Checkout -----------------
 function handleCheckout(e) {
     e.preventDefault();
-
-    const selectedIds = Array.from(items)
-        .filter(i => i.checked)
-        .map(i => i.value);
-
+    const selectedIds = Array.from(items).filter(i => i.checked).map(i => i.value);
     if (selectedIds.length === 0) {
         alert('Vui lòng chọn ít nhất một sản phẩm để thanh toán.');
         return;
     }
-
     const url = new URL(checkoutUrl, window.location.origin);
     selectedIds.forEach(id => url.searchParams.append('cartIds', id));
     window.location.href = url.toString();
 }
 
-// Chọn tất cả
+// Chọn tất cả checkbox
 if (selectAll) {
-    selectAll.addEventListener('change', function () {
+    selectAll.addEventListener('change', () => {
         items.forEach(item => item.checked = selectAll.checked);
         updateTotalAmount();
     });
 }
 
-// Thay đổi lựa chọn sản phẩm hoặc số lượng
+// Checkbox từng sản phẩm + input số lượng
 items.forEach(item => {
     item.addEventListener('change', () => {
         selectAll.checked = Array.from(items).every(i => i.checked);
         updateTotalAmount();
     });
-
     const quantityInput = item.closest('tr').querySelector('input[name="quantity"]');
     if (quantityInput) {
         quantityInput.addEventListener('input', updateTotalAmount);
@@ -71,10 +62,13 @@ items.forEach(item => {
     }
 });
 
-// Gắn sự kiện click vào nút Thanh toán
+// Nút checkout
 if (checkoutBtn) {
     checkoutBtn.addEventListener('click', handleCheckout);
-} $(function () {
+}
+
+// ----------------- Voucher & Shipping -----------------
+$(function () {
     const $subtotal = $('#subtotal');
     const $shippingFee = $('#shippingFee');
     const $discountAmount = $('#discountAmount');
@@ -85,31 +79,28 @@ if (checkoutBtn) {
     const $discountId = $('#DiscountId');
     const $discountRow = $('#discountRow');
 
-    function formatCurrency(num) {
-        return num.toLocaleString('vi-VN') + ' đ';
-    }
-
+    // Cập nhật tổng tiền cuối
     function updateFinalAmount() {
-        let subtotal = parseFloat($subtotal.data('value') || 0);
-        let shippingFee = parseInt($shippingFee.data('value') || 0);
-        let discount = parseInt($discountAmount.data('value') || 0);
+        const subtotal = parseFloat($subtotal.data('value') || 0);
+        const shippingFee = parseInt($shippingFee.data('value') || 0);
+        const discount = parseInt($discountAmount.data('value') || 0);
         $finalAmount.text(formatCurrency(subtotal + shippingFee - discount));
         $finalAmount.data('value', subtotal + shippingFee - discount);
     }
 
+    // Cập nhật phí vận chuyển
     function updateShippingFee() {
         let fee = 20000; // tiêu chuẩn
         const val = $shippingSelect.val();
         if (val === '1') fee = 40000;
         if (val === '2') fee = 60000;
-        $shippingFee.text(formatCurrency(fee));
-        $shippingFee.data('value', fee);
+        $shippingFee.text(formatCurrency(fee)).data('value', fee);
         updateFinalAmount();
     }
 
     $shippingSelect.on('change', updateShippingFee);
 
-    // Reset discount (chỉ input và thông tin giảm giá, không reset radio)
+    // Reset discount input
     function resetDiscountInput() {
         $discountAmount.text('0 đ').data('value', 0);
         $discountId.val('');
@@ -118,40 +109,39 @@ if (checkoutBtn) {
         updateFinalAmount();
     }
 
-    // Reset hoàn toàn (input + radio)
+    // Reset hoàn toàn
     function resetDiscountAll() {
         $discountCodeInput.val('');
         $('input[name="selectedDiscount"]').prop('checked', false);
         resetDiscountInput();
     }
 
-    // Khi nhập mã giảm giá, xóa thông báo cũ nếu rỗng
     $discountCodeInput.on('input', function () {
         if ($(this).val().trim() === '') resetDiscountInput();
     });
 
-    // Áp dụng mã giảm giá
+    // Áp dụng voucher
     $('#applyDiscountBtn').click(function () {
-        resetDiscountInput(); // xóa thông báo cũ
-        var selectedVoucher = $('input[name="selectedDiscount"]:checked').data('discount-code');
-        var discountCode = selectedVoucher || $discountCodeInput.val().trim();
+        resetDiscountInput();
+        const selectedVoucher = $('input[name="selectedDiscount"]:checked').data('discount-code');
+        const discountCode = selectedVoucher || $discountCodeInput.val().trim();
 
         if (!discountCode) {
             $discountMessage.text("Vui lòng chọn hoặc nhập mã giảm giá")
-                .removeClass('text-success').addClass('text-danger');
+                .removeClass('text-success')
+                .addClass('text-danger');
             return;
         }
 
-        if (selectedVoucher) {
-            $discountCodeInput.val(selectedVoucher);
-        }
+        if (selectedVoucher) $discountCodeInput.val(selectedVoucher);
 
-        var orderItems = [];
+        const orderItems = [];
         $('.cart-item').each(function () {
-            var productId = $(this).data('product-id');
-            var quantity = parseInt($(this).find('.badge').text()) || 0;
-            var unitPrice = parseFloat($(this).data('unit-price')) || 0;
-            orderItems.push({ productId, quantity, unitPrice });
+            orderItems.push({
+                productId: $(this).data('product-id'),
+                quantity: parseInt($(this).find('.badge').text()) || 0,
+                unitPrice: parseFloat($(this).data('unit-price')) || 0
+            });
         });
 
         abp.ajax({
@@ -166,8 +156,7 @@ if (checkoutBtn) {
             success: function (result) {
                 if (result && result.discountAmount > 0) {
                     $discountRow.show();
-                    $discountAmount.text(formatCurrency(result.discountAmount));
-                    $discountAmount.data('value', result.discountAmount);
+                    $discountAmount.text(formatCurrency(result.discountAmount)).data('value', result.discountAmount);
                     $discountId.val(result.discountId);
                     $discountCodeInput.val(result.discountCode);
                     $discountMessage.text('Áp dụng mã giảm giá thành công!')
@@ -177,37 +166,31 @@ if (checkoutBtn) {
                 }
                 updateFinalAmount();
             },
-            error: function () {
-                resetDiscountInput();
-            }
+            error: resetDiscountInput
         });
     });
 
     // Nút Hủy voucher
-    $('#clearDiscountBtn').click(function () {
-        resetDiscountAll();
+    $('#clearDiscountBtn').click(resetDiscountAll);
+
+    // Mở modal chọn voucher
+    $('#btnChooseVoucher').on('click', function () {
+        $('#voucherModal').modal('show');
+
+        // Khi modal mở, tự động điền voucher đã chọn
+        const selectedRadio = $('.discount-radio:checked');
+        if (selectedRadio.length) {
+            $discountCodeInput.val(selectedRadio.data('discount-code'));
+        }
+    });
+
+    // Khi chọn voucher trong modal
+    $(document).on('change', '.discount-radio', function () {
+        const selectedDiscountCode = $(this).data('discount-code');
+        $discountCodeInput.val(selectedDiscountCode);
+        $('#voucherModal').modal('hide');
+        $('#applyDiscountBtn').trigger('click');
     });
 
     updateShippingFee();
-});
-$(document).ready(function () {
-    // Mở modal khi nhấn nút "Chọn Voucher"
-    $('#btnChooseVoucher').on('click', function () {
-        $('#voucherModal').modal('show');
-    });
-
-    // Xử lý khi chọn một voucher trong modal
-    $(document).on('change', '.discount-radio', function () {
-        // Lấy mã voucher từ thuộc tính data-
-        let selectedDiscountCode = $(this).data('discount-code');
-
-        // Điền mã vào ô input
-        $('#DiscountCode').val(selectedDiscountCode);
-
-        // Đóng modal
-        $('#voucherModal').modal('hide');
-
-        // Tự động kích hoạt sự kiện áp dụng voucher
-        $('#applyDiscountBtn').trigger('click');
-    });
 });
