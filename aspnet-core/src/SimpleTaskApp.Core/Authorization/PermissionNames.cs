@@ -40,6 +40,11 @@
         public const string Pages_Discount_Edit = "Pages.Discount.Edit";        // Sửa
         public const string Pages_Discount_Delete = "Pages.Discount.Delete";    // Xóa
 
+        // Phiếu nhập / Imports
+        public const string Pages_Import = "Pages.Import";                  // Xem
+        public const string Pages_Import_Create = "Pages.Import.Create";    // Thêm
+        public const string Pages_Import_Edit = "Pages.Import.Edit";        // Sửa
+        public const string Pages_Import_Delete = "Pages.Import.Delete";    // Xóa
 
     }
 }

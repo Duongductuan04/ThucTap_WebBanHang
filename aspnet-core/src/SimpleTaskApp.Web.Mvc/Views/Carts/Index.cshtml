@@ -36,33 +36,106 @@
                                 <tbody>
                                     @foreach (var item in Model)
                                     {
-                                        <tr data-cart-id="@item.Id">
+                                        <tr data-cart-id="@item.Id"
+                                            class="@(!item.IsAvailable ? "table-secondary" : item.IsOutOfStock ? "table-warning" : "")">
+
+                                            <!-- Checkbox -->
                                             <td class="text-center align-middle">
-                                                <input type="checkbox" class="selectItem" name="cartIds" value="@item.Id" data-price="@item.DisplayPrice" />
+                                                @if (item.IsAvailable && !item.IsOutOfStock)
+                                                {
+                                                    <input type="checkbox"
+                                                           class="selectItem"
+                                                           name="cartIds"
+                                                           value="@item.Id"
+                                                           data-price="@item.DisplayPrice" />
+                                                }
+                                                else
+                                                {
+                                                    <i class="fas fa-exclamation-triangle text-warning"
+                                                       title="@item.StatusMessage"></i>
+                                                }
                                             </td>
+
+                                            <!-- Ảnh sản phẩm -->
                                             <td class="text-center align-middle">
-                                                <img src="@item.ImageUrl" class="img-thumbnail" style="max-width:80px;" alt="@item.Name" />
+                                                <img src="@item.ImageUrl"
+                                                     class="img-thumbnail @(item.IsAvailable ? "" : "opacity-50")"
+                                                     style="max-width:80px;"
+                                                     alt="@item.Name" />
                                             </td>
+
+                                            <!-- Tên + trạng thái -->
                                             <td class="align-middle">
                                                 <div class="fw-semibold">@item.Name</div>
-                                                <small class="text-muted">Tồn kho: @item.StockQuantity</small>
+
+                                                @if (!item.IsAvailable || item.IsOutOfStock)
+                                                {
+                                                    <div class="mt-1">
+                                                        <small class="badge @(!item.IsAvailable ? "bg-danger" : "bg-warning text-dark")">
+                                                            @item.StatusMessage
+                                                        </small>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <small class="text-muted">Tồn kho: @item.StockQuantity</small>
+                                                }
                                             </td>
-                                            <td class="text-center align-middle">@String.Format("{0:N0} VNĐ", item.DisplayPrice)</td>
+
+                                            <!-- Giá -->
                                             <td class="text-center align-middle">
-                                                <div class="quantity-control d-flex justify-content-center gap-2">
-                                                    <button type="button" class="btn btn-outline-secondary btn-sm btn-qty decrease">-</button>
-                                                    <input type="number" class="form-control text-center quantity-input cartQuantity"
-                                                           value="@item.Quantity" min="1" max="@item.StockQuantity"
-                                                           data-cart-id="@item.Id"
-                                                           data-price="@item.DisplayPrice" readonly/>
-                                                    <button type="button" class="btn btn-outline-secondary btn-sm btn-qty increase">+</button>
-                                                </div>
+                                                @String.Format("{0:N0} VNĐ", item.DisplayPrice)
                                             </td>
-                                            <td class="text-end align-middle fw-bold item-total" data-cart-id="@item.Id">
-                                                @String.Format("{0:N0} VNĐ", item.DisplayPrice * item.Quantity)
-                                            </td>
+
+                                            <!-- Số lượng -->
                                             <td class="text-center align-middle">
-                                                <form asp-action="DeleteCartItem" asp-controller="Carts" method="post" onsubmit="return confirm('Bạn có chắc muốn xóa sản phẩm này?');">
+                                                @if (item.IsAvailable && !item.IsOutOfStock)
+                                                {
+                                                    <div class="quantity-control d-flex justify-content-center gap-2">
+                                                        <button type="button"
+                                                                class="btn btn-outline-secondary btn-sm btn-qty decrease">
+                                                            -
+                                                        </button>
+
+                                                        <input type="number"
+                                                               class="form-control text-center quantity-input cartQuantity"
+                                                               value="@item.Quantity"
+                                                               min="1"
+                                                               max="@item.StockQuantity"
+                                                               data-cart-id="@item.Id"
+                                                               data-price="@item.DisplayPrice"
+                                                               readonly />
+
+                                                        <button type="button"
+                                                                class="btn btn-outline-secondary btn-sm btn-qty increase">
+                                                            +
+                                                        </button>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">Không khả dụng</span>
+                                                }
+                                            </td>
+
+                                            <!-- Thành tiền -->
+                                            <td class="text-end align-middle fw-bold item-total">
+                                                @if (item.IsAvailable)
+                                                {
+                                                    @String.Format("{0:N0} VNĐ", item.DisplayPrice * item.Quantity)
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">0 VNĐ</span>
+                                                }
+                                            </td>
+
+                                            <!-- Hành động -->
+                                            <td class="text-center align-middle">
+                                                <form asp-action="DeleteCartItem"
+                                                      asp-controller="Carts"
+                                                      method="post"
+                                                      onsubmit="return confirm('Bạn có chắc muốn xóa sản phẩm này?');">
                                                     @Html.AntiForgeryToken()
                                                     <input type="hidden" name="cartId" value="@item.Id" />
                                                     <button type="submit" class="btn btn-danger btn-sm">
@@ -70,9 +143,9 @@
                                                     </button>
                                                 </form>
                                             </td>
-
                                         </tr>
                                     }
+
                                 </tbody>
                             </table>
                         </div>

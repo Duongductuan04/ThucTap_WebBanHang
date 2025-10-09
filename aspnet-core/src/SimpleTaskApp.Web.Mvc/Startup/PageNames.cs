@@ -12,6 +12,7 @@
         public const string Orders = "Orders"; // 👈 thêm Orders
         public const string Statistics = "Statistics";
         public const string Discounts = "Discounts"; // 👈 thêm Discounts
+        public const string Imports = "Imports";
 
 
     }

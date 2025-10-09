@@ -67,22 +67,26 @@
                 title: l('Actions'),
                 render: function (data, type, row) {
                     return `
-                        <button type="button" 
-                                class="btn btn-sm btn-info view-order" 
-                                data-id="${row.id}">
-                            <i class="fas fa-eye"></i> ${l('Detail')}
-                        </button>
-                        <button type="button" 
-                                class="btn btn-sm btn-secondary edit-order" 
-                                data-id="${row.id}">
-                            <i class="fas fa-pencil-alt"></i> ${l('Edit')}
-                        </button>
-                        <button type="button" 
-                                class="btn btn-sm btn-danger delete-order" 
-                                data-id="${row.id}">
-                            <i class="fas fa-trash"></i> ${l('Delete')}
-                        </button>
-                    `;
+            <button type="button" 
+                    class="btn btn-sm btn-info view-order" 
+                    data-id="${row.id}">
+                <i class="fas fa-eye"></i> ${l('Detail')}
+            </button>
+            <button type="button" 
+                    class="btn btn-sm btn-secondary edit-order" 
+                    data-id="${row.id}">
+                <i class="fas fa-pencil-alt"></i> ${l('Edit')}
+            </button>
+            <button type="button" 
+                    class="btn btn-sm btn-danger delete-order" 
+                    data-id="${row.id}">
+                <i class="fas fa-trash"></i> ${l('Delete')}
+            </button>
+            <a href="${abp.appPath}Admin/Orders/PrintInvoice?id=${row.id}" 
+               class="btn btn-sm btn-success" target="_blank">
+               <i class="fas fa-print"></i> ${l('Print')}
+            </a>
+        `;
                 }
             }
         ]

@@ -19,6 +19,8 @@ namespace SimpleTaskApp.EntityFrameworkCore
         public DbSet<Discount> Discounts { get; set; }
         public DbSet<DiscountCategory> DiscountCategories { get; set; }
         public DbSet<DiscountProduct> DiscountProducts { get; set; }
+        public DbSet<Import> Imports { get; set; }
+        public DbSet<ImportDetail> ImportDetails { get; set; }
         public SimpleTaskAppDbContext(DbContextOptions<SimpleTaskAppDbContext> options)
             : base(options)
         {

@@ -187,5 +187,11 @@
     "inputFiles": [
       "wwwroot/view-resources/Views/Discounts/Index.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/view-resources/Views/Imports/Index.min.js",
+    "inputFiles": [
+      "wwwroot/view-resources/Views/Imports/Index.js"
+    ]
   }
 ]

@@ -46,9 +46,18 @@
                     Order = order
                 });
             }
+        [HttpGet]
+        public async Task<IActionResult> PrintInvoice(int id)
+        {
+            var order = await _orderAppService.GetAsync(new EntityDto<int>(id));
+            if (order == null)
+                return NotFound();
 
-            // =================== DELETE ===================
-            [HttpPost]
+            return View(order); // Truyền sang view chuyên dụng cho in ấn
+        }
+
+        // =================== DELETE ===================
+        [HttpPost]
             public async Task<IActionResult> Delete(EntityDto<int> input)
             {
                 await _orderAppService.DeleteAsync(input);

@@ -41,6 +41,11 @@ namespace SimpleTaskApp.Authorization
             discount.CreateChildPermission(PermissionNames.Pages_Discount_Edit, L("EditDiscount"));
             discount.CreateChildPermission(PermissionNames.Pages_Discount_Delete, L("DeleteDiscount"));
 
+            // Permissions cho Phiếu nhập / Imports
+            var import = context.CreatePermission(PermissionNames.Pages_Import, L("Import"));
+            import.CreateChildPermission(PermissionNames.Pages_Import_Create, L("CreateImport"));
+            import.CreateChildPermission(PermissionNames.Pages_Import_Edit, L("EditImport"));
+            import.CreateChildPermission(PermissionNames.Pages_Import_Delete, L("DeleteImport"));
 
             var statistics = context.CreatePermission(PermissionNames.Pages_Statistics, L("Statistics"));
 

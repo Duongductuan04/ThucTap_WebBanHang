@@ -227,5 +227,39 @@
 		<text name="Note" value="Note" />
 		<text name="ShippingFee" value="ShippingFee" />
 		<text name="FinalAmount" value="FinalAmount" />
+		<!-- Import Modals -->
+<text name="CreateNewImport" value="Create New Import" />
+<text name="EditImport" value="Edit Import" />
+<text name="ImportDetail" value="Import Detail" />
+
+<text name="SupplierName" value="Supplier" />
+<text name="SupplierName_Required" value="Supplier name is required" />
+
+<text name="KeeperName" value="Keeper" />
+<text name="KeeperName_Required" value="Keeper name is required" />
+
+<text name="KeeperPhone" value="Phone number" />
+<text name="KeeperPhone_Required" value="Phone number is required" />
+<text name="Phone_Invalid" value="Invalid phone number" />
+
+<text name="Note_MaxLength" value="Note can have up to 500 characters" />
+
+<text name="AddProduct" value="Add Product" />
+		<text name="DiscountAmount" value="DiscountAmount" />
+
+		<text name="ImportCode" value="Import Code" />
+<text name="CreationTime" value="Creation Time" />
+<text name="ImportDetails" value="Import Details" />
+<text name="ImportPrice" value="Import Price" />
+<text name="NoDetails" value="No Details" />
+
+<!-- Index Page -->
+<text name="Imports" value="Imports" />
+
+<!-- Sale / Product Labels -->
+<text name="SalePeriod" value="Sale Period" />
+<text name="New" value="New" />
+<text name="OnSale" value="On Sale" />
+
 	</texts>
 </localizationDictionary>

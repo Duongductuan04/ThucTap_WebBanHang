@@ -1,0 +1,75 @@
+﻿@using SimpleTaskApp.MobilePhones.Dto
+@using SimpleTaskApp.Areas.Admin.Models.Common.Modals
+@model ImportDto
+
+@{
+    Layout = null;
+}
+
+@await Html.PartialAsync(
+            "~/Areas/Admin/Views/Shared/Modals/_ModalHeader.cshtml",
+            new ModalHeaderViewModel(L("ImportDetail"))
+        )
+
+<div class="modal-body">
+    <div class="row">
+        <!-- Thông tin phiếu nhập -->
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 mb-3">
+                <div class="card-body">
+                    <div class="mb-2"><strong>@L("ImportCode"):</strong> @Model.ImportCode</div>
+                    <div class="mb-2"><strong>@L("SupplierName"):</strong> @Model.SupplierName</div>
+                    <div class="mb-2"><strong>@L("KeeperName"):</strong> @Model.KeeperName</div>
+                    <div class="mb-2"><strong>@L("KeeperPhone"):</strong> @Model.KeeperPhone</div>
+                    @if (!string.IsNullOrWhiteSpace(Model.Note))
+                    {
+                        <li><strong>@L("Note"):</strong> @Model.Note</li>
+                    }                    <div class="mb-2"><strong>@L("CreationTime"):</strong> @Model.CreationTime.ToString("dd/MM/yyyy HH:mm")</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chi tiết sản phẩm -->
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 mb-3">
+                <div class="card-body">
+                    <h5 class="mb-3">@L("ImportDetails")</h5>
+                    <table class="table table-sm table-bordered">
+                        <thead>
+                            <tr>
+                                <th>@L("MobilePhone")</th>
+                                <th>@L("Quantity")</th>
+                                <th>@L("ImportPrice")</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.ImportDetails != null && Model.ImportDetails.Any())
+                            {
+                                foreach (var d in Model.ImportDetails)
+                                {
+                                    <tr>
+                                        <td>@d.MobilePhoneName</td>
+                                        <td>@d.Quantity</td>
+                                        <td>@d.ImportPrice.ToString("0.00")</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="3" class="text-center text-muted">- @L("NoDetails") -</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-footer border-0">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+        <i class="fa fa-times"></i> @L("Close")
+    </button>
+</div>

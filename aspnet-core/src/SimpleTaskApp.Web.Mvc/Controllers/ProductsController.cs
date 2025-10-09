@@ -27,7 +27,7 @@ namespace SimpleTaskApp.Web.Controllers
         // Trang danh sách sản phẩm với bộ lọc, sắp xếp, tìm kiếm
         public async Task<IActionResult> Index(
             int? categoryId, string sort, string brand, string query,
-            int page = 1, int pageSize = 12 )
+            int page = 1, int pageSize = 20 )
         {
             // Xác định filter IsNew, IsOnSale dựa vào sort
             bool? isNew = null;

@@ -14,12 +14,15 @@ namespace SimpleTaskApp.MobilePhones.Dto
         public decimal Price { get; set; }      // Giá gốc
         public decimal? DiscountPrice { get; set; } // Giá khuyến mãi (nếu có)
         public int Quantity { get; set; }
-
+        public bool IsAvailable { get; set; }
+        public bool IsOutOfStock { get; set; }
+        public string StatusMessage { get; set; }
         // Giá hiển thị: ưu tiên giá khuyến mãi
         public decimal DisplayPrice => DiscountPrice ?? Price;
 
         // Thành tiền = giá hiển thị * số lượng
         public int? StockQuantity { get; set; }
+        public string Message { get; set; }
 
         public decimal Total => Quantity * DisplayPrice;
     }

@@ -58,10 +58,16 @@ namespace SimpleTaskApp.MobilePhones
             await _orderRepository.InsertAsync(order);
             await CurrentUnitOfWork.SaveChangesAsync();
 
-            // Thêm chi tiết đơn hàng
+            // Thêm chi tiết đơn hàng và giảm tồn kho
             foreach (var od in input.OrderDetails)
             {
                 var phone = await _mobilePhoneRepository.GetAsync(od.MobilePhoneId);
+
+                // Kiểm tra tồn kho
+                if (phone.StockQuantity < od.Quantity)
+                {
+                    throw new UserFriendlyException($"Sản phẩm {phone.Name} chỉ còn {phone.StockQuantity} trong kho");
+                }
 
                 var unitPrice = phone.DiscountPrice.HasValue && phone.DiscountPrice.Value > 0
                     ? phone.DiscountPrice.Value
@@ -76,6 +82,10 @@ namespace SimpleTaskApp.MobilePhones
                 };
 
                 await _orderDetailRepository.InsertAsync(orderDetail);
+
+                // Trừ tồn kho
+                phone.StockQuantity -= od.Quantity;
+                await _mobilePhoneRepository.UpdateAsync(phone);
             }
 
             // Load lại order cùng OrderDetails để tính tổng
@@ -138,6 +148,7 @@ namespace SimpleTaskApp.MobilePhones
 
             return MapToOrderDto(order);
         }
+
 
         // ================== ÁP DỤNG MÃ GIẢM GIÁ ==================
         public async Task<ApplyDiscountResultDto> ApplyDiscountAsync(ApplyDiscountInputDto input)
@@ -314,6 +325,17 @@ namespace SimpleTaskApp.MobilePhones
             if (order == null)
                 throw new UserFriendlyException($"Order not found! Id = {input.Id}");
 
+            // Nếu đang hủy đơn (status = 3) và chưa hủy trước đó, trả lại tồn kho
+            if (input.Status == 3 && order.Status != 3)
+            {
+                foreach (var od in order.OrderDetails)
+                {
+                    var phone = await _mobilePhoneRepository.GetAsync(od.MobilePhoneId);
+                    phone.StockQuantity += od.Quantity;
+                    await _mobilePhoneRepository.UpdateAsync(phone);
+                }
+            }
+
             // Cập nhật thông tin cơ bản
             order.RecipientName = input.RecipientName;
             order.RecipientAddress = input.RecipientAddress;
@@ -343,7 +365,6 @@ namespace SimpleTaskApp.MobilePhones
 
                 if (discount != null)
                 {
-                    // Chuyển OrderDetails sang OrderItemDto để tính discount
                     var orderItems = order.OrderDetails.Select(od => new OrderItemDto
                     {
                         ProductId = od.MobilePhoneId,
@@ -351,10 +372,8 @@ namespace SimpleTaskApp.MobilePhones
                         UnitPrice = od.UnitPrice
                     }).ToList();
 
-                    // Kiểm tra điều kiện
                     await ValidateDiscountAsync(discount, order.TotalAmount, orderItems);
 
-                    // Tính số tiền giảm
                     var discountAmount = await CalculateDiscountAmountAsync(discount, order.TotalAmount, orderItems);
 
                     order.DiscountId = discount.Id;
@@ -598,12 +617,26 @@ namespace SimpleTaskApp.MobilePhones
         }
         public async Task UpdateStatusAsync(int orderId, int status)
         {
-            var order = await _orderRepository.FirstOrDefaultAsync(orderId);
+            var order = await _orderRepository.GetAll()
+                .Include(o => o.OrderDetails)
+                .FirstOrDefaultAsync(o => o.Id == orderId);
+
             if (order != null)
             {
+                // Trả lại tồn kho nếu hủy đơn và chưa hủy trước đó
+                if (status == 3 && order.Status != 3)
+                {
+                    foreach (var od in order.OrderDetails)
+                    {
+                        var phone = await _mobilePhoneRepository.GetAsync(od.MobilePhoneId);
+                        phone.StockQuantity += od.Quantity;
+                        await _mobilePhoneRepository.UpdateAsync(phone);
+                    }
+                }
+
                 order.Status = status;
                 await _orderRepository.UpdateAsync(order);
-                CurrentUnitOfWork.SaveChanges();
+                await CurrentUnitOfWork.SaveChangesAsync();
             }
         }
     }

@@ -46,11 +46,42 @@
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="RecipientAddress" class="form-label">Địa chỉ nhận hàng *</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
-                                <input asp-for="RecipientAddress" class="form-control" placeholder="Nhập địa chỉ chi tiết" required />
+                            <label class="form-label">Địa chỉ nhận hàng *</label>
+
+                            <!-- Nhóm dropdown Tỉnh/Quận/Xã xếp ngang với icon -->
+                            <div class="row g-2 mb-2">
+                                <div class="col">
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-city"></i></span>
+                                        <select id="Province" class="form-select" required>
+                                            <option value="">Chọn Tỉnh/Thành phố</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                        <select id="District" class="form-select" required>
+                                            <option value="">Chọn Quận/Huyện</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-map-pin"></i></span>
+                                        <select id="Ward" class="form-select" required>
+                                            <option value="">Chọn Xã/Phường</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
+
+                            <!-- Input địa chỉ chi tiết -->
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-home"></i></span>
+                                <input type="text" id="DetailAddress" name="RecipientAddress" class="form-control" placeholder="Nhập địa chỉ chi tiết" required />
+                            </div>
+
                             <span asp-validation-for="RecipientAddress" class="text-danger"></span>
                         </div>
 

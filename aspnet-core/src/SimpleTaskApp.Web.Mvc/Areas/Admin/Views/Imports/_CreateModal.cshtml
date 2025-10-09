@@ -1,0 +1,88 @@
+﻿@using SimpleTaskApp.MobilePhones.Dto
+@using SimpleTaskApp.Areas.Admin.Models.Common.Modals
+@using SimpleTaskApp.Areas.Admin.Models.Imports
+@model CreateImportViewModel
+
+@{
+    Layout = null;
+}
+
+@await Html.PartialAsync(
+            "~/Areas/Admin/Views/Shared/Modals/_ModalHeader.cshtml",
+            new ModalHeaderViewModel(L("CreateNewImport"))
+        )
+
+<form id="ImportCreateForm" role="form" class="form-horizontal" method="post" asp-controller="Imports" asp-action="Create">
+    <div class="modal-body">
+
+        <!-- SupplierName -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="SupplierName">@L("SupplierName")</label>
+            <div class="col-md-9">
+                <input id="SupplierName" name="SupplierName" type="text" class="form-control" maxlength="256" required
+                       data-val="true" data-val-required="@L("SupplierName_Required")" />
+                <span class="text-danger field-validation-valid" data-valmsg-for="SupplierName" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+
+        <!-- KeeperName -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="KeeperName">@L("KeeperName")</label>
+            <div class="col-md-9">
+                <input id="KeeperName" name="KeeperName" type="text" class="form-control" maxlength="256" required
+                       data-val="true" data-val-required="@L("KeeperName_Required")" />
+                <span class="text-danger field-validation-valid" data-valmsg-for="KeeperName" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+
+        <!-- KeeperPhone -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="KeeperPhone">@L("KeeperPhone")</label>
+            <div class="col-md-9">
+                <input id="KeeperPhone" name="KeeperPhone" type="tel" class="form-control" maxlength="20" required
+                       data-val="true" data-val-required="@L("KeeperPhone_Required")"
+                       data-val-regex="@L("Phone_Invalid")" data-val-regex-pattern="^\+?\d{7,15}$" />
+                <span class="text-danger field-validation-valid" data-valmsg-for="KeeperPhone" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+
+        <!-- Note -->
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="Note">@L("Note")</label>
+            <div class="col-md-9">
+                <textarea id="Note" name="Note" class="form-control" maxlength="500"
+                          data-val="true"
+                          data-val-maxlength="@L("Note_MaxLength")"
+                          data-val-maxlength-max="500"></textarea>
+                <span class="text-danger field-validation-valid" data-valmsg-for="Note" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+
+        <!-- Products Container -->
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label">@L("Products")</label>
+            <div class="col-md-9">
+                <div class="import-detail-container">
+                    <!-- Các dòng sản phẩm sẽ được thêm vào đây -->
+                </div>
+                <button type="button" class="btn btn-primary mt-2 add-detail">@L("AddProduct")</button>
+            </div>
+        </div>
+
+    </div>
+
+    @await Html.PartialAsync("~/Areas/Admin/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml")
+</form>
+
+<!-- Chuyển danh sách sản phẩm sang JS -->
+<script>
+    window.availablePhones = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(
+        Model.MobilePhones.Select(p => new { id = p.Value, name = p.Text })
+    ));
+</script>
+
+<!-- JS libraries -->
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+<script src="~/view-resources/Views/Imports/_CreateModal.js" asp-append-version="true"></script>

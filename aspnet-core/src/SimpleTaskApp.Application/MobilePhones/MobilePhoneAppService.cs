@@ -33,7 +33,7 @@ namespace SimpleTaskApp.MobilePhones
                 Description = input.Description,
                 Price = input.Price,
                 DiscountPrice = input.DiscountPrice,
-                StockQuantity = input.StockQuantity,
+                StockQuantity = 0,
                 CategoryId = input.CategoryId,
                 Brand = input.Brand,
                 IsNew = input.IsNew,
@@ -59,7 +59,6 @@ namespace SimpleTaskApp.MobilePhones
             phone.Description = input.Description;
             phone.Price = input.Price;
             phone.DiscountPrice = input.DiscountPrice;
-            phone.StockQuantity = input.StockQuantity;
             phone.CategoryId = input.CategoryId;
             phone.Brand = input.Brand;
             phone.IsNew = input.IsNew;
@@ -101,6 +100,7 @@ namespace SimpleTaskApp.MobilePhones
             var query = _mobilePhoneRepository.GetAll()
                 .Include(mp => mp.Category)
                 .AsQueryable();
+            query = query.Where(p => p.StockQuantity > 0);
 
             // 1. Lọc theo từ khóa
             if (!string.IsNullOrEmpty(input.Keyword))

@@ -97,7 +97,16 @@
                             @Model.ShippingFee.ToString("N0", new System.Globalization.CultureInfo("vi-VN")) đ
                         </div>
                     </div>
-
+                    <!-- Giảm giá (Discount Amount) -->
+                    @if (Model.DiscountAmount.HasValue && Model.DiscountAmount.Value > 0)
+                    {
+                        <div class="row mb-2">
+                            <div class="col-sm-4 text-muted">@L("DiscountAmount")</div>
+                            <div class="col-sm-8 font-weight-bold text-success">
+                                -@Model.DiscountAmount.Value.ToString("N0", new System.Globalization.CultureInfo("vi-VN")) đ
+                            </div>
+                        </div>
+                    }
                     <hr />
 
                     <!-- Tổng thanh toán cuối cùng -->

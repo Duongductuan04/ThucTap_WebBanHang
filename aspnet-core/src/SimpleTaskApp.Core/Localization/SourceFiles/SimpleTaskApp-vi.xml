@@ -163,13 +163,13 @@
 		<text name="RecipientNameRequired" value="Bắt buộc" />
 		<text name="RecipientAddressRequired" value="Bắt buộc" />
 		<text name="RecipientPhoneRequired" value="Bắt buộc" />
-		<text name="Pending" value="Đang xử lí" />
+		<text name="Pending" value="Chờ thanh toán" />
 		<text name="Shipping" value="Đang vận chuyển" />
 		<text name="Completed" value="Hoàn thành" />
 		<text name="Cancelled" value="Đã hủy" />
 		<text name="Cash" value="Tiền mặt" />
 		<text name="BankTransfer" value="Chuyển khoản" />
-		<text name="EWallet" value="Ví điện tử" />
+		<text name="EWallet" value="Ví điện tử (VnPay)" />
 		<text name="Standard" value="Tiêu chuẩn" />
 		<text name="Express" value="Nhanh" />
 		<text name="SuperFast" value="Siêu tốc" />
@@ -183,6 +183,8 @@
 
 		<text name="Edit" value="Sửa" />
 		<text name="CreateNewMobilePhone" value="Thêm điện thoại mới" />
+	
+		<text name="DiscountAmount" value="Giảm giá" />
 
 		<!-- Flags / checkboxes -->
 		<text name="IsNew" value="Mới" />
@@ -230,6 +232,39 @@
 		<text name="Note" value="Ghi chú" />
 		<text name="ShippingFee" value="Phí vận chuyển" />
 		<text name="FinalAmount" value="Tổng cộng" />
-		
+
+
+		<!-- Import Modals -->
+		<text name="CreateNewImport" value="Tạo phiếu nhập mới" />
+		<text name="EditImport" value="Chỉnh sửa phiếu nhập" />
+		<text name="ImportDetail" value="Chi tiết phiếu nhập" />
+
+		<text name="SupplierName" value="Nhà cung cấp" />
+		<text name="SupplierName_Required" value="Tên nhà cung cấp là bắt buộc" />
+
+		<text name="KeeperName" value="Thủ kho" />
+		<text name="KeeperName_Required" value="Tên thủ kho là bắt buộc" />
+
+		<text name="KeeperPhone" value="Số điện thoại" />
+		<text name="KeeperPhone_Required" value="Số điện thoại là bắt buộc" />
+		<text name="Phone_Invalid" value="Số điện thoại không hợp lệ" />
+
+		<text name="Note_MaxLength" value="Ghi chú tối đa 500 ký tự" />
+
+		<text name="AddProduct" value="Thêm sản phẩm" />
+
+		<text name="ImportCode" value="Mã phiếu nhập" />
+		<text name="CreationTime" value="Thời gian tạo" />
+		<text name="ImportDetails" value="Chi tiết sản phẩm" />
+		<text name="ImportPrice" value="Giá nhập" />
+		<text name="NoDetails" value="Không có chi tiết" />
+
+		<!-- Index Page -->
+		<text name="Imports" value="Phiếu nhập" />
+
+		<!-- Sale / Product Labels -->
+		<text name="SalePeriod" value="Thời gian khuyến mãi" />
+		<text name="New" value="Mới" />
+		<text name="OnSale" value="Đang giảm giá" />
 	</texts>
 </localizationDictionary>

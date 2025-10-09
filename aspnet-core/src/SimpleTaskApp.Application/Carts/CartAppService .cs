@@ -175,18 +175,26 @@ namespace SimpleTaskApp.MobilePhones
         {
             if (cart == null) return null;
 
-            return new CartDto
+            var dto = new CartDto
             {
                 Id = cart.Id,
                 UserId = cart.UserId,
                 MobilePhoneId = cart.MobilePhoneId,
-                Name = phone?.Name,
+                Name = phone?.Name ?? "Sản phẩm đã bị xóa",
                 ImageUrl = phone?.ImageUrl,
                 Price = phone?.Price ?? 0,
                 DiscountPrice = phone?.DiscountPrice,
                 Quantity = cart.Quantity,
                 StockQuantity = phone?.StockQuantity ?? 0
             };
+
+            dto.IsAvailable = phone != null;
+            dto.IsOutOfStock = phone != null && phone.StockQuantity <= 0;
+            dto.StatusMessage = phone == null
+                ? "Sản phẩm không tồn tại hoặc đã bị xóa"
+                : phone.StockQuantity <= 0 ? "Đã hết hàng" : "Còn hàng";
+
+            return dto;
         }
     }
 }

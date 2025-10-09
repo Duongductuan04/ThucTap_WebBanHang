@@ -5,13 +5,18 @@
     Layout = "~/Views/Shared/Layout/_LayoutFrontend.cshtml";
 
     int currentPage = ViewBag.CurrentPage ?? 1;
-    int pageSize = ViewBag.PageSize ?? 12;
+    int pageSize = ViewBag.PageSize ?? 20;
     int totalCount = ViewBag.TotalCount ?? Model.Count;
     int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
     if (totalPages < 1) totalPages = 1;
     if (currentPage > totalPages) currentPage = totalPages;
 
     string searchQuery = ViewBag.SearchQuery as string;
+
+    // Pagination rút gọn
+    int pageRange = 2; // số trang hiển thị trước/sau trang hiện tại
+    int startPage = Math.Max(2, currentPage - pageRange);
+    int endPage = Math.Min(totalPages - 1, currentPage + pageRange);
 }
 
 <div class="container my-5">
@@ -35,20 +40,15 @@
     <div class="mb-3">
         <strong class="me-2">Thương hiệu:</strong>
 
-        <!-- Nút Tất cả -->
         <a href="@Url.Action("Index", "Products", new { categoryId = ViewBag.SelectedCategoryId, sort = ViewBag.CurrentSort, query = searchQuery })"
-           class="btn btn-outline-secondary btn-sm mb-1 @(ViewBag.SelectedBrand == null ? "active" : "")">
-            Tất cả
-        </a>
+           class="btn btn-outline-secondary btn-sm mb-1 @(ViewBag.SelectedBrand == null ? "active" : "")">Tất cả</a>
 
         @if (ViewBag.Brands != null)
         {
             foreach (var b in ViewBag.Brands as List<string>)
             {
                 <a href="@Url.Action("Index", "Products", new { categoryId = ViewBag.SelectedCategoryId, brand = b, sort = ViewBag.CurrentSort, query = searchQuery })"
-                   class="btn btn-outline-secondary btn-sm mb-1 @(ViewBag.SelectedBrand == b ? "active" : "")">
-                    @b
-                </a>
+                   class="btn btn-outline-secondary btn-sm mb-1 @(ViewBag.SelectedBrand == b ? "active" : "")">@b</a>
             }
         }
     </div>
@@ -108,20 +108,46 @@
         }
     </div>
 
-    <!-- Pagination -->
+    <!-- Pagination rút gọn -->
     <nav aria-label="Page navigation" class="mt-4">
         <ul class="pagination justify-content-center">
+            <!-- Previous -->
             <li class="page-item @(currentPage == 1 ? "disabled" : "")">
                 <a class="page-link" href="@Url.Action("Index", "Products", new { page = currentPage - 1, categoryId = ViewBag.SelectedCategoryId, brand = ViewBag.SelectedBrand, sort = ViewBag.CurrentSort, query = searchQuery })">Trước</a>
             </li>
 
-            @for (int i = 1; i <= totalPages; i++)
+            <!-- Trang đầu -->
+            <li class="page-item @(currentPage == 1 ? "active" : "")">
+                <a class="page-link" href="@Url.Action("Index", "Products", new { page = 1, categoryId = ViewBag.SelectedCategoryId, brand = ViewBag.SelectedBrand, sort = ViewBag.CurrentSort, query = searchQuery })">1</a>
+            </li>
+
+            @if (startPage > 2)
+            {
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+            }
+
+            <!-- Các trang giữa -->
+            @for (int i = startPage; i <= endPage; i++)
             {
                 <li class="page-item @(i == currentPage ? "active" : "")">
                     <a class="page-link" href="@Url.Action("Index", "Products", new { page = i, categoryId = ViewBag.SelectedCategoryId, brand = ViewBag.SelectedBrand, sort = ViewBag.CurrentSort, query = searchQuery })">@i</a>
                 </li>
             }
 
+            @if (endPage < totalPages - 1)
+            {
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+            }
+
+            <!-- Trang cuối -->
+            @if (totalPages > 1)
+            {
+                <li class="page-item @(currentPage == totalPages ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("Index", "Products", new { page = totalPages, categoryId = ViewBag.SelectedCategoryId, brand = ViewBag.SelectedBrand, sort = ViewBag.CurrentSort, query = searchQuery })">@totalPages</a>
+                </li>
+            }
+
+            <!-- Next -->
             <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
                 <a class="page-link" href="@Url.Action("Index", "Products", new { page = currentPage + 1, categoryId = ViewBag.SelectedCategoryId, brand = ViewBag.SelectedBrand, sort = ViewBag.CurrentSort, query = searchQuery })">Sau</a>
             </li>

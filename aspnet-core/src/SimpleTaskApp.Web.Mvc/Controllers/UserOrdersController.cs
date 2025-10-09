@@ -17,7 +17,7 @@ public class UserOrdersController : AbpController
     }
 
     // Trang danh sách đơn hàng (có lọc theo trạng thái + phân trang)
-    public async Task<IActionResult> Index(int? status, int page = 1, int pageSize = 15)
+    public async Task<IActionResult> Index(int? status, int page = 1, int pageSize = 10)
     {
         var userId = _abpSession.UserId;
         if (userId == null)

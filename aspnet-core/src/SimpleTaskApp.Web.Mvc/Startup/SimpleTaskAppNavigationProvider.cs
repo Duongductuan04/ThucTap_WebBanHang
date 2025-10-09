@@ -41,7 +41,18 @@ namespace SimpleTaskApp.Web.Startup
 
                 )
             )
-                .AddItem(
+               .AddItem(
+                        new MenuItemDefinition(
+                            "ImportsAdmin",
+                            L("Imports"),
+                            url: "/Admin/Imports", // đường dẫn tới trang quản lý Import
+                            icon: "fas fa-file-import",
+                            permissionDependency: new SimplePermissionDependency(
+                                PermissionNames.Pages_Import // 👈 nhớ khai báo permission cho Import
+                            )
+                        )
+                    )
+                     .AddItem(
                     new MenuItemDefinition(
                         "CartsAdmin",
                         L("Carts"),

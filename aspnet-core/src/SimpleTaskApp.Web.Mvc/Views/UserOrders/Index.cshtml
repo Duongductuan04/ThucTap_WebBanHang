@@ -6,7 +6,7 @@
     ViewBag.Title = "Đơn hàng của tôi";
 
     int currentPage = ViewBag.CurrentPage ?? 1;
-    int pageSize = ViewBag.PageSize ?? 15;
+    int pageSize = ViewBag.PageSize ?? 10;
     int totalCount = ViewBag.TotalCount ?? Model.Count;
     int totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
     if (totalPages < 1) totalPages = 1;
@@ -16,7 +16,7 @@
 
     string statusLabel = statusValue switch
     {
-        0 => "🕒 Đang xử lí",
+        0 => "🕒 Chờ thanh toán",
         1 => "🚚 Đang vận chuyển",
         2 => "✅ Hoàn thành",
         3 => "❌ Đã hủy",
@@ -37,7 +37,7 @@
         </a>
         <a href="@Url.Action("Index", "UserOrders", new { status = 0, page = 1, pageSize = pageSize })"
            class="btn btn-outline-secondary btn-sm mb-1 @(statusValue == 0 ? "active" : "")">
-            🕒 Đang xử lí
+            🕒 Chờ thanh toán
         </a>
         <a href="@Url.Action("Index", "UserOrders", new { status = 1, page = 1, pageSize = pageSize })"
            class="btn btn-outline-secondary btn-sm mb-1 @(statusValue == 1 ? "active" : "")">
@@ -78,7 +78,7 @@
             string orderStatusText = order.Status switch
             {
 
-                0 => "🕒 Đang xử lí",
+                0 => "🕒 Chờ thanh toán",
                 1 => "🚚 Đang vận chuyển",
                 2 => "✅ Hoàn thành",
                 3 => "❌ Đã hủy",
@@ -163,21 +163,57 @@
         }
 
         <!-- Phân trang -->
-        <nav aria-label="Page navigation" class="mt-4">
-            <ul class="pagination justify-content-center">
-                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
-                    <a class="page-link" href="@Url.Action("Index", "UserOrders", new { page = currentPage - 1, pageSize = pageSize, status = statusValue })">Trước</a>
-                </li>
-                @for (int i = 1; i <= totalPages; i++)
-                {
-                    <li class="page-item @(i == currentPage ? "active" : "")">
-                        <a class="page-link" href="@Url.Action("Index", "UserOrders", new { page = i, pageSize = pageSize, status = statusValue })">@i</a>
+        @if (totalPages >= 1)  // luôn hiển thị kể cả 1 trang
+        {
+            int displayPages = 5;
+            int startPage = Math.Max(1, currentPage - 2);
+            int endPage = Math.Min(totalPages, startPage + displayPages - 1);
+
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <!-- Trang trước -->
+                    <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                        <a class="page-link" href="@Url.Action("Index", "UserOrders", new { page = currentPage - 1, pageSize = pageSize, status = statusValue })">Trước</a>
                     </li>
-                }
-                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
-                    <a class="page-link" href="@Url.Action("Index", "UserOrders", new { page = currentPage + 1, pageSize = pageSize, status = statusValue })">Sau</a>
-                </li>
-            </ul>
-        </nav>
+
+                    <!-- Dấu … trước startPage nếu cần -->
+                    @if (startPage > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="@Url.Action("Index", "UserOrders", new { page = 1, pageSize = pageSize, status = statusValue })">1</a>
+                        </li>
+                        @if (startPage > 2)
+                        {
+                            <li class="page-item disabled"><span class="page-link">…</span></li>
+                        }
+                    }
+
+                    <!-- Các trang chính giữa -->
+                    @for (int i = startPage; i <= endPage; i++)
+                    {
+                        <li class="page-item @(i == currentPage ? "active" : "")">
+                            <a class="page-link" href="@Url.Action("Index", "UserOrders", new { page = i, pageSize = pageSize, status = statusValue })">@i</a>
+                        </li>
+                    }
+
+                    <!-- Dấu … sau endPage nếu cần -->
+                    @if (endPage < totalPages)
+                    {
+                        @if (endPage < totalPages - 1)
+                        {
+                            <li class="page-item disabled"><span class="page-link">…</span></li>
+                        }
+                        <li class="page-item">
+                            <a class="page-link" href="@Url.Action("Index", "UserOrders", new { page = totalPages, pageSize = pageSize, status = statusValue })">@totalPages</a>
+                        </li>
+                    }
+
+                    <!-- Trang sau -->
+                    <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                        <a class="page-link" href="@Url.Action("Index", "UserOrders", new { page = currentPage + 1, pageSize = pageSize, status = statusValue })">Sau</a>
+                    </li>
+                </ul>
+            </nav>
+        }
     }
 </div>

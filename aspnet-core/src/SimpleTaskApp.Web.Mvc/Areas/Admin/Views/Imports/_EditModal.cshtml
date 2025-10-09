@@ -1,0 +1,107 @@
+﻿@using SimpleTaskApp.MobilePhones.Dto
+@using SimpleTaskApp.Areas.Admin.Models.Common.Modals
+@using SimpleTaskApp.Areas.Admin.Models.Imports
+@model EditImportViewModel
+
+@{
+    Layout = null;
+}
+
+@await Html.PartialAsync(
+    "~/Areas/Admin/Views/Shared/Modals/_ModalHeader.cshtml",
+    new ModalHeaderViewModel(L("EditImport"))
+)
+
+<form id="ImportEditForm" role="form" class="form-horizontal">
+    <input type="hidden" name="Id" value="@Model.Import.Id" />
+
+    <div class="modal-body">
+
+        <!-- SupplierName -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="SupplierName">@L("SupplierName")</label>
+            <div class="col-md-9">
+                <input id="SupplierName" name="SupplierName" type="text" class="form-control"
+                       value="@Model.Import.SupplierName" required />
+            </div>
+        </div>
+
+        <!-- KeeperName -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="KeeperName">@L("KeeperName")</label>
+            <div class="col-md-9">
+                <input id="KeeperName" name="KeeperName" type="text" class="form-control"
+                       value="@Model.Import.KeeperName" required />
+            </div>
+        </div>
+
+        <!-- KeeperPhone -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="KeeperPhone">@L("KeeperPhone")</label>
+            <div class="col-md-9">
+                <input id="KeeperPhone" name="KeeperPhone" type="text" class="form-control"
+                       value="@Model.Import.KeeperPhone" required />
+            </div>
+        </div>
+
+        <!-- Note -->
+        @if (!string.IsNullOrEmpty(Model.Import.Note))
+        {
+            <div class="form-group row">
+                <label class="col-md-3 col-form-label" for="Note">@L("Note")</label>
+                <div class="col-md-9">
+                    <textarea id="Note" name="Note" class="form-control">@Model.Import.Note</textarea>
+                </div>
+            </div>
+        }
+
+        <!-- Products Container -->
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label">@L("Products")</label>
+            <div class="col-md-9">
+                <div class="import-detail-container">
+                    @for (int i = 0; i < Model.Import.ImportDetails.Count; i++)
+                    {
+                        var d = Model.Import.ImportDetails[i];
+                        <div class="import-detail-row d-flex gap-2 mb-2">
+                            <select name="ImportDetails[@i].MobilePhoneId" class="form-control" required>
+                                <option value="">-- @L("Select") --</option>
+                                @foreach (var p in Model.MobilePhones)
+                                {
+                                    <option value="@p.Value"
+                                            selected="@(p.Value == d.MobilePhoneId.ToString() ? "selected" : null)">
+                                        @p.Text
+                                    </option>
+                                }
+                            </select>
+                            <input type="number" name="ImportDetails[@i].Quantity" class="form-control"
+                                   value="@d.Quantity" min="1" required />
+                            <input type="number" name="ImportDetails[@i].ImportPrice" class="form-control"
+                                   value="@d.ImportPrice.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)"
+                                   step="0.01" min="0" required />
+                            <button type="button" class="btn btn-danger remove-detail">X</button>
+                        </div>
+                    }
+                </div>
+                <button type="button" class="btn btn-primary mt-2 add-detail">@L("AddProduct")</button>
+            </div>
+        </div>
+
+    </div>
+
+    @await Html.PartialAsync("~/Areas/Admin/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml")
+</form>
+
+<!-- Chuyển danh sách sản phẩm sang JS -->
+<script>
+    window.availablePhones = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(
+        Model.MobilePhones.Select(p => new { id = p.Value, name = p.Text })
+    ));
+</script>
+
+<!-- JS libraries -->
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+<script src="~/view-resources/Views/Imports/_EditModal.js" asp-append-version="true"></script>
+

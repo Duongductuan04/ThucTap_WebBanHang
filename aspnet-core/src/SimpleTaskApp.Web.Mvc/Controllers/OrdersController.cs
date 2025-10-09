@@ -140,7 +140,11 @@ public class OrdersController : AbpController
         // Lưu đơn hàng vào DB với trạng thái 0
         input.Status = 0; // chờ thanh toán
         var createdOrder = await _orderAppService.CreateAsync(input);
-
+        // Nếu chọn COD, cập nhật trạng thái thành 1 (thành công)
+        if (PaymentMethod != 1) // COD
+        {
+            await _orderAppService.UpdateStatusAsync(createdOrder.Id, 1);
+        }
         if (PaymentMethod == 1) // VNPAY
         {
             // Tạo Payment URL
@@ -201,7 +205,11 @@ public class OrdersController : AbpController
         // Xóa sản phẩm trong giỏ hàng đã thanh toán
         foreach (var cartId in cartIds)
             await _cartAppService.DeleteAsync(new EntityDto<int>(cartId));
-
+        // Nếu chọn COD, cập nhật trạng thái thành 1 (thành công)
+        if (PaymentMethod != 1) // COD
+        {
+            await _orderAppService.UpdateStatusAsync(createdOrder.Id, 1);
+        }
         if (PaymentMethod == 1) // VNPAY
         {
             // Tạo Payment URL
@@ -221,21 +229,25 @@ public class OrdersController : AbpController
             return RedirectToAction("Success");
         
     }
-
-
     [HttpGet]
     public async Task<IActionResult> PaymentCallbackVnpay()
     {
         var response = _vnPayService.PaymentExecute(Request.Query);
 
-        if (response.Success) // nếu thanh toán thành công
+        var txnRef = Request.Query["vnp_TxnRef"].ToString();
+        if (!int.TryParse(txnRef, out int orderId))
+            return RedirectToAction("Fail");
+
+        var vnpResponseCode = Request.Query["vnp_ResponseCode"].ToString();
+
+        if (vnpResponseCode == "00") // thanh toán thành công
         {
-
-
+            await _orderAppService.UpdateStatusAsync(orderId, 1);
             return RedirectToAction("Success");
         }
-        else
+        else // thất bại hoặc hủy
         {
+            await _orderAppService.UpdateStatusAsync(orderId, 3);
             return RedirectToAction("Fail");
         }
     }

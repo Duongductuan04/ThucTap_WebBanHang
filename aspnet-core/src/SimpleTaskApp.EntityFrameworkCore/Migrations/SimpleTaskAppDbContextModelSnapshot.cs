@@ -1704,6 +1704,66 @@ namespace SimpleTaskApp.Migrations
                     b.ToTable("AppDiscountProducts");
                 });
 
+            modelBuilder.Entity("SimpleTaskApp.MobilePhones.Import", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ImportCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("KeeperName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("KeeperPhone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SupplierName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AppImports");
+                });
+
+            modelBuilder.Entity("SimpleTaskApp.MobilePhones.ImportDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ImportId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("ImportPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("MobilePhoneId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ImportId");
+
+                    b.HasIndex("MobilePhoneId");
+
+                    b.ToTable("AppImportDetails");
+                });
+
             modelBuilder.Entity("SimpleTaskApp.MobilePhones.MobilePhone", b =>
                 {
                     b.Property<int>("Id")
@@ -2204,6 +2264,25 @@ namespace SimpleTaskApp.Migrations
                     b.Navigation("MobilePhone");
                 });
 
+            modelBuilder.Entity("SimpleTaskApp.MobilePhones.ImportDetail", b =>
+                {
+                    b.HasOne("SimpleTaskApp.MobilePhones.Import", "Import")
+                        .WithMany("ImportDetails")
+                        .HasForeignKey("ImportId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SimpleTaskApp.MobilePhones.MobilePhone", "MobilePhone")
+                        .WithMany()
+                        .HasForeignKey("MobilePhoneId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Import");
+
+                    b.Navigation("MobilePhone");
+                });
+
             modelBuilder.Entity("SimpleTaskApp.MobilePhones.MobilePhone", b =>
                 {
                     b.HasOne("SimpleTaskApp.MobilePhones.MobilePhoneCategory", "Category")
@@ -2347,6 +2426,11 @@ namespace SimpleTaskApp.Migrations
                     b.Navigation("Settings");
 
                     b.Navigation("Tokens");
+                });
+
+            modelBuilder.Entity("SimpleTaskApp.MobilePhones.Import", b =>
+                {
+                    b.Navigation("ImportDetails");
                 });
 
             modelBuilder.Entity("SimpleTaskApp.MobilePhones.MobilePhoneCategory", b =>

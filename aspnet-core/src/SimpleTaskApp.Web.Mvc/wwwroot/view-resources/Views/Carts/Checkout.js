@@ -194,3 +194,67 @@ $(function () {
 
     updateShippingFee();
 });
+//Chọn địa chỉ 
+$(document).ready(function () {
+    var locations = [];
+
+    // 1️⃣ Load JSON địa chỉ
+    $.getJSON('/data/vietnam_provinces.json', function (data) {
+        locations = data;
+        var provinceSelect = $('#Province');
+        locations.forEach(function (province) {
+            provinceSelect.append('<option value="' + province.name + '">' + province.name + '</option>');
+        });
+    });
+
+    // 2️⃣ Khi chọn Tỉnh → load Quận/Huyện
+    $('#Province').change(function () {
+        var selectedProvince = $(this).val();
+        var districtSelect = $('#District');
+        var wardSelect = $('#Ward');
+        districtSelect.empty().append('<option value="">Chọn Quận/Huyện</option>');
+        wardSelect.empty().append('<option value="">Chọn Xã/Phường</option>');
+
+        var province = locations.find(p => p.name === selectedProvince);
+        if (province) {
+            province.districts.forEach(function (district) {
+                districtSelect.append('<option value="' + district.name + '">' + district.name + '</option>');
+            });
+        }
+    });
+
+    // 3️⃣ Khi chọn Quận → load Xã/Phường
+    $('#District').change(function () {
+        var selectedProvince = $('#Province').val();
+        var selectedDistrict = $(this).val();
+        var wardSelect = $('#Ward');
+        wardSelect.empty().append('<option value="">Chọn Xã/Phường</option>');
+
+        var province = locations.find(p => p.name === selectedProvince);
+        if (!province) return;
+
+        var district = province.districts.find(d => d.name === selectedDistrict);
+        if (!district) return;
+
+        district.wards.forEach(function (ward) {
+            // ward là object, lấy ward.name
+            wardSelect.append('<option value="' + ward.name + '">' + ward.name + '</option>');
+        });
+    });
+
+    // 4️⃣ Khi submit, nối full địa chỉ vào input RecipientAddress
+    $('#btnPlaceOrder').click(function () {
+        var detail = $('#DetailAddress').val().trim();
+        var ward = $('#Ward').val();
+        var district = $('#District').val();
+        var province = $('#Province').val();
+
+        var fullAddress = '';
+        if (detail) fullAddress += detail;
+        if (ward) fullAddress += ', ' + ward;
+        if (district) fullAddress += ', ' + district;
+        if (province) fullAddress += ', ' + province;
+
+        $('#DetailAddress').val(fullAddress);
+    });
+});

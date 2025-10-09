@@ -2,7 +2,19 @@
 
 @{
     Layout = "~/Views/Shared/Layout/_LayoutFrontend.cshtml";
-    ViewBag.Title = "Trang chủ ";
+    ViewBag.Title = "Trang chủ";
+    int newPage = ViewBag.NewPage ?? 1;
+    int promotionPage = ViewBag.PromotionPage ?? 1;
+    int newPageSize = 8;
+    int promotionPageSize = 8;
+
+    // Pagination rút gọn
+    Func<int, int, int, int, (int startPage, int endPage)> CalcPageRange = (current, total, rangeBefore, rangeAfter) =>
+    {
+        int start = Math.Max(2, current - rangeBefore);
+        int end = Math.Min(total - 1, current + rangeAfter);
+        return (start, end);
+    };
 }
 
 <div class="container-fluid p-0 text-center mb-5">
@@ -10,79 +22,57 @@
          style="height: 400px; width: auto; object-fit: contain;" alt="Banner">
 </div>
 
-<div class="container">
-    <div class="container mb-5">
-        <!-- Dịch vụ cửa hàng điện thoại -->
-        <div class="container mb-5">
-            <div class="row text-center g-4">
-                <!-- Miễn phí vận chuyển -->
-                <div class="col-md-3 col-6">
-                    <i class="fas fa-truck-fast fa-2x mb-2 text-primary"></i>
-                    <h6>Miễn phí vận chuyển</h6>
-                    <p class="small text-muted">Đơn hàng từ 2 triệu đồng</p>
-                </div>
-
-                <!-- Đổi trả dễ dàng -->
-                <div class="col-md-3 col-6">
-                    <i class="fas fa-sync-alt fa-2x mb-2 text-success"></i>
-                    <h6>Đổi trả dễ dàng</h6>
-                    <p class="small text-muted">7 ngày đổi trả bất cứ lý do</p>
-                </div>
-
-                <!-- Hỗ trợ nhanh -->
-                <div class="col-md-3 col-6">
-                    <i class="fas fa-headset fa-2x mb-2 text-warning"></i>
-                    <h6>Hỗ trợ nhanh</h6>
-                    <p class="small text-muted">Hotline 24/7: 0797183943</p>
-                </div>
-
-                <!-- Thanh toán đa dạng -->
-                <div class="col-md-3 col-6">
-                    <i class="fas fa-credit-card fa-2x mb-2 text-danger"></i>
-                    <h6>Thanh toán linh hoạt</h6>
-                    <p class="small text-muted">Tiền mặt, Ví điện tử, Chuyển khoản</p>
-                </div>
-            </div>
+<div class="container mb-5">
+    <!-- Dịch vụ cửa hàng điện thoại -->
+    <div class="row text-center g-4 mb-5">
+        <div class="col-md-3 col-6">
+            <i class="fas fa-truck-fast fa-2x mb-2 text-primary"></i>
+            <h6>Miễn phí vận chuyển</h6>
+            <p class="small text-muted">Đơn hàng từ 2 triệu đồng</p>
         </div>
+        <div class="col-md-3 col-6">
+            <i class="fas fa-sync-alt fa-2x mb-2 text-success"></i>
+            <h6>Đổi trả dễ dàng</h6>
+            <p class="small text-muted">7 ngày đổi trả bất cứ lý do</p>
+        </div>
+        <div class="col-md-3 col-6">
+            <i class="fas fa-headset fa-2x mb-2 text-warning"></i>
+            <h6>Hỗ trợ nhanh</h6>
+            <p class="small text-muted">Hotline 24/7: 0797183943</p>
+        </div>
+        <div class="col-md-3 col-6">
+            <i class="fas fa-credit-card fa-2x mb-2 text-danger"></i>
+            <h6>Thanh toán linh hoạt</h6>
+            <p class="small text-muted">Tiền mặt, Ví điện tử, Chuyển khoản</p>
+        </div>
+    </div>
 
-        <h3 class="mb-3">Sản Phẩm Nổi Bật</h3>
-
-        <div class="row g-3 text-center">
-            <!-- Điện thoại -->
-            <div class="col-md-4">
-                <a asp-controller="Products" asp-action="Index" asp-route-categoryId="14">
-                    <div class="position-relative">
-                        <img src="~/img/1.webp" class="img-fluid rounded" style="height:300px; object-fit:cover;" alt="Điện thoại">
-                        <div class="position-absolute bottom-0 start-50 translate-middle-x w-100 py-2 bg-dark bg-opacity-50 text-white fw-bold">
-                            ĐIỆN THOẠI
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-            <!-- Laptop -->
-            <div class="col-md-4">
-                <a asp-controller="Products" asp-action="Index" asp-route-categoryId="15">
-                    <div class="position-relative">
-                        <img src="~/img/2.png" class="img-fluid rounded" style="height:300px; object-fit:cover;" alt="Laptop">
-                        <div class="position-absolute bottom-0 start-50 translate-middle-x w-100 py-2 bg-dark bg-opacity-50 text-white fw-bold">
-                            LAPTOP
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-            <!-- Phụ kiện -->
-            <div class="col-md-4">
-                <a asp-controller="Products" asp-action="Index" asp-route-categoryId="16">
-                    <div class="position-relative">
-                        <img src="~/img/4.webp" class="img-fluid rounded" style="height:300px; object-fit:cover;" alt="Phụ kiện">
-                        <div class="position-absolute bottom-0 start-50 translate-middle-x w-100 py-2 bg-dark bg-opacity-50 text-white fw-bold">
-                            PHỤ KIỆN
-                        </div>
-                    </div>
-                </a>
-            </div>
+    <!-- Sản phẩm nổi bật -->
+    <h3 class="mb-3">Sản Phẩm Nổi Bật</h3>
+    <div class="row g-3 text-center mb-5">
+        <div class="col-md-4">
+            <a asp-controller="Products" asp-action="Index" asp-route-categoryId="14">
+                <div class="position-relative">
+                    <img src="~/img/1.webp" class="img-fluid rounded" style="height:300px; object-fit:cover;" alt="Điện thoại">
+                    <div class="position-absolute bottom-0 start-50 translate-middle-x w-100 py-2 bg-dark bg-opacity-50 text-white fw-bold">ĐIỆN THOẠI</div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a asp-controller="Products" asp-action="Index" asp-route-categoryId="15">
+                <div class="position-relative">
+                    <img src="~/img/2.png" class="img-fluid rounded" style="height:300px; object-fit:cover;" alt="Laptop">
+                    <div class="position-absolute bottom-0 start-50 translate-middle-x w-100 py-2 bg-dark bg-opacity-50 text-white fw-bold">LAPTOP</div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a asp-controller="Products" asp-action="Index" asp-route-categoryId="16">
+                <div class="position-relative">
+                    <img src="~/img/4.webp" class="img-fluid rounded" style="height:300px; object-fit:cover;" alt="Phụ kiện">
+                    <div class="position-absolute bottom-0 start-50 translate-middle-x w-100 py-2 bg-dark bg-opacity-50 text-white fw-bold">PHỤ KIỆN</div>
+                </div>
+            </a>
         </div>
     </div>
 
@@ -104,7 +94,6 @@
                                 }
                             </div>
                             <div class="card-body text-center">
-
                                 <h6 class="card-title mb-2">@item.Name</h6>
                                 <p class="card-text mb-2">
                                     @if (item.DiscountPrice.HasValue && item.DiscountPrice.Value < item.Price)
@@ -129,34 +118,51 @@
             }
         </div>
 
-        <!-- Pagination Hàng mới -->
-        @if (ViewBag.NewTotalCount > 8)
+        <!-- Pagination rút gọn Hàng mới -->
+        @if (ViewBag.NewTotalCount > newPageSize)
         {
-            var totalPages = (int)Math.Ceiling((double)ViewBag.NewTotalCount / 8);
+            var totalPages = (int)Math.Ceiling((double)ViewBag.NewTotalCount / newPageSize);
+            var (startPage, endPage) = CalcPageRange(newPage, totalPages, 2, 2);
             <nav class="mt-3">
                 <ul class="pagination justify-content-center">
-
-                    <!-- Nút Trước -->
-                    <li class="page-item @(ViewBag.NewPage == 1 ? "disabled" : "")">
-                        <a class="page-link" href="@Url.Action("Index","Home", new { newPage = ViewBag.NewPage - 1 })">Trước</a>
+                    <li class="page-item @(newPage == 1 ? "disabled" : "")">
+                        <a class="page-link" href="@Url.Action("Index","Home", new { newPage = newPage - 1 })">Trước</a>
                     </li>
 
-                    @for (int i = 1; i <= totalPages; i++)
+                    <li class="page-item @(newPage == 1 ? "active" : "")">
+                        <a class="page-link" href="@Url.Action("Index","Home", new { newPage = 1 })">1</a>
+                    </li>
+
+                    @if (startPage > 2)
                     {
-                        <li class="page-item @(i == ViewBag.NewPage ? "active" : "")">
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    }
+
+                    @for (int i = startPage; i <= endPage; i++)
+                    {
+                        <li class="page-item @(i == newPage ? "active" : "")">
                             <a class="page-link" href="@Url.Action("Index","Home", new { newPage = i })">@i</a>
                         </li>
                     }
 
-                    <!-- Nút Sau -->
-                    <li class="page-item @(ViewBag.NewPage == totalPages ? "disabled" : "")">
-                        <a class="page-link" href="@Url.Action("Index","Home", new { newPage = ViewBag.NewPage + 1 })">Sau</a>
+                    @if (endPage < totalPages - 1)
+                    {
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    }
+
+                    @if (totalPages > 1)
+                    {
+                        <li class="page-item @(newPage == totalPages ? "active" : "")">
+                            <a class="page-link" href="@Url.Action("Index","Home", new { newPage = totalPages })">@totalPages</a>
+                        </li>
+                    }
+
+                    <li class="page-item @(newPage == totalPages ? "disabled" : "")">
+                        <a class="page-link" href="@Url.Action("Index","Home", new { newPage = newPage + 1 })">Sau</a>
                     </li>
                 </ul>
             </nav>
         }
-        </nav>
-        
     </section>
 
     <!-- Hàng khuyến mãi -->
@@ -177,7 +183,6 @@
                                 }
                             </div>
                             <div class="card-body text-center">
-
                                 <h6 class="card-title mb-2">@item.Name</h6>
                                 <p class="card-text mb-2">
                                     @if (item.DiscountPrice.HasValue && item.DiscountPrice.Value < item.Price)
@@ -202,32 +207,50 @@
             }
         </div>
 
-        <!-- Pagination Hàng khuyến mãi -->
-        @if (ViewBag.PromotionTotalCount > 8)
+        <!-- Pagination rút gọn Hàng khuyến mãi -->
+        @if (ViewBag.PromotionTotalCount > promotionPageSize)
         {
-            var totalPages = (int)Math.Ceiling((double)ViewBag.PromotionTotalCount / 8);
+            var totalPages = (int)Math.Ceiling((double)ViewBag.PromotionTotalCount / promotionPageSize);
+            var (startPage, endPage) = CalcPageRange(promotionPage, totalPages, 2, 2);
             <nav class="mt-3">
                 <ul class="pagination justify-content-center">
-
-                    <!-- Nút Trước -->
-                    <li class="page-item @(ViewBag.PromotionPage == 1 ? "disabled" : "")">
-                        <a class="page-link" href="@Url.Action("Index","Home", new { promotionPage = ViewBag.PromotionPage - 1 })">Trước</a>
+                    <li class="page-item @(promotionPage == 1 ? "disabled" : "")">
+                        <a class="page-link" href="@Url.Action("Index","Home", new { promotionPage = promotionPage - 1 })">Trước</a>
                     </li>
 
-                    @for (int i = 1; i <= totalPages; i++)
+                    <li class="page-item @(promotionPage == 1 ? "active" : "")">
+                        <a class="page-link" href="@Url.Action("Index","Home", new { promotionPage = 1 })">1</a>
+                    </li>
+
+                    @if (startPage > 2)
                     {
-                        <li class="page-item @(i == ViewBag.PromotionPage ? "active" : "")">
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    }
+
+                    @for (int i = startPage; i <= endPage; i++)
+                    {
+                        <li class="page-item @(i == promotionPage ? "active" : "")">
                             <a class="page-link" href="@Url.Action("Index","Home", new { promotionPage = i })">@i</a>
                         </li>
                     }
 
-                    <!-- Nút Sau -->
-                    <li class="page-item @(ViewBag.PromotionPage == totalPages ? "disabled" : "")">
-                        <a class="page-link" href="@Url.Action("Index","Home", new { promotionPage = ViewBag.PromotionPage + 1 })">Sau</a>
+                    @if (endPage < totalPages - 1)
+                    {
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    }
+
+                    @if (totalPages > 1)
+                    {
+                        <li class="page-item @(promotionPage == totalPages ? "active" : "")">
+                            <a class="page-link" href="@Url.Action("Index","Home", new { promotionPage = totalPages })">@totalPages</a>
+                        </li>
+                    }
+
+                    <li class="page-item @(promotionPage == totalPages ? "disabled" : "")">
+                        <a class="page-link" href="@Url.Action("Index","Home", new { promotionPage = promotionPage + 1 })">Sau</a>
                     </li>
                 </ul>
             </nav>
         }
-
     </section>
 </div>

@@ -43,6 +43,7 @@
     <PackageReference Include="Abp.HangFire" Version="9.4.1" />
     <PackageReference Include="Abp.RedisCache" Version="9.4.1" />
     <PackageReference Include="Abp.Castle.Log4Net" Version="9.4.1" />
+    <PackageReference Include="RestSharp" Version="110.3.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="wwwroot\libs\" />
@@ -53,5 +54,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="E:\SimpleTaskApp\9.4.2\aspnet-core\src\SimpleTaskApp.Web.Mvc\Models\.editorconfig" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="wwwroot\view-resources\Views\Imports\_CreateModal.js">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\view-resources\Views\Imports\_EditModal.js">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 </Project>
