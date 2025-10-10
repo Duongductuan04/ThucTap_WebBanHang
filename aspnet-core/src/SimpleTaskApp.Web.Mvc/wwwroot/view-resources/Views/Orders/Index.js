@@ -8,7 +8,10 @@
         serverSide: true,
         processing: true,
         listAction: {
-            ajaxFunction: _orderService.getAll
+            ajaxFunction: _orderService.getAll,
+            inputFilter: function () {
+                return $('#OrdersSearchForm').serializeFormToObject(true);
+            }
         },
         buttons: [
             {
@@ -67,25 +70,27 @@
                 title: l('Actions'),
                 render: function (data, type, row) {
                     return `
-            <button type="button" 
-                    class="btn btn-sm btn-info view-order" 
-                    data-id="${row.id}">
-                <i class="fas fa-eye"></i> ${l('Detail')}
-            </button>
-            <button type="button" 
-                    class="btn btn-sm btn-secondary edit-order" 
-                    data-id="${row.id}">
-                <i class="fas fa-pencil-alt"></i> ${l('Edit')}
-            </button>
-            <button type="button" 
-                    class="btn btn-sm btn-danger delete-order" 
-                    data-id="${row.id}">
-                <i class="fas fa-trash"></i> ${l('Delete')}
-            </button>
-            <a href="${abp.appPath}Admin/Orders/PrintInvoice?id=${row.id}" 
-               class="btn btn-sm btn-success" target="_blank">
-               <i class="fas fa-print"></i> ${l('Print')}
-            </a>
+            <div class="d-flex gap-2 flex-wrap justify-content-center">
+                <button type="button" 
+                        class="btn btn-sm btn-info view-order" 
+                        data-id="${row.id}">
+                    <i class="fas fa-eye"></i> ${l('Detail')}
+                </button>
+                <button type="button" 
+                        class="btn btn-sm btn-secondary edit-order" 
+                        data-id="${row.id}">
+                    <i class="fas fa-pencil-alt"></i> ${l('Edit')}
+                </button>
+                <button type="button" 
+                        class="btn btn-sm btn-danger delete-order" 
+                        data-id="${row.id}">
+                    <i class="fas fa-trash"></i> ${l('Delete')}
+                </button>
+                <a href="${abp.appPath}Admin/Orders/PrintInvoice?id=${row.id}" 
+                   class="btn btn-sm btn-success" target="_blank">
+                   <i class="fas fa-print"></i> ${l('Print')}
+                </a>
+            </div>
         `;
                 }
             }
@@ -105,7 +110,29 @@
             }
         });
     });
+    // Hoặc: click toàn bộ dòng trừ cột Actions
+    $('#OrdersTable tbody').on('click', 'tr', function (e) {
+        if (!$(e.target).closest('td').hasClass('control') &&
+            !$(e.target).closest('td').is(':last-child')) { // cột Actions là cuối cùng
+            var data = _$ordersTable.row(this).data();
+            if (data) {
+                openOrderDetailModal(data.id);
+            }
+        }
+    });
 
+    // Hàm mở modal chi tiết Order
+    function openOrderDetailModal(id) {
+        abp.ajax({
+            url: abp.appPath + 'Admin/Orders/DetailModal?Id=' + id,
+            type: 'GET',
+            dataType: 'html',
+            success: function (content) {
+                $('#OrderDetailModal div.modal-content').html(content);
+                $('#OrderDetailModal').modal('show');
+            }
+        });
+    }
     // Edit Order
     $(document).on('click', '.edit-order', function () {
         var id = $(this).data('id');
@@ -119,7 +146,17 @@
             }
         });
     });
+    // ======= Search nâng cao =======
+    $('.btn-search').on('click', () => {
+        _$ordersTable.ajax.reload();
+    });
 
+    $('.txt-search').on('keypress', (e) => {
+        if (e.which == 13) {
+            _$ordersTable.ajax.reload();
+            return false;
+        }
+    });
     abp.event.on('order.edited', function () {
         _$ordersTable.ajax.reload();
     });

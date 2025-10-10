@@ -1,78 +1,84 @@
-﻿@using SimpleTaskApp.Web.Startup
-@using SimpleTaskApp.Areas.Admin.Models.Users
-@model UserListViewModel
+﻿@using SimpleTaskApp.MobilePhones.Dto
+@using SimpleTaskApp.Areas.Admin.Models.Orders
+@using SimpleTaskApp.Areas.Admin.Models.Common.Modals
+
 @{
-    ViewBag.Title = L("Users");
-    ViewBag.CurrentPageName = PageNames.Users;
+    ViewBag.Title = L("Orders");
 }
+
 @section scripts
 {
     <environment names="Development">
-        <script src="~/view-resources/Views/Users/Index.js" asp-append-version="true"></script>
+        <script src="~/view-resources/Views/Orders/Index.js" asp-append-version="true"></script>
     </environment>
-
     <environment names="Staging,Production">
-        <script src="~/view-resources/Views/Users/Index.min.js" asp-append-version="true"></script>
+        <script src="~/view-resources/Views/Orders/Index.min.js" asp-append-version="true"></script>
     </environment>
 }
+
 <section class="content-header">
     <div class="container-fluid">
-        <div class="row">
+        <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>@L("Users")</h1>
-            </div>
-            <div class="col-sm-6">
-                <a href="javascript:;" data-toggle="modal" data-target="#UserCreateModal" class="btn bg-blue float-sm-right">
-                    <i class="fa fa-plus-square"></i>
-                    @L("Create")
-                </a>
+                <h1>@L("Orders")</h1>
             </div>
         </div>
     </div>
 </section>
+
 <section class="content">
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <!--Use for bulk actions-->
-                            </div>
-                            <div class="col-md-6">
-                                @await Html.PartialAsync("~/Areas/Admin/Views/Users/Index.AdvancedSearch.cshtml")
-                            </div>
-                        </div>
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-6">
+                        <!-- Optional: bulk actions -->
                     </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table id="UsersTable" class="table table-striped table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th></th>
-                                        <th>@L("UserName")</th>
-                                        <th>@L("FullName")</th>
-                                        <th>@L("EmailAddress")</th>
-                                        <th>@L("IsActive")</th>
-                                        <th style="width: 150px">@L("Actions")</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
+                    <div class="col-md-6">
+                        <!-- Partial view tìm kiếm nâng cao -->
+                        @await Html.PartialAsync("~/Areas/Admin/Views/Orders/Index.AdvancedSearch.cshtml")
                     </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="OrdersTable" class="table table-striped table-bordered" aria-label="@L("Orders")">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width:30px"></th>
+                                <th>@L("Recipient")</th>
+                                <th>@L("Phone")</th>
+                                <th>@L("Status")</th>
+                                <th>@L("TotalAmount")</th>
+                                <th>@L("ShippingFee")</th>
+                                <th>@L("FinalAmount")</th>
+                                <th style="width:150px">@L("Actions")</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @* Dữ liệu load qua AJAX trong Index.js *@
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-@await Html.PartialAsync("~/Areas/Admin/Views/Users/_CreateModal.cshtml", Model)
+<!-- Modal chỉnh sửa Order -->
+<div class="modal fade" id="OrderEditModal" tabindex="-1" role="dialog" aria-labelledby="OrderEditModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            @* Nội dung Edit load qua AJAX *@
+        </div>
+    </div>
+</div>
 
-<div class="modal fade" id="UserEditModal" tabindex="-1" role="dialog" aria-labelledby="UserEditModalLabel" data-backdrop="static">
+<!-- Modal chi tiết Order -->
+<div class="modal fade" id="OrderDetailModal" tabindex="-1" role="dialog" aria-labelledby="OrderDetailModalLabel" aria-hidden="true" data-backdrop="static">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
+            @* Nội dung Detail load qua AJAX *@
         </div>
     </div>
 </div>

@@ -70,18 +70,21 @@
                 title: l('Actions'),
                 render: function (data, type, row) {
                     return `
-                        <button type="button" class="btn btn-sm btn-info detail-discount" data-id="${row.id}" data-toggle="modal" data-target="#DiscountDetailModal">
-                            <i class="fas fa-info-circle"></i> ${l('Detail')}
-                        </button>
-                        <button type="button" class="btn btn-sm btn-secondary edit-discount" data-id="${row.id}" data-toggle="modal" data-target="#DiscountEditModal">
-                            <i class="fas fa-pencil-alt"></i> ${l('Edit')}
-                        </button>
-                        <button type="button" class="btn btn-sm btn-danger delete-discount" data-id="${row.id}" data-name="${row.name}">
-                            <i class="fas fa-trash"></i> ${l('Delete')}
-                        </button>
-                    `;
+            <div class="d-flex gap-2 justify-content-center">
+                <button type="button" class="btn btn-sm btn-info detail-discount" data-id="${row.id}" data-toggle="modal" data-target="#DiscountDetailModal">
+                    <i class="fas fa-info-circle"></i> ${l('Detail')}
+                </button>
+                <button type="button" class="btn btn-sm btn-secondary edit-discount" data-id="${row.id}" data-toggle="modal" data-target="#DiscountEditModal">
+                    <i class="fas fa-pencil-alt"></i> ${l('Edit')}
+                </button>
+                <button type="button" class="btn btn-sm btn-danger delete-discount" data-id="${row.id}" data-name="${row.name}">
+                    <i class="fas fa-trash"></i> ${l('Delete')}
+                </button>
+            </div>
+        `;
                 }
             }
+            
         ]
     });
 
@@ -136,7 +139,30 @@
             }
         });
     });
+    // Mở modal khi click vào dòng, trừ cột Actions và control
+    $('#DiscountsTable tbody').on('click', 'tr', function (e) {
+        // Nếu click vào cột Actions hoặc control column thì không mở
+        if (!$(e.target).closest('td').hasClass('control') &&
+            !$(e.target).closest('td').is(':last-child')) { // cột Actions là cuối cùng
+            var data = _$discountsTable.row(this).data();
+            if (data) {
+                openDiscountDetailModal(data.id);
+            }
+        }
+    });
 
+    // Hàm mở modal chi tiết Discount
+    function openDiscountDetailModal(id) {
+        abp.ajax({
+            url: abp.appPath + 'Admin/Discounts/DetailModal?discountId=' + id,
+            type: 'GET',
+            dataType: 'html',
+            success: function (content) {
+                $('#DiscountDetailModal div.modal-content').html(content);
+                $('#DiscountDetailModal').modal('show');
+            }
+        });
+    }
     // =================== DELETE ===================
     $(document).on('click', '.delete-discount', function () {
         var id = $(this).data('id');

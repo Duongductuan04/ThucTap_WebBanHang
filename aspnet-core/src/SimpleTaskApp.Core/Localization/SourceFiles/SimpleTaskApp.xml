@@ -106,30 +106,34 @@
 
 		<!-- MobilePhone -->
 		<text name="MobilePhone" value="Mobile Phone" />
-		<text name="MobilePhones" value="Mobile Phones" />
-		<text name="MobilePhoneDetail" value="Detail" />
+		<text name="MobilePhones" value="Mobile Phone List" />
+		<text name="MobilePhoneDetail" value="Details" />
 		<text name="CreateMobilePhone" value="Add New" />
 		<text name="EditMobilePhone" value="Edit" />
 		<text name="CurrentImage" value="Current Image" />
 		<text name="NewImage" value="New Image" />
 		<text name="Image" value="Image" />
-		<text name="ImageUploadHint" value="Select image file (jpg, png, webp)" />
-		<text name="NameRequired" value="Required" />
-		<text name="NameInvalid" value="Invalid" />
+		<text name="ImageUploadHint" value="Select an image file (jpg, png, webp)" />
+
+		<!-- Validation / Required -->
+		<text name="DescriptionMaxLength" value="Maximum 500 characters" />
+		<text name="Price_Required" value="Please enter the product price" />
+		<text name="Brand_Required" value="Please select a brand" />
+		<text name="Brand_Invalid" value="Invalid brand" />
+		<text name="Category_Required" value="Please select a product category" />
+		<text name="Photo_Required" value="Please upload a product image" />
+
+		<!-- Other fields -->
 		<text name="Description" value="Description" />
-		<text name="DescriptionRequired" value="Required" />
-		<text name="DescriptionMaxLength" value="Max 500 characters" />
 		<text name="Price" value="Price" />
-		<text name="PriceRequired" value="Required" />
 		<text name="StockQuantity" value="Stock Quantity" />
 		<text name="StockQuantityRequired" value="Required" />
 		<text name="StockQuantityInvalid" value="Invalid" />
 		<text name="Category" value="Category" />
-		<text name="CategoryRequired" value="Select Category" />
 		<text name="Create" value="Add" />
 		<text name="Delete" value="Delete" />
 		<text name="ConfirmDelete" value="Are you sure?" />
-		<text name="Detail" value="Detail" />
+		<text name="Detail" value="Details" />
 		<text name="Cancel" value="Cancel" />
 		<text name="Save" value="Save" />
 
@@ -143,6 +147,7 @@
 		<text name="NoImage" value="No Image" />
 		<text name="EditCart" value="Edit Cart" />
 		<text name="QuantityRequired" value="Required" />
+		<text name="Flags" value="Flags" />
 
 		<!-- Order -->
 		<text name="Order" value="Order" />
@@ -180,14 +185,18 @@
 
 		<text name="Edit" value="Edit" />
 		<text name="CreateNewMobilePhone" value="Create New Mobile Phone" />
-
+		<text name="SearchByRecipientNamePhone" value="SearchByRecipientNamePhone" />
+		<text name="AllStatuses" value="AllStatuses" />
 		<!-- Flags / checkboxes -->
 		<text name="IsNew" value="Is New" />
 		<text name="IsOnSale" value="On Sale" />
-
+		<text name="AllCategories" value="AllCategories " />
+		<text name="SearchByNameOrDescription" value="SearchByNameOrDescription" />
 		<!-- Sale period -->
 		<text name="SaleStart" value="Sale Start Date" />
 		<text name="SaleEnd" value="Sale End Date" />
+		<text name="Clear" value="Clear" />
+		<text name="CurrentUsage" value="Current usage" />
 
 		<!-- Common -->
 		<text name="Select" value="Select" />

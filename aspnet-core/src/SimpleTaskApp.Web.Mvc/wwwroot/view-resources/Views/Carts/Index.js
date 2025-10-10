@@ -59,17 +59,19 @@
                 sortable: false,
                 title: l('Actions'),
                 render: (data, type, row) => `
-                    <button type="button" 
-                            class="btn btn-sm btn-secondary edit-cart" 
-                            data-id="${row.id}">
-                        <i class="fas fa-pencil-alt"></i> ${l('Edit')}
-                    </button>
-                    <button type="button" 
-                            class="btn btn-sm btn-danger delete-cart" 
-                            data-id="${row.id}" data-name="${row.name}">
-                        <i class="fas fa-trash"></i> ${l('Delete')}
-                    </button>
-                `
+        <div class="d-flex gap-2 justify-content-center">
+            <button type="button" 
+                    class="btn btn-sm btn-secondary edit-cart" 
+                    data-id="${row.id}">
+                <i class="fas fa-pencil-alt"></i> ${l('Edit')}
+            </button>
+            <button type="button" 
+                    class="btn btn-sm btn-danger delete-cart" 
+                    data-id="${row.id}" data-name="${row.name}">
+                <i class="fas fa-trash"></i> ${l('Delete')}
+            </button>
+        </div>
+    `
             }
         ]
     });

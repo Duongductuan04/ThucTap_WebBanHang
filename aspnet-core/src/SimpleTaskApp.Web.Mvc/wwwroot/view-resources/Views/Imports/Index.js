@@ -40,16 +40,18 @@
                 title: l('Actions'),
                 render: function (data, type, row) {
                     return `
-                        <button type="button" class="btn btn-sm btn-info detail-import" data-id="${row.id}" data-toggle="modal" data-target="#ImportDetailModal">
-                            <i class="fas fa-info-circle"></i> ${l('Detail')}
-                        </button>
-                        <button type="button" class="btn btn-sm btn-secondary edit-import" data-id="${row.id}" data-toggle="modal" data-target="#ImportEditModal">
-                            <i class="fas fa-pencil-alt"></i> ${l('Edit')}
-                        </button>
-                        <button type="button" class="btn btn-sm btn-danger delete-import" data-id="${row.id}" data-name="${row.importCode}">
-                            <i class="fas fa-trash"></i> ${l('Delete')}
-                        </button>
-                    `;
+            <div class="d-flex gap-2 justify-content-center">
+                <button type="button" class="btn btn-sm btn-info detail-import" data-id="${row.id}" data-toggle="modal" data-target="#ImportDetailModal">
+                    <i class="fas fa-info-circle"></i> ${l('Detail')}
+                </button>
+                <button type="button" class="btn btn-sm btn-secondary edit-import" data-id="${row.id}" data-toggle="modal" data-target="#ImportEditModal">
+                    <i class="fas fa-pencil-alt"></i> ${l('Edit')}
+                </button>
+                <button type="button" class="btn btn-sm btn-danger delete-import" data-id="${row.id}" data-name="${row.importCode}">
+                    <i class="fas fa-trash"></i> ${l('Delete')}
+                </button>
+            </div>
+        `;
                 }
             }
         ]
@@ -93,7 +95,30 @@
     abp.event.on('import.edited', function () {
         _$importsTable.ajax.reload();
     });
+    // Mở modal khi click vào dòng, trừ cột Actions và control
+    $('#ImportsTable tbody').on('click', 'tr', function (e) {
+        // Nếu click vào cột Actions hoặc control column thì không mở
+        if (!$(e.target).closest('td').hasClass('control') &&
+            !$(e.target).closest('td').is(':last-child')) { // cột Actions là cuối cùng
+            var data = _$importsTable.row(this).data();
+            if (data) {
+                openImportDetailModal(data.id);
+            }
+        }
+    });
 
+    // Hàm mở modal chi tiết import
+    function openImportDetailModal(id) {
+        abp.ajax({
+            url: abp.appPath + 'Admin/Imports/DetailModal?importId=' + id,
+            type: 'GET',
+            dataType: 'html',
+            success: function (content) {
+                $('#ImportDetailModal div.modal-content').html(content);
+                $('#ImportDetailModal').modal('show');
+            }
+        });
+    }
     // =================== DETAIL ===================
     $(document).on('click', '.detail-import', function () {
         var id = $(this).data('id');

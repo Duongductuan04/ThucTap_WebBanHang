@@ -3,7 +3,7 @@ using Abp.AutoMapper;
 
 namespace SimpleTaskApp.MobilePhones.Dto
 {
-    [AutoMap(typeof(Cart))]
+    [AutoMap(typeof(Cart))]  
     public class CartDto : EntityDto<int>
     {
         public long UserId { get; set; }

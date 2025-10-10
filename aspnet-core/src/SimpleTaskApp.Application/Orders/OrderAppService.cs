@@ -408,7 +408,13 @@ namespace SimpleTaskApp.MobilePhones
                 .ThenInclude(od => od.MobilePhone)
                 .Include(o => o.Discount)
                 .AsQueryable();
-
+            // ⭐ Lọc theo từ khóa
+            if (!string.IsNullOrWhiteSpace(input.Keyword))
+            {
+                query = query.Where(o =>
+                    o.RecipientName.Contains(input.Keyword) ||
+                    o.RecipientPhone.Contains(input.Keyword)) ;
+            }
             if (input.UserId.HasValue)
                 query = query.Where(o => o.UserId == input.UserId.Value);
 

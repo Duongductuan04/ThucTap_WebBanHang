@@ -21,7 +21,7 @@ using Microsoft.Extensions.FileProviders;
 using SimpleTaskApp.Vnpay;
 using System;
 using SimpleTaskApp.Otp;
-using SimpleTaskApp.Sms;
+
 
 namespace SimpleTaskApp.Web.Startup
 {
@@ -45,7 +45,9 @@ namespace SimpleTaskApp.Web.Startup
                     options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                     options.Filters.Add(new AbpAutoValidateAntiforgeryTokenAttribute());
                 }
-            );
+            )
+            .AddNewtonsoftJson(); // ✅ thêm dòng này
+
 
             services.AddAuthentication("Cookies")
                 .AddCookie("Cookies", options =>
@@ -78,8 +80,8 @@ namespace SimpleTaskApp.Web.Startup
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true; // bắt buộc
             });
-            services.AddScoped<ISmsService, SmsService>();
             services.AddScoped<IOtpService, OtpService>();
+
             // Configure Abp and Dependency Injection
             services.AddAbpWithoutCreatingServiceProvider<SimpleTaskAppWebMvcModule>(
                 options => options.IocManager.IocContainer.AddFacility<LoggingFacility>(

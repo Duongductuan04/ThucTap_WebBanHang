@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimpleTaskApp.Otp.Dto;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,8 +9,7 @@ namespace SimpleTaskApp.Otp
 {
     public interface IOtpService
     {
-        Task<string> GenerateOtpAsync(string phoneNumber);
-        bool VerifyOtp(string phoneNumber, string otpCode);
+        Task<OtpResult> SendOtpAsync(string phoneNumber);
+        Task<OtpResult> VerifyOtpAsync(string phoneNumber, string otpCode);
     }
-
 }

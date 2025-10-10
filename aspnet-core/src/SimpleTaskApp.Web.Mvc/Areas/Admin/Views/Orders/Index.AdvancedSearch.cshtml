@@ -1,0 +1,50 @@
+﻿<div class="abp-advanced-search mb-3">
+    <form id="OrdersSearchForm" class="form-horizontal">
+        <div class="row g-2">
+            <!-- Keyword search -->
+            <div class="col-md-6">
+                <input type="text" name="Keyword" class="form-control txt-search" placeholder="@L("SearchByRecipientNamePhone")" />
+            </div>
+
+            <!-- Filter & buttons -->
+            <div class="col-md-6 d-flex">
+                <div class="dropdown mr-2">
+                    <button type="button"
+                            class="btn btn-default dropdown-toggle"
+                            data-toggle="dropdown"
+                            aria-expanded="false">
+                        <i class="fas fa-filter"></i> @L("Filter")
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right dd-menu p-2" role="menu">
+                        <label class="d-block mb-1">@L("Status")</label>
+                        <div class="form-check form-check-inline">
+                            <input type="radio" class="form-check-input" id="Status_All" name="Status" value="" checked>
+                            <label class="form-check-label" for="Status_All">@L("AllStatuses")</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input type="radio" class="form-check-input" id="Status_Pending" name="Status" value="0">
+                            <label class="form-check-label" for="Status_Pending">@L("Pending")</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input type="radio" class="form-check-input" id="Status_Shipping" name="Status" value="1">
+                            <label class="form-check-label" for="Status_Shipping">@L("Shipping")</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input type="radio" class="form-check-input" id="Status_Completed" name="Status" value="2">
+                            <label class="form-check-label" for="Status_Completed">@L("Completed")</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input type="radio" class="form-check-input" id="Status_Cancelled" name="Status" value="3">
+                            <label class="form-check-label" for="Status_Cancelled">@L("Cancelled")</label>
+                        </div>
+                     
+                    </div>
+                </div>
+                <!-- Nếu muốn, thêm nút search nhanh bên ngoài dropdown -->
+                <button type="button" class="btn bg-blue ml-2 btn-search">
+                    <i class="fas fa-search"></i> @L("Search")
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

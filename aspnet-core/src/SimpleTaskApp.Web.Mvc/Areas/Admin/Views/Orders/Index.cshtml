@@ -29,6 +29,17 @@
 <section class="content">
     <div class="container-fluid">
         <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-6">
+                        <!-- Optional: bulk actions -->
+                    </div>
+                    <div class="col-md-6">
+                        <!-- Partial view tìm kiếm nâng cao -->
+                        @await Html.PartialAsync("~/Areas/Admin/Views/Orders/Index.AdvancedSearch.cshtml")
+                    </div>
+                </div>
+            </div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table id="OrdersTable" class="table table-striped table-bordered" aria-label="@L("Orders")">

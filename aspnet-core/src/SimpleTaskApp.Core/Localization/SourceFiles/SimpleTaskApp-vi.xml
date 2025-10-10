@@ -116,18 +116,22 @@
 		<text name="NewImage" value="Ảnh mới" />
 		<text name="Image" value="Ảnh" />
 		<text name="ImageUploadHint" value="Chọn file ảnh (jpg, png, webp)" />
-		<text name="NameRequired" value="Bắt buộc" />
-		<text name="NameInvalid" value="Không hợp lệ" />
-		<text name="Description" value="Mô tả" />
-		<text name="DescriptionRequired" value="Bắt buộc" />
+
+		<!-- Validation / Required -->
 		<text name="DescriptionMaxLength" value="Tối đa 500 ký tự" />
+		<text name="Price_Required" value="Vui lòng nhập giá sản phẩm" />
+		<text name="Brand_Required" value="Vui lòng chọn thương hiệu" />
+		<text name="Brand_Invalid" value="Thương hiệu không hợp lệ" />
+		<text name="Category_Required" value="Vui lòng chọn danh mục sản phẩm" />
+		<text name="Photo_Required" value="Vui lòng tải lên hình ảnh sản phẩm" />
+
+		<!-- Other fields -->
+		<text name="Description" value="Mô tả" />
 		<text name="Price" value="Giá" />
-		<text name="PriceRequired" value="Bắt buộc" />
 		<text name="StockQuantity" value="Tồn kho" />
 		<text name="StockQuantityRequired" value="Bắt buộc" />
 		<text name="StockQuantityInvalid" value="Không hợp lệ" />
 		<text name="Category" value="Danh mục" />
-		<text name="CategoryRequired" value="Chọn danh mục" />
 		<text name="Create" value="Thêm" />
 		<text name="Delete" value="Xóa" />
 		<text name="ConfirmDelete" value="Bạn có chắc chắn?" />
@@ -135,6 +139,7 @@
 		<text name="Detail" value="Chi tiết" />
 		<text name="Cancel" value="Hủy" />
 		<text name="Save" value="Lưu" />
+		<text name="Flags" value="Tùy chọn" />
 
 		<!-- Cart -->
 		<text name="Cart" value="Giỏ hàng" />
@@ -261,10 +266,17 @@
 
 		<!-- Index Page -->
 		<text name="Imports" value="Phiếu nhập" />
-
+		<text name="SearchByRecipientNamePhone" value="Tìm theo tên người nhận, số điện thoại " />
+		<text name="AllStatuses" value="Tất cả trạng thái" />
 		<!-- Sale / Product Labels -->
 		<text name="SalePeriod" value="Thời gian khuyến mãi" />
 		<text name="New" value="Mới" />
 		<text name="OnSale" value="Đang giảm giá" />
+		<text name="AllCategories" value="Tất cả " />
+		<text name="SearchByNameOrDescription" value="Nhập tên điện thoại hoặc mô tả" />
+		<text name="Clear" value="Xóa" />
+		
+		<text name="CurrentUsage" value="Số lần sử dụng" />
+
 	</texts>
 </localizationDictionary>

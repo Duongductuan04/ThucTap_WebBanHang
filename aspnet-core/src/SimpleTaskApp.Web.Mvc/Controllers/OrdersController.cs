@@ -1,9 +1,16 @@
 ﻿using Abp.Application.Services.Dto;
 using Abp.AspNetCore.Mvc.Controllers;
+using Azure.Core;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using SimpleTaskApp.Authorization.Users;
 using SimpleTaskApp.MobilePhones;
 using SimpleTaskApp.MobilePhones.Dto;
+using SimpleTaskApp.Otp.Dto;
+using SimpleTaskApp.Otp;
 using SimpleTaskApp.Vnpay;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,20 +22,42 @@ public class OrdersController : AbpController
     private readonly IMobilePhoneAppService _mobilePhoneAppService;
     private readonly IDiscountAppService _discountAppService;
     private readonly IVnPayService _vnPayService;
+    private readonly IOtpService _otpService;
 
     public OrdersController(
         IOrderAppService orderAppService,
         ICartAppService cartAppService,
         IDiscountAppService discountAppService,
         IVnPayService vnPayService,
-        IMobilePhoneAppService mobilePhoneAppService)
+        IMobilePhoneAppService mobilePhoneAppService,
+        IOtpService otpService
+    )
     {
         _orderAppService = orderAppService;
         _cartAppService = cartAppService;
         _discountAppService = discountAppService;
         _vnPayService = vnPayService;
         _mobilePhoneAppService = mobilePhoneAppService;
+        _otpService = otpService;
     }
+
+    // ========================== OTP Actions ==========================
+    [IgnoreAntiforgeryToken]
+
+    [HttpPost]
+    public async Task<IActionResult> SendOtp([FromBody] SendOtpDto input)
+    {
+        try
+        {
+            var result = await _otpService.SendOtpAsync(input.PhoneNumber);
+            return Json(new { success = result.Success, message = result.Message });
+        }
+        catch (Exception ex)
+        {
+            return Json(new { success = false, message = "Lỗi khi gửi OTP: " + ex.Message });
+        }
+    }
+    
 
     // ========================== Checkout mua ngay ==========================
     [HttpGet]
@@ -115,24 +144,33 @@ public class OrdersController : AbpController
       [FromForm] int MobilePhoneId,
       [FromForm] int Quantity,
       [FromForm] string DiscountCode,
-      [FromForm] int PaymentMethod)
+      [FromForm] int PaymentMethod,
+      [FromForm] string OtpCode)
     {
+        // Kiểm tra OTP trước khi tạo đơn hàng
+        var otpResult = await _otpService.VerifyOtpAsync(input.RecipientPhone, OtpCode);
+        if (!otpResult.Success)
+        {
+            TempData["Error"] = otpResult.Message;
+            return RedirectToAction("CheckoutBuyNow", new { mobilePhoneId = MobilePhoneId, quantity = Quantity });
+        }
+
         var mobilePhone = await _mobilePhoneAppService.GetAsync(new EntityDto<int>(MobilePhoneId));
         if (mobilePhone == null)
             return RedirectToAction("CheckoutBuyNow", new { mobilePhoneId = MobilePhoneId, quantity = Quantity });
 
         // Gán OrderDetails
         input.OrderDetails = new List<CreateOrderDetailDto>
-    {
-        new CreateOrderDetailDto
         {
-            MobilePhoneId = mobilePhone.Id,
-            Quantity = Quantity,
-            UnitPrice = mobilePhone.DiscountPrice ?? mobilePhone.Price,
-            MobilePhoneName = mobilePhone.Name,
-            ImageUrl = mobilePhone.ImageUrl
-        }
-    };
+            new CreateOrderDetailDto
+            {
+                MobilePhoneId = mobilePhone.Id,
+                Quantity = Quantity,
+                UnitPrice = mobilePhone.DiscountPrice ?? mobilePhone.Price,
+                MobilePhoneName = mobilePhone.Name,
+                ImageUrl = mobilePhone.ImageUrl
+            }
+        };
 
         input.DiscountCode = DiscountCode;
         input.PaymentMethod = PaymentMethod;
@@ -140,6 +178,7 @@ public class OrdersController : AbpController
         // Lưu đơn hàng vào DB với trạng thái 0
         input.Status = 0; // chờ thanh toán
         var createdOrder = await _orderAppService.CreateAsync(input);
+
         // Nếu chọn COD, cập nhật trạng thái thành 1 (thành công)
         if (PaymentMethod != 1) // COD
         {
@@ -154,27 +193,31 @@ public class OrdersController : AbpController
                 OrderDescription = "Thanh toán đơn hàng qua VNPAY",
                 OrderType = "other",
                 Name = input.RecipientName ?? User.Identity?.Name ?? "Khách hàng",
-                OrderId = createdOrder.Id.ToString() // ép thành string nếu cần
+                OrderId = createdOrder.Id.ToString()
             };
 
             var paymentUrl = _vnPayService.CreatePaymentUrl(paymentInfo, HttpContext);
-
-            // Redirect sang VNPAY để thanh toán
             return Redirect(paymentUrl);
         }
 
-
-            return RedirectToAction("Success");
-        
+        return RedirectToAction("Success");
     }
-
 
     [HttpPost]
     public async Task<IActionResult> CheckoutCart(CreateOrderDto input,
      [FromForm] List<int> cartIds,
      [FromForm] string DiscountCode,
-     [FromForm] int PaymentMethod)
+     [FromForm] int PaymentMethod,
+     [FromForm] string OtpCode)
     {
+        // Kiểm tra OTP trước khi tạo đơn hàng
+        var otpResult = await _otpService.VerifyOtpAsync(input.RecipientPhone, OtpCode);
+        if (!otpResult.Success)
+        {
+            TempData["Error"] = otpResult.Message;
+            return RedirectToAction("CheckoutCart", new { cartIds = cartIds });
+        }
+
         cartIds ??= new List<int>();
         var myCart = await _cartAppService.GetMyCartAsync() ?? new List<CartDto>();
         if (cartIds.Any())
@@ -205,6 +248,7 @@ public class OrdersController : AbpController
         // Xóa sản phẩm trong giỏ hàng đã thanh toán
         foreach (var cartId in cartIds)
             await _cartAppService.DeleteAsync(new EntityDto<int>(cartId));
+
         // Nếu chọn COD, cập nhật trạng thái thành 1 (thành công)
         if (PaymentMethod != 1) // COD
         {
@@ -219,16 +263,16 @@ public class OrdersController : AbpController
                 OrderDescription = "Thanh toán đơn hàng qua VNPAY",
                 OrderType = "other",
                 Name = input.RecipientName ?? User.Identity?.Name ?? "Khách hàng",
-                OrderId = createdOrder.Id.ToString() // giữ kiểu string
+                OrderId = createdOrder.Id.ToString()
             };
 
             var paymentUrl = _vnPayService.CreatePaymentUrl(paymentInfo, HttpContext);
             return Redirect(paymentUrl);
         }
-        
-            return RedirectToAction("Success");
-        
+
+        return RedirectToAction("Success");
     }
+
     [HttpGet]
     public async Task<IActionResult> PaymentCallbackVnpay()
     {
