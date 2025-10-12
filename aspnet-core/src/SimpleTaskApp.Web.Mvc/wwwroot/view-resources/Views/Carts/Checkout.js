@@ -160,12 +160,48 @@ $(document).ready(() => {
     });
 
     $('#btnVerifyOtp').click(() => {
-        const code = $('#otpCode').val(); if (!code || code.length !== 6) return showOtpMessage('Vui lòng nhập mã OTP 6 số', 'danger');
-        $('#OtpCode').val(code); isOtpVerified = true; $('#otpModal').modal('hide'); $('#checkoutForm')[0].submit();
+        const code = $('#otpCode').val();
+
+        if (!code || code.length !== 6) {
+            return showOtpMessage('Vui lòng nhập mã OTP 6 số', 'danger');
+        }
+
+        // Gọi service VerifyOtpAsync trước khi submit form
+        abp.services.app.otp.verifyOtp({
+            phoneNumber: currentPhone, // số điện thoại hiện tại
+            otpCode: code
+        })
+            .done(res => {
+                if (res.success) {
+                    // Nếu OTP đúng, submit form
+                    isOtpVerified = true;
+                    $('#OtpCode').val(code);
+                    $('#otpModal').modal('hide');
+                    $('#checkoutForm')[0].submit();
+                } else {
+                    // Nếu OTP sai, hiển thị lỗi ngay trên modal
+                    showOtpMessage(res.message, 'danger');
+                }
+            })
+            .fail(() => {
+                showOtpMessage('Lỗi kết nối, vui lòng thử lại', 'danger');
+            });
     });
 
     $('#btnResendOtp').click(() => $('#btnSendOtp').click());
 
-    function showOtpMessage(msg, type) { $('#otpMessage').html(`<div class="alert ${type === 'success' ? 'alert-success' : 'alert-danger'}">${msg}</div>`); }
+    function showOtpMessage(msg, type) {
+        if (!msg) {
+            // Nếu không có nội dung, xóa vùng thông báo luôn
+            $('#otpMessage').html('');
+            return;
+        }
+
+        $('#otpMessage').html(`
+        <div class="alert ${type === 'success' ? 'alert-success' : 'alert-danger'}">
+            ${msg}
+        </div>
+    `);
+    }
     $('#otpModal').on('hidden.bs.modal', () => { if (!isOtpVerified) resetOtpForm(); });
 });

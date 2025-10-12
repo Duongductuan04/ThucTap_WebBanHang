@@ -1,14 +1,11 @@
 ﻿using Abp.Application.Services.Dto;
 using Abp.AspNetCore.Mvc.Controllers;
-using Azure.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using SimpleTaskApp.Authorization.Users;
 using SimpleTaskApp.MobilePhones;
 using SimpleTaskApp.MobilePhones.Dto;
-using SimpleTaskApp.Otp.Dto;
 using SimpleTaskApp.Otp;
+using SimpleTaskApp.Otp.Dto;
 using SimpleTaskApp.Vnpay;
 using System;
 using System.Collections.Generic;
@@ -22,7 +19,7 @@ public class OrdersController : AbpController
     private readonly IMobilePhoneAppService _mobilePhoneAppService;
     private readonly IDiscountAppService _discountAppService;
     private readonly IVnPayService _vnPayService;
-    private readonly IOtpService _otpService;
+    private readonly IOtpAppService _otpService;
 
     public OrdersController(
         IOrderAppService orderAppService,
@@ -30,7 +27,7 @@ public class OrdersController : AbpController
         IDiscountAppService discountAppService,
         IVnPayService vnPayService,
         IMobilePhoneAppService mobilePhoneAppService,
-        IOtpService otpService
+        IOtpAppService otpService
     )
     {
         _orderAppService = orderAppService;
@@ -43,21 +40,29 @@ public class OrdersController : AbpController
 
     // ========================== OTP Actions ==========================
     [IgnoreAntiforgeryToken]
-
     [HttpPost]
-    public async Task<IActionResult> SendOtp([FromBody] SendOtpDto input)
+    public async Task<JsonResult> SendOtp([FromBody] SendOtpDto input)
     {
+        if (input == null || string.IsNullOrWhiteSpace(input.PhoneNumber))
+        {
+            return Json(new { success = false, message = "Số điện thoại không hợp lệ" });
+        }
+
         try
         {
-            var result = await _otpService.SendOtpAsync(input.PhoneNumber);
-            return Json(new { success = result.Success, message = result.Message });
+            var result = await _otpService.SendOtpAsync(input);
+            return Json(new
+            {
+                success = result.Success,
+                message = result.Message,
+                otpCode = result.OtpCode // Chỉ dùng trong môi trường test/dev
+            });
         }
         catch (Exception ex)
         {
             return Json(new { success = false, message = "Lỗi khi gửi OTP: " + ex.Message });
         }
     }
-    
 
     // ========================== Checkout mua ngay ==========================
     [HttpGet]
@@ -65,6 +70,8 @@ public class OrdersController : AbpController
     {
         var mobilePhone = await _mobilePhoneAppService.GetAsync(new EntityDto<int>(mobilePhoneId));
         if (mobilePhone == null) return RedirectToAction("Index", "Home");
+
+        var unitPrice = GetEffectivePrice(mobilePhone);
 
         var orderDto = new CreateOrderDto
         {
@@ -74,7 +81,7 @@ public class OrdersController : AbpController
                 {
                     MobilePhoneId = mobilePhone.Id,
                     Quantity = quantity,
-                    UnitPrice = mobilePhone.DiscountPrice ?? mobilePhone.Price,
+                    UnitPrice = unitPrice,
                     MobilePhoneName = mobilePhone.Name,
                     ImageUrl = mobilePhone.ImageUrl
                 }
@@ -108,16 +115,25 @@ public class OrdersController : AbpController
         var selectedItems = myCart.Where(c => cartIds.Contains(c.Id)).ToList();
         if (!selectedItems.Any()) return RedirectToAction("Index", "Cart");
 
-        var orderDto = new CreateOrderDto
+        // Lấy giá cập nhật từ dịch vụ MobilePhone cho mỗi item để preview chính xác
+        var orderDetails = new List<CreateOrderDetailDto>();
+        foreach (var c in selectedItems)
         {
-            OrderDetails = selectedItems.Select(c => new CreateOrderDetailDto
+            var phone = await _mobilePhoneAppService.GetAsync(new EntityDto<int>(c.MobilePhoneId));
+            var unitPrice = GetEffectivePrice(phone);
+            orderDetails.Add(new CreateOrderDetailDto
             {
                 MobilePhoneId = c.MobilePhoneId,
                 Quantity = c.Quantity,
-                UnitPrice = c.DisplayPrice,
+                UnitPrice = unitPrice,
                 MobilePhoneName = c.Name,
                 ImageUrl = c.ImageUrl
-            }).ToList()
+            });
+        }
+
+        var orderDto = new CreateOrderDto
+        {
+            OrderDetails = orderDetails
         };
 
         orderDto.TotalAmount = orderDto.OrderDetails.Sum(od => od.Quantity * od.UnitPrice);
@@ -147,8 +163,16 @@ public class OrdersController : AbpController
       [FromForm] int PaymentMethod,
       [FromForm] string OtpCode)
     {
-        // Kiểm tra OTP trước khi tạo đơn hàng
-        var otpResult = await _otpService.VerifyOtpAsync(input.RecipientPhone, OtpCode);
+        // Tạo DTO VerifyOtpDto
+        var verifyDto = new VerifyOtpDto
+        {
+            PhoneNumber = input.RecipientPhone,
+            OtpCode = OtpCode
+        };
+
+        // Gọi service với DTO
+        var otpResult = await _otpService.VerifyOtpAsync(verifyDto);
+
         if (!otpResult.Success)
         {
             TempData["Error"] = otpResult.Message;
@@ -159,14 +183,16 @@ public class OrdersController : AbpController
         if (mobilePhone == null)
             return RedirectToAction("CheckoutBuyNow", new { mobilePhoneId = MobilePhoneId, quantity = Quantity });
 
-        // Gán OrderDetails
+        // Gán OrderDetails: sử dụng giá thực tính tại thời điểm thanh toán
+        var unitPrice = GetEffectivePrice(mobilePhone);
+
         input.OrderDetails = new List<CreateOrderDetailDto>
         {
             new CreateOrderDetailDto
             {
                 MobilePhoneId = mobilePhone.Id,
                 Quantity = Quantity,
-                UnitPrice = mobilePhone.DiscountPrice ?? mobilePhone.Price,
+                UnitPrice = unitPrice,
                 MobilePhoneName = mobilePhone.Name,
                 ImageUrl = mobilePhone.ImageUrl
             }
@@ -210,8 +236,16 @@ public class OrdersController : AbpController
      [FromForm] int PaymentMethod,
      [FromForm] string OtpCode)
     {
+        // Tạo DTO VerifyOtpDto
+        var verifyDto = new VerifyOtpDto
+        {
+            PhoneNumber = input.RecipientPhone,
+            OtpCode = OtpCode
+        };
+
         // Kiểm tra OTP trước khi tạo đơn hàng
-        var otpResult = await _otpService.VerifyOtpAsync(input.RecipientPhone, OtpCode);
+        var otpResult = await _otpService.VerifyOtpAsync(verifyDto);
+
         if (!otpResult.Success)
         {
             TempData["Error"] = otpResult.Message;
@@ -226,18 +260,24 @@ public class OrdersController : AbpController
         if (!myCart.Any())
             return View("CheckoutCart", input);
 
-        // Gán OrderDetails
-        input.OrderDetails = myCart
-            .Where(x => x.Quantity > 0)
-            .Select(x => new CreateOrderDetailDto
-            {
-                MobilePhoneId = x.MobilePhoneId,
-                Quantity = x.Quantity,
-                UnitPrice = x.DisplayPrice,
-                MobilePhoneName = x.Name,
-                ImageUrl = x.ImageUrl
-            }).ToList();
+        // Gán OrderDetails: LẤY GIÁ MỚI TỪ MOBILEPHONE SERVICE để tránh bị client thay đổi
+        var orderDetails = new List<CreateOrderDetailDto>();
+        foreach (var c in myCart.Where(x => x.Quantity > 0))
+        {
+            var phone = await _mobilePhoneAppService.GetAsync(new EntityDto<int>(c.MobilePhoneId));
+            var unitPrice = GetEffectivePrice(phone);
 
+            orderDetails.Add(new CreateOrderDetailDto
+            {
+                MobilePhoneId = c.MobilePhoneId,
+                Quantity = c.Quantity,
+                UnitPrice = unitPrice,
+                MobilePhoneName = c.Name,
+                ImageUrl = c.ImageUrl
+            });
+        }
+
+        input.OrderDetails = orderDetails;
         input.DiscountCode = DiscountCode;
         input.PaymentMethod = PaymentMethod;
 
@@ -299,4 +339,31 @@ public class OrdersController : AbpController
     // ========================== Trạng thái thành công / thất bại ==========================
     public IActionResult Success() => View();
     public IActionResult Fail() => View();
+
+    // ---------- Helper: tính giá thực (chỉ dùng DiscountPrice khi sale còn hiệu lực) ----------
+    private decimal GetEffectivePrice(MobilePhoneDto phone)
+    {
+        if (phone == null) return 0m;
+
+        // Mặc định không áp dụng sale
+        var useSale = false;
+
+        // Nếu có cờ IsOnSale thì ưu tiên kiểm tra
+        try
+        {
+            if (phone.IsOnSale)
+                useSale = true;
+        }
+        catch
+        {
+            // nếu MobilePhoneDto không có IsOnSale property, bỏ qua
+        }
+
+        // Chỉ dùng DiscountPrice khi phone.DiscountPrice < phone.Price và flag sale = true
+        if (useSale && phone.DiscountPrice.HasValue && phone.DiscountPrice.Value < phone.Price)
+            return phone.DiscountPrice.Value;
+
+        // Mặc định trả về giá gốc
+        return phone.Price;
+    }
 }

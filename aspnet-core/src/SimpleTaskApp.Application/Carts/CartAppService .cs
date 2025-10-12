@@ -6,6 +6,7 @@ using Abp.UI;
 using Microsoft.EntityFrameworkCore;
 using SimpleTaskApp.Authorization;
 using SimpleTaskApp.MobilePhones.Dto;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -130,14 +131,14 @@ namespace SimpleTaskApp.MobilePhones
             return new PagedResultDto<CartDto>(totalCount, result);
         }
 
-        // GET CART TOTAL
+        // GET CART TOTAL (chỉ tính giá khuyến mãi khi còn hiệu lực)
         public async Task<decimal> GetCartTotalAsync(long userId)
         {
             var items = await _cartRepository.GetAllIncluding(c => c.MobilePhone)
                                              .Where(c => c.UserId == userId)
                                              .ToListAsync();
 
-            return items.Sum(c => (c.MobilePhone.DiscountPrice ?? c.MobilePhone.Price) * c.Quantity);
+            return items.Sum(c => GetEffectivePrice(c.MobilePhone) * c.Quantity);
         }
 
         // GET MY CART
@@ -184,6 +185,7 @@ namespace SimpleTaskApp.MobilePhones
                 ImageUrl = phone?.ImageUrl,
                 Price = phone?.Price ?? 0,
                 DiscountPrice = phone?.DiscountPrice,
+                DisplayPrice = GetEffectivePrice(phone), // ✅ giá thực tế dùng để hiển thị hoặc thanh toán
                 Quantity = cart.Quantity,
                 StockQuantity = phone?.StockQuantity ?? 0
             };
@@ -195,6 +197,34 @@ namespace SimpleTaskApp.MobilePhones
                 : phone.StockQuantity <= 0 ? "Đã hết hàng" : "Còn hàng";
 
             return dto;
+        }
+
+        // ✅ Tính giá thực tế (chỉ dùng giá khuyến mãi khi còn hiệu lực)
+        private decimal GetEffectivePrice(MobilePhone phone)
+        {
+            if (phone == null) return 0;
+
+            bool isOnSale = false;
+
+            // Nếu có cột IsOnSale thì kiểm tra
+            if (phone.IsOnSale)
+            {
+                isOnSale = true;
+            }
+
+            // Nếu có cột SaleEndDate thì kiểm tra thêm
+            if (phone.SaleStart.HasValue && phone.SaleEnd <= DateTime.Now)
+            {
+                isOnSale = false;
+            }
+
+            // Chỉ áp dụng giá giảm khi đang sale và DiscountPrice < Price
+            if (isOnSale && phone.DiscountPrice.HasValue && phone.DiscountPrice.Value < phone.Price)
+            {
+                return phone.DiscountPrice.Value;
+            }
+
+            return phone.Price;
         }
     }
 }

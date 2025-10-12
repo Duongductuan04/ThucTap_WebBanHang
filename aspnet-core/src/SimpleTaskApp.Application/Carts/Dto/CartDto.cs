@@ -18,7 +18,7 @@ namespace SimpleTaskApp.MobilePhones.Dto
         public bool IsOutOfStock { get; set; }
         public string StatusMessage { get; set; }
         // Giá hiển thị: ưu tiên giá khuyến mãi
-        public decimal DisplayPrice => DiscountPrice ?? Price;
+        public decimal DisplayPrice { get; set; }
 
         // Thành tiền = giá hiển thị * số lượng
         public int? StockQuantity { get; set; }

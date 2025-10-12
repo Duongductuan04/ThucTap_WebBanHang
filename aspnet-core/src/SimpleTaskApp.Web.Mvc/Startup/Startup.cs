@@ -80,7 +80,7 @@ namespace SimpleTaskApp.Web.Startup
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true; // bắt buộc
             });
-            services.AddScoped<IOtpService, OtpService>();
+            services.AddScoped<IOtpAppService, OtpAppService>();
 
             // Configure Abp and Dependency Injection
             services.AddAbpWithoutCreatingServiceProvider<SimpleTaskAppWebMvcModule>(

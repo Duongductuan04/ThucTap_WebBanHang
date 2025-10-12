@@ -31,7 +31,7 @@
             <h5 class="text-muted mb-3">@Model.Brand</h5>
 
             <div class="mb-3">
-                @if (Model.DiscountPrice.HasValue && Model.DiscountPrice.Value < Model.Price)
+                @if (Model.IsOnSale && Model.DiscountPrice.HasValue)
                 {
                     <span class="h4 text-danger fw-bold">@String.Format("{0:N0} VNĐ", Model.DiscountPrice)</span>
                     <span class="text-muted text-decoration-line-through ms-2">@String.Format("{0:N0} VNĐ", Model.Price)</span>
@@ -41,6 +41,7 @@
                     <span class="h4 fw-bold">@String.Format("{0:N0} VNĐ", Model.Price)</span>
                 }
             </div>
+
 
             <p class="mb-4">@Model.Description</p>
 

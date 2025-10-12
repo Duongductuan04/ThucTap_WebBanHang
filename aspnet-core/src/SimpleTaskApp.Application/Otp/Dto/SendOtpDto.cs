@@ -10,5 +10,6 @@ namespace SimpleTaskApp.Otp.Dto
     public class SendOtpDto
     {
         public string PhoneNumber { get; set; }
+
     }
 }
