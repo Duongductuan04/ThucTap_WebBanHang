@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
@@ -34,5 +35,7 @@ namespace SimpleTaskApp.MobilePhones
         public DateTime? SaleEnd { get; set; }
 
         public DateTime CreationTime { get; set; } = Clock.Now;
+        public virtual ICollection<MobilePhoneColor> Colors { get; set; }
+
     }
 }

@@ -2,6 +2,7 @@
 using Abp.AutoMapper;
 using Microsoft.AspNetCore.Http;
 using System;
+using System.Collections.Generic;
 
 namespace SimpleTaskApp.MobilePhones.Dto
 {
@@ -26,5 +27,7 @@ namespace SimpleTaskApp.MobilePhones.Dto
         public bool IsOnSale { get; set; } = false;   // Khuyến mãi
         public DateTime? SaleStart { get; set; }      // Bắt đầu khuyến mãi
         public DateTime? SaleEnd { get; set; }        // Kết thúc khuyến mãi
+        public List<UpdateMobilePhoneColorDto> Colors { get; set; }
+
     }
 }

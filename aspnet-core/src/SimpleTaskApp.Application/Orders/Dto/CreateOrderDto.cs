@@ -60,8 +60,11 @@ namespace SimpleTaskApp.MobilePhones.Dto
     {
         public int MobilePhoneId { get; set; }
         public int Quantity { get; set; }
+        public int? ColorId { get; set; }  // <-- thêm thuộc tính
         public decimal UnitPrice { get; set; }   // Giá tại thời điểm đặt
         public string MobilePhoneName { get; set; }
         public string ImageUrl { get; set; }
+        public string ColorName { get; set; } // <-- thêm đây
+
     }
 }

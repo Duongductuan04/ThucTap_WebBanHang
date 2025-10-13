@@ -16,15 +16,20 @@ namespace SimpleTaskApp.MobilePhones
         private readonly IRepository<ImportDetail, int> _importDetailRepository;
         private readonly IRepository<Import, int> _importRepository;
         private readonly IRepository<MobilePhone, int> _mobilePhoneRepository;
+        private readonly IRepository<MobilePhoneColor, int> _colorRepository;
 
         public ImportDetailAppService(
             IRepository<ImportDetail, int> importDetailRepository,
             IRepository<Import, int> importRepository,
-            IRepository<MobilePhone, int> mobilePhoneRepository)
+            IRepository<MobilePhone, int> mobilePhoneRepository,
+            IRepository<MobilePhoneColor, int> colorRepository)
+
         {
             _importDetailRepository = importDetailRepository;
             _importRepository = importRepository;
             _mobilePhoneRepository = mobilePhoneRepository;
+            _colorRepository = colorRepository;
+
         }
 
         // ==================== Lấy danh sách (phân trang + tìm kiếm) ====================

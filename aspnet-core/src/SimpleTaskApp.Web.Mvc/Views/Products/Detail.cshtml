@@ -47,23 +47,29 @@
 
             <div class="d-flex flex-column align-items-start gap-3 mt-4">
                 <!-- Thêm vào giỏ -->
-                <form id="addToCartForm" asp-controller="Carts" asp-action="AddToCart" method="post" class="d-flex flex-column gap-2" style="max-width:250px;">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="mobilePhoneId" value="@Model.Id" />
-                    <button type="submit" class="btn btn-primary btn-lg fw-semibold w-100"><i class="fas fa-cart-plus me-2"></i>THÊM VÀO GIỎ</button>
-                </form>
+                <button type="button" class="btn btn-primary btn-lg fw-semibold w-100 add-to-cart-btn"
+                        style="max-width:250px;" data-action="addToCart">
+                    <i class="fas fa-cart-plus me-2"></i>THÊM VÀO GIỎ
+                </button>
 
                 <!-- Mua ngay -->
-                <form id="buyNowForm" method="get" action="@Url.Action("CheckoutBuyNow","Orders")" class="d-flex flex-column gap-2" style="max-width:250px;">
-                    <input type="hidden" name="mobilePhoneId" value="@Model.Id" />
-                    <div class="quantity-control d-flex gap-2">
-                        <button type="button" class="btn-qty decrease">-</button>
-                        <input type="number" id="buyNowQuantity" name="quantity" value="1" min="1" max="@Model.StockQuantity" class="text-center" readonly />
-                        <button type="button" class="btn-qty increase">+</button>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-lg fw-semibold w-100 mt-2"><i class="fas fa-bolt me-2"></i>MUA NGAY</button>
-                </form>
+                <button type="button" class="btn btn-danger btn-lg fw-semibold w-100 buy-now-btn"
+                        style="max-width:250px;" data-action="buyNow">
+                    <i class="fas fa-bolt me-2"></i>MUA NGAY
+                </button>
             </div>
+
+            <!-- Form ẩn -->
+            <form id="addToCartForm" asp-controller="Carts" asp-action="AddToCart" method="post" style="display: none;">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="mobilePhoneId" value="@Model.Id" />
+                <input type="hidden" name="quantity" id="cartQuantity" value="1" />
+            </form>
+
+            <form id="buyNowForm" method="get" action="@Url.Action("CheckoutBuyNow","Orders")" style="display: none;">
+                <input type="hidden" name="mobilePhoneId" value="@Model.Id" />
+                <input type="hidden" name="quantity" id="buyNowQuantity" value="1" />
+            </form>
 
             <ul class="list-unstyled mt-4">
                 <li><strong>Kho hàng:</strong> @Model.StockQuantity</li>
@@ -160,8 +166,36 @@
         <p class="text-muted">Không có sản phẩm liên quan</p>
     }
 </div>
+<!-- Modal chọn số lượng -->
+<div class="modal fade" id="quantityModal" tabindex="-1" aria-labelledby="quantityModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="quantityModalLabel">Chọn số lượng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <h6 id="modalProductName">@Model.Name</h6>
+                    <p class="text-muted mb-0" id="modalStockInfo">Tồn kho: @Model.StockQuantity sản phẩm</p>
+                </div>
 
+                <div class="quantity-control d-flex justify-content-center align-items-center gap-3 mb-4">
+                    <button type="button" class="btn btn-outline-secondary btn-qty decrease" style="width: 45px; height: 45px;">-</button>
+                    <input type="number" id="modalQuantity" value="1" min="1" max="@Model.StockQuantity" readonly
+                           class="form-control text-center" style="width: 80px;" />
+                    <button type="button" class="btn btn-outline-secondary btn-qty increase" style="width: 45px; height: 45px;">+</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary" id="confirmAction">Đồng ý</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/abp/5.3.0/abp.js"></script>
-<script src="~/view-resources/Views/Carts/_Add-to-Cart.js" asp-append-version="true"></script>
 <script src="~/view-resources/Views/Carts/buyNowQuantity.js" asp-append-version="true"></script>
+
+<

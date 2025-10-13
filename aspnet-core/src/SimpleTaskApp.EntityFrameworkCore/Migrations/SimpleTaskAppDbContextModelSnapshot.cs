@@ -1834,6 +1834,33 @@ namespace SimpleTaskApp.Migrations
                     b.ToTable("AppMobilePhoneCategories");
                 });
 
+            modelBuilder.Entity("SimpleTaskApp.MobilePhones.MobilePhoneColor", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ColorHex")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ColorName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MobilePhoneId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MobilePhoneId");
+
+                    b.ToTable("AppMobilePhoneColors");
+                });
+
             modelBuilder.Entity("SimpleTaskApp.MobilePhones.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -2294,6 +2321,17 @@ namespace SimpleTaskApp.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("SimpleTaskApp.MobilePhones.MobilePhoneColor", b =>
+                {
+                    b.HasOne("SimpleTaskApp.MobilePhones.MobilePhone", "MobilePhone")
+                        .WithMany("Colors")
+                        .HasForeignKey("MobilePhoneId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MobilePhone");
+                });
+
             modelBuilder.Entity("SimpleTaskApp.MobilePhones.Order", b =>
                 {
                     b.HasOne("SimpleTaskApp.MobilePhones.Discount", "Discount")
@@ -2431,6 +2469,11 @@ namespace SimpleTaskApp.Migrations
             modelBuilder.Entity("SimpleTaskApp.MobilePhones.Import", b =>
                 {
                     b.Navigation("ImportDetails");
+                });
+
+            modelBuilder.Entity("SimpleTaskApp.MobilePhones.MobilePhone", b =>
+                {
+                    b.Navigation("Colors");
                 });
 
             modelBuilder.Entity("SimpleTaskApp.MobilePhones.MobilePhoneCategory", b =>

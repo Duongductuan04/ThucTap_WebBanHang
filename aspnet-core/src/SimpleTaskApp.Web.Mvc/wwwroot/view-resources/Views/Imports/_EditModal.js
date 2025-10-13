@@ -4,6 +4,9 @@
     const _$form = _$modal.find('form');
     const _importService = abp.services.app.import;
 
+    // ================== Khởi tạo index cho các dòng chi tiết ==================
+    let detailIndex = _$form.find('.import-detail-row').length;
+
     // ================== Lưu (Cập nhật) phiếu nhập ==================
     function saveImport() {
         if (!_$form.valid()) return;
@@ -14,12 +17,13 @@
         // Duyệt qua các dòng chi tiết sản phẩm
         _$form.find('.import-detail-row').each(function () {
             const $row = $(this);
-            const mobilePhoneId = parseInt($row.find('[name$=".MobilePhoneId"]').val());
-            const quantity = parseInt($row.find('[name$=".Quantity"]').val());
-            const importPrice = parseFloat($row.find('[name$=".ImportPrice"]').val());
+            const mobilePhoneId = parseInt($row.find('select[name*="MobilePhoneId"]').val());
+            const quantity = parseInt($row.find('input[name*="Quantity"]').val());
+            const importPrice = parseFloat($row.find('input[name*="ImportPrice"]').val());
 
             if (mobilePhoneId && quantity > 0 && importPrice >= 0) {
                 importData.ImportDetails.push({
+                    Id: parseInt($row.find('input[name*=".Id"]').val()) || 0,
                     MobilePhoneId: mobilePhoneId,
                     Quantity: quantity,
                     ImportPrice: importPrice
@@ -34,7 +38,6 @@
 
         abp.ui.setBusy(_$form);
 
-        // Gọi API update thay vì create
         _importService.update(importData)
             .done(() => {
                 _$modal.modal('hide');
@@ -56,17 +59,19 @@
         });
 
         const newRow = `
-            <div class="import-detail-row d-flex gap-2 mb-2">
-                <select name="MobilePhoneId" class="form-control" required>${optionsHtml}</select>
-                <input type="number" name="Quantity" class="form-control" placeholder="${l("Quantity")}" 
-                       value="${quantity}" min="1" required />
-                <input type="number" name="ImportPrice" class="form-control" placeholder="${l("ImportPrice")}" 
-                       value="${importPrice}" min="0" step="0.01" required />
-                <button class="btn btn-danger remove-detail" type="button">X</button>
-            </div>
+        <div class="import-detail-row d-flex gap-2 mb-2">
+            <input type="hidden" name="ImportDetails[${detailIndex}].Id" value="0" />
+            <select name="ImportDetails[${detailIndex}].MobilePhoneId" class="form-control" required>${optionsHtml}</select>
+            <input type="number" name="ImportDetails[${detailIndex}].Quantity" class="form-control" 
+                   placeholder="${l("Quantity")}" value="${quantity}" min="1" required />
+            <input type="number" name="ImportDetails[${detailIndex}].ImportPrice" class="form-control" 
+                   placeholder="${l("ImportPrice")}" value="${importPrice}" min="0" step="0.01" required />
+            <button class="btn btn-danger remove-detail" type="button">X</button>
+        </div>
         `;
 
         _$form.find('.import-detail-container').append(newRow);
+        detailIndex++; // tăng index cho dòng tiếp theo
     }
 
     // ================== Gán sự kiện ==================

@@ -1,4 +1,4 @@
-﻿@using SimpleTaskApp.MobilePhones.Dto
+﻿﻿@using SimpleTaskApp.MobilePhones.Dto
 @using SimpleTaskApp.Areas.Admin.Models.Common.Modals
 @using SimpleTaskApp.Areas.Admin.Models.Imports
 @model EditImportViewModel
@@ -8,9 +8,9 @@
 }
 
 @await Html.PartialAsync(
-    "~/Areas/Admin/Views/Shared/Modals/_ModalHeader.cshtml",
-    new ModalHeaderViewModel(L("EditImport"))
-)
+        "~/Areas/Admin/Views/Shared/Modals/_ModalHeader.cshtml",
+        new ModalHeaderViewModel(L("EditImport"))
+    )
 
 <form id="ImportEditForm" role="form" class="form-horizontal">
     <input type="hidden" name="Id" value="@Model.Import.Id" />
@@ -104,4 +104,3 @@
 <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
 <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 <script src="~/view-resources/Views/Imports/_EditModal.js" asp-append-version="true"></script>
-

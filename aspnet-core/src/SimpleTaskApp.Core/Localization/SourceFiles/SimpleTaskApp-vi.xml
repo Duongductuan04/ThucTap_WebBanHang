@@ -275,7 +275,10 @@
 		<text name="AllCategories" value="Tất cả " />
 		<text name="SearchByNameOrDescription" value="Nhập tên điện thoại hoặc mô tả" />
 		<text name="Clear" value="Xóa" />
-		
+		<text name="Colors" value="Màu sắc" />
+		<text name="AddColor" value="Thêm màu" />
+		<text name="YouCanAddMultipleColors" value="Bạn có thể thêm nhiều màu" />
+
 		<text name="CurrentUsage" value="Số lần sử dụng" />
 
 	</texts>

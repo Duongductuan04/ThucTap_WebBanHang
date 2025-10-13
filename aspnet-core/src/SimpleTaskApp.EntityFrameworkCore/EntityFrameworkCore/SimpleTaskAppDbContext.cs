@@ -12,6 +12,8 @@ namespace SimpleTaskApp.EntityFrameworkCore
         /* Define a DbSet for each entity of the application */
         public DbSet<MobilePhoneCategory> MobilePhoneCategories { get; set; }
         public DbSet<MobilePhone> MobilePhones { get; set; }
+        public DbSet<MobilePhoneColor> MobilePhoneColors { get; set; }
+
         public DbSet<Cart> Carts { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }

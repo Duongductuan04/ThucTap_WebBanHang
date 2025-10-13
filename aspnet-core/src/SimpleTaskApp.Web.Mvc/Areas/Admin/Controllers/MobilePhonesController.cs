@@ -26,16 +26,21 @@ namespace SimpleTaskApp.Areas.Admin.Controllers
         private readonly IMobilePhoneAppService _mobilePhoneAppService;
         private readonly IMobilePhoneCategoryAppService _categoryAppService;
         private readonly IWebHostEnvironment _env;
+        private readonly IMobilePhoneColorAppService _mobilePhoneColorAppService;
+
         private readonly string _imagePath;
         //private readonly IConfiguration _configuration;
         public MobilePhonesController(
             IMobilePhoneAppService mobilePhoneAppService,
             MobilePhoneCategoryAppService categoryAppService,
+                IMobilePhoneColorAppService mobilePhoneColorAppService,
+
             IWebHostEnvironment env,
             IConfiguration configuration)
         {
             _mobilePhoneAppService = mobilePhoneAppService;
             _categoryAppService = categoryAppService;
+            _mobilePhoneColorAppService = mobilePhoneColorAppService;
             _env = env;
             _imagePath = configuration["UploadSettings:ImagePath"];
         }
@@ -118,7 +123,7 @@ namespace SimpleTaskApp.Areas.Admin.Controllers
 
 
         #region Upload File 
-        
+
         public async Task<IActionResult> UploadImage(IFormFile file)
         {
             if (file == null || file.Length == 0)
