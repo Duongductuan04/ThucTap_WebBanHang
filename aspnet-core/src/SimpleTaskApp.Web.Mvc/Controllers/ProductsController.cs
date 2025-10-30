@@ -90,13 +90,15 @@ namespace SimpleTaskApp.Web.Controllers
 
             var relatedProductsAll = await _mobilePhoneAppService.GetAllAsync(request);
             var relatedProducts = relatedProductsAll.Items.Where(p => p.Id != product.Id).ToList();
+             var colors = await _mobilePhoneAppService.GetColorsByMobilePhoneIdAsync(id);
 
-            ViewBag.RelatedProducts = relatedProducts;
+      ViewBag.RelatedProducts = relatedProducts;
             ViewBag.RelatedTotalCount = relatedProductsAll.TotalCount - 1;
             ViewBag.RelatedPage = relatedPage;
             ViewBag.RelatedPageSize = relatedPageSize;
+            ViewBag.Colors = colors;
 
-            return View(product);
+      return View(product);
         }
     }
 }

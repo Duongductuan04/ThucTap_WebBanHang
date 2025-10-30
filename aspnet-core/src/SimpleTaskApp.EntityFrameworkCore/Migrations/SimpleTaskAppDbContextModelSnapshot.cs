@@ -1591,6 +1591,9 @@ namespace SimpleTaskApp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("MobilePhoneColorId")
+                        .HasColumnType("int");
+
                     b.Property<int>("MobilePhoneId")
                         .HasColumnType("int");
 
@@ -1601,6 +1604,8 @@ namespace SimpleTaskApp.Migrations
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MobilePhoneColorId");
 
                     b.HasIndex("MobilePhoneId");
 
@@ -1931,6 +1936,9 @@ namespace SimpleTaskApp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("MobilePhoneColorId")
+                        .HasColumnType("int");
+
                     b.Property<int>("MobilePhoneId")
                         .HasColumnType("int");
 
@@ -1944,6 +1952,8 @@ namespace SimpleTaskApp.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MobilePhoneColorId");
 
                     b.HasIndex("MobilePhoneId");
 
@@ -2236,6 +2246,10 @@ namespace SimpleTaskApp.Migrations
 
             modelBuilder.Entity("SimpleTaskApp.MobilePhones.Cart", b =>
                 {
+                    b.HasOne("SimpleTaskApp.MobilePhones.MobilePhoneColor", "MobilePhoneColor")
+                        .WithMany()
+                        .HasForeignKey("MobilePhoneColorId");
+
                     b.HasOne("SimpleTaskApp.MobilePhones.MobilePhone", "MobilePhone")
                         .WithMany()
                         .HasForeignKey("MobilePhoneId")
@@ -2249,6 +2263,8 @@ namespace SimpleTaskApp.Migrations
                         .IsRequired();
 
                     b.Navigation("MobilePhone");
+
+                    b.Navigation("MobilePhoneColor");
 
                     b.Navigation("User");
                 });
@@ -2351,6 +2367,10 @@ namespace SimpleTaskApp.Migrations
 
             modelBuilder.Entity("SimpleTaskApp.MobilePhones.OrderDetail", b =>
                 {
+                    b.HasOne("SimpleTaskApp.MobilePhones.MobilePhoneColor", "MobilePhoneColor")
+                        .WithMany()
+                        .HasForeignKey("MobilePhoneColorId");
+
                     b.HasOne("SimpleTaskApp.MobilePhones.MobilePhone", "MobilePhone")
                         .WithMany()
                         .HasForeignKey("MobilePhoneId")
@@ -2364,6 +2384,8 @@ namespace SimpleTaskApp.Migrations
                         .IsRequired();
 
                     b.Navigation("MobilePhone");
+
+                    b.Navigation("MobilePhoneColor");
 
                     b.Navigation("Order");
                 });

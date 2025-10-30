@@ -23,7 +23,11 @@ namespace SimpleTaskApp.MobilePhones.Dto
         // Thành tiền = giá hiển thị * số lượng
         public int? StockQuantity { get; set; }
         public string Message { get; set; }
+    // ✅ Thông tin màu sắc
+    public int? MobilePhoneColorId { get; set; }
 
-        public decimal Total => Quantity * DisplayPrice;
+    public string ColorName { get; set; }
+    public string ColorImageUrl { get; set; }
+    public decimal Total => Quantity * DisplayPrice;
     }
 }

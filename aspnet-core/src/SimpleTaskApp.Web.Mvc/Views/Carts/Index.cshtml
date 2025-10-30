@@ -1,263 +1,230 @@
 ﻿@model List<SimpleTaskApp.MobilePhones.Dto.CartDto>
 
 @{
-    Layout = "~/Views/Shared/Layout/_LayoutFrontend.cshtml";
-    ViewBag.Title = "Giỏ hàng của bạn";
+  Layout = "~/Views/Shared/Layout/_LayoutFrontend.cshtml";
+  ViewBag.Title = "Giỏ hàng của bạn";
 }
 
 <div class="container my-5">
-    <h3 class="mb-3">Giỏ hàng của bạn</h3>
+  <h3 class="mb-3">Giỏ hàng của bạn</h3>
 
-    @if (Model != null && Model.Count > 0)
-    {
-        <div class="row">
-            <!-- Danh sách sản phẩm - Cột 8 -->
-            <div class="col-lg-8 mb-4">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-success text-white py-3">
-                        <h4 class="mb-0"><i class="fas fa-shopping-cart me-2"></i>DANH SÁCH SẢN PHẨM</h4>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th class="text-center">
-                                            <input type="checkbox" id="selectAll" />
-                                        </th>
-                                        <th class="text-center">Ảnh</th>
-                                        <th class="text-center">Tên sản phẩm</th>
-                                        <th class="text-center">Đơn giá</th>
-                                        <th class="text-center">Số lượng</th>
-                                        <th class="text-end">Thành tiền</th>
-                                        <th class="text-center">Hành động</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var item in Model)
-                                    {
-                                        <tr data-cart-id="@item.Id"
-                                            class="@(!item.IsAvailable ? "table-secondary" : item.IsOutOfStock ? "table-warning" : "")">
+  @if (Model != null && Model.Count > 0)
+  {
+    <div class="row">
+      <!-- Danh sách sản phẩm -->
+      <div class="col-lg-8 mb-4">
+        <div class="card shadow-sm">
+          <div class="card-header bg-success text-white py-3">
+            <h4 class="mb-0"><i class="fas fa-shopping-cart me-2"></i>DANH SÁCH SẢN PHẨM</h4>
+          </div>
 
-                                            <!-- Checkbox -->
-                                            <td class="text-center align-middle">
-                                                @if (item.IsAvailable && !item.IsOutOfStock)
-                                                {
-                                                    <input type="checkbox"
-                                                           class="selectItem"
-                                                           name="cartIds"
-                                                           value="@item.Id"
-                                                           data-price="@item.DisplayPrice" />
-                                                }
-                                                else
-                                                {
-                                                    <i class="fas fa-exclamation-triangle text-warning"
-                                                       title="@item.StatusMessage"></i>
-                                                }
-                                            </td>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th class="text-center"><input type="checkbox" id="selectAll" /></th>
+                    <th class="text-center">Ảnh</th>
+                    <th class="text-center">Màu sắc</th>
+                    <th class="text-center">Tên sản phẩm</th>
+                    <th class="text-center">Đơn giá</th>
+                    <th class="text-center">Số lượng</th>
+                    <th class="text-end">Thành tiền</th>
+                    <th class="text-center">Hành động</th>
+                  </tr>
+                </thead>
 
-                                            <!-- Ảnh sản phẩm -->
-                                            <td class="text-center align-middle">
-                                                <img src="@item.ImageUrl"
-                                                     class="img-thumbnail @(item.IsAvailable ? "" : "opacity-50")"
-                                                     style="max-width:80px;"
-                                                     alt="@item.Name" />
-                                            </td>
+                <tbody>
+                  @foreach (var item in Model)
+                  {
+                    <tr data-cart-id="@item.Id"
+                        class="@(!item.IsAvailable ? "table-secondary" : item.IsOutOfStock ? "table-warning" : "")">
 
-                                            <!-- Tên + trạng thái -->
-                                            <td class="align-middle">
-                                                <div class="fw-semibold">@item.Name</div>
+                      <!-- Checkbox -->
+                      <td class="text-center align-middle">
+                        @if (item.IsAvailable && !item.IsOutOfStock)
+                        {
+                          <input type="checkbox" class="selectItem"
+                                 name="cartIds"
+                                 value="@item.Id"
+                                 data-price="@item.DisplayPrice" />
+                        }
+                        else
+                        {
+                          <i class="fas fa-exclamation-triangle text-warning"
+                             title="@item.StatusMessage"></i>
+                        }
+                      </td>
 
-                                                @if (!item.IsAvailable || item.IsOutOfStock)
-                                                {
-                                                    <div class="mt-1">
-                                                        <small class="badge @(!item.IsAvailable ? "bg-danger" : "bg-warning text-dark")">
-                                                            @item.StatusMessage
-                                                        </small>
-                                                    </div>
-                                                }
-                                                else
-                                                {
-                                                    <small class="text-muted">Tồn kho: @item.StockQuantity</small>
-                                                }
-                                            </td>
+                      <!-- Ảnh sản phẩm (ảnh theo màu nếu có) -->
+                      <td class="text-center align-middle">
+                        <img src="@(item.ColorImageUrl ?? item.ImageUrl)"
+                             class="img-thumbnail @(item.IsAvailable ? "" : "opacity-50")"
+                             style="max-width:80px;"
+                             alt="@item.Name" />
+                      </td>
 
-                                            <!-- Giá -->
-                                            <td class="text-center align-middle">
-                                                @String.Format("{0:N0} VNĐ", item.DisplayPrice)
-                                            </td>
+                      <!-- Màu sắc (ẩn nếu không có) -->
+                      <td class="text-center align-middle">
+                        @if (!string.IsNullOrEmpty(item.ColorName))
+                        {
+                          @item.ColorName
+                        }
+                        else
+                        {
+                          @:<!-- không hiển thị gì nếu không có màu -->
+                        }
+                      </td>
 
-                                            <!-- Số lượng -->
-                                            <td class="text-center align-middle">
-                                                @if (item.IsAvailable && !item.IsOutOfStock)
-                                                {
-                                                    <div class="quantity-control d-flex justify-content-center gap-2">
-                                                        <button type="button"
-                                                                class="btn btn-outline-secondary btn-sm btn-qty decrease">
-                                                            -
-                                                        </button>
+                      <!-- Tên sản phẩm + trạng thái -->
+                      <td class="align-middle">
+                        <div class="fw-semibold">@item.Name</div>
 
-                                                        <input type="number"
-                                                               class="form-control text-center quantity-input cartQuantity"
-                                                               value="@item.Quantity"
-                                                               min="1"
-                                                               max="@item.StockQuantity"
-                                                               data-cart-id="@item.Id"
-                                                               data-price="@item.DisplayPrice"
-                                                               readonly />
-
-                                                        <button type="button"
-                                                                class="btn btn-outline-secondary btn-sm btn-qty increase">
-                                                            +
-                                                        </button>
-                                                    </div>
-                                                }
-                                                else
-                                                {
-                                                    <span class="text-muted">Không khả dụng</span>
-                                                }
-                                            </td>
-
-                                            <!-- Thành tiền -->
-                                            <td class="text-end align-middle fw-bold item-total">
-                                                @if (item.IsAvailable)
-                                                {
-                                                    @String.Format("{0:N0} VNĐ", item.DisplayPrice * item.Quantity)
-                                                }
-                                                else
-                                                {
-                                                    <span class="text-muted">0 VNĐ</span>
-                                                }
-                                            </td>
-
-                                            <!-- Hành động -->
-                                            <td class="text-center align-middle">
-                                                <form asp-action="DeleteCartItem"
-                                                      asp-controller="Carts"
-                                                      method="post"
-                                                      onsubmit="return confirm('Bạn có chắc muốn xóa sản phẩm này?');">
-                                                    @Html.AntiForgeryToken()
-                                                    <input type="hidden" name="cartId" value="@item.Id" />
-                                                    <button type="submit" class="btn btn-danger btn-sm">
-                                                        <i class="fas fa-trash me-1"></i>Xóa
-                                                    </button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    }
-
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tổng thanh toán - Cột 4 -->
-            <div class="col-lg-4">
-                <div class="card shadow-sm">
-                    <div class="card-body p-4">
-
-                            <hr>
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span class="fw-bold fs-5">Tổng tất cả:</span>
-                                <span class="fw-bold fs-5 text-highlight" id="grandTotal">
-                                    @String.Format("{0:N0} VNĐ", Model.Sum(x => x.DisplayPrice * x.Quantity))
-                                </span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="fw-bold fs-6">Tổng đã chọn:</span>
-                                <span class="fw-bold fs-6 text-primary" id="selectedTotal">0 VNĐ</span>
-                            </div>
-                        </div>
-
-                    <!-- Nút Thanh Toán Ngay -->
-                    <form id="checkoutForm" method="get" action="@Url.Action("CheckoutCart", "Orders")" class="text-center mb-3">
-                        <button type="submit" id="checkoutBtn" class="btn btn-primary btn-lg px-5 py-3 fw-semibold">
-                            <i class="fas fa-shopping-bag me-2"></i>THANH TOÁN NGAY
-                        </button>
-                    </form>
-
-                    <!-- Nút Tiếp Tục Mua Sắm -->
-                    <div class="text-center">
-                        <a href="@Url.Action("Index", "Home")" class="btn btn-primary btn-lg px-5 py-3 fw-semibold">
-                            <i class="fas fa-arrow-left me-2"></i>TIẾP TỤC MUA SẮM
-                        </a>
-                    </div>
-                    </div>
-                </div>
-            </div>
-    }
-    else
-    {
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="card shadow-lg border-0">
-                    <div class="card-header bg-light py-4">
-                        <div class="text-center">
-                            <i class="bi bi-cart-x text-muted display-1 mb-3"></i>
-                            <h3 class="fw-bold text-dark mb-2">GIỎ HÀNG TRỐNG</h3>
-                            <p class="text-muted mb-0">Bạn chưa thêm sản phẩm nào vào giỏ hàng</p>
-                        </div>
-                    </div>
-
-                    <div class="card-body p-5">
-                        <!-- Thống kê cửa hàng -->
-                        <div class="row mb-4">
-                            <div class="col-md-4 text-center">
-                                <div class="border-end pe-3">
-                                    <div class="fw-bold text-primary fs-4">1000+</div>
-                                    <small class="text-muted">Sản phẩm</small>
-                                </div>
-                            </div>
-                            <div class="col-md-4 text-center">
-                                <div class="border-end pe-3">
-                                    <div class="fw-bold text-success fs-4">99%</div>
-                                    <small class="text-muted">Hài lòng</small>
-                                </div>
-                            </div>
-                            <div class="col-md-4 text-center">
-                                <div>
-                                    <div class="fw-bold text-warning fs-4">24/7</div>
-                                    <small class="text-muted">Hỗ trợ</small>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Nút hành động chính -->
-                        <div class="text-center mb-4">
-                            <a class="btn btn-primary btn-lg px-5 py-3 fw-semibold" href="@Url.Action("Index", "Home")">
-                                <i class="fas fa-shopping-bag me-2"></i>TIẾP TỤC MUA SẮM
-                            </a>
-                        </div>
-
-                   
-
-                        <!-- Hỗ trợ khách hàng -->
-                        <div class="text-center mt-4 pt-4 border-top">
-                            <small class="text-muted">
-                                <i class="bi bi-headset me-1"></i>
-                                Cần hỗ trợ? Gọi ngay <strong class="text-primary">0797183943</strong>
-                                hoặc <a href="#" class="text-decoration-none">chat với chúng tôi</a>
+                        @if (!item.IsAvailable || item.IsOutOfStock)
+                        {
+                          <div class="mt-1">
+                            <small class="badge @(!item.IsAvailable ? "bg-danger" : "bg-warning text-dark")">
+                              @item.StatusMessage
                             </small>
-                        </div>
-                    </div>
-                </div>
+                          </div>
+                        }
+                        else
+                        {
+                          <small class="text-muted">Tồn kho: @item.StockQuantity</small>
+                        }
+                      </td>
 
+                      <!-- Giá -->
+                      <td class="text-center align-middle">
+                        @String.Format("{0:N0} VNĐ", item.DisplayPrice)
+                      </td>
 
+                      <!-- Số lượng -->
+                      <td class="text-center align-middle">
+                        @if (item.IsAvailable && !item.IsOutOfStock)
+                        {
+                          <div class="quantity-control d-flex justify-content-center gap-2">
+                            <button type="button"
+                                    class="btn btn-outline-secondary btn-sm btn-qty decrease">
+                              -
+                            </button>
+
+                            <input type="number"
+                                   class="form-control text-center quantity-input cartQuantity"
+                                   value="@item.Quantity"
+                                   min="1"
+                                   max="@item.StockQuantity"
+                                   data-cart-id="@item.Id"
+                                   data-price="@item.DisplayPrice"
+                                   readonly />
+
+                            <button type="button"
+                                    class="btn btn-outline-secondary btn-sm btn-qty increase">
+                              +
+                            </button>
+                          </div>
+                        }
+                        else
+                        {
+                          <span class="text-muted">Không khả dụng</span>
+                        }
+                      </td>
+
+                      <!-- Thành tiền -->
+                      <td class="text-end align-middle fw-bold item-total">
+                        @if (item.IsAvailable)
+                        {
+                          @String.Format("{0:N0} VNĐ", item.DisplayPrice * item.Quantity)
+                        }
+                        else
+                        {
+                          <span class="text-muted">0 VNĐ</span>
+                        }
+                      </td>
+
+                      <!-- Hành động -->
+                      <td class="text-center align-middle">
+                        <form asp-action="DeleteCartItem"
+                              asp-controller="Carts"
+                              method="post"
+                              onsubmit="return confirm('Bạn có chắc muốn xóa sản phẩm này?');">
+                          @Html.AntiForgeryToken()
+                          <input type="hidden" name="cartId" value="@item.Id" />
+                          <button type="submit" class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash me-1"></i>Xóa
+                          </button>
+                        </form>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
             </div>
+          </div>
         </div>
-   
-    }
+      </div>
+
+      <!-- Tổng thanh toán -->
+      <div class="col-lg-4">
+        <div class="card shadow-sm">
+          <div class="card-body p-4">
+            <hr>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="fw-bold fs-5">Tổng tất cả:</span>
+              <span class="fw-bold fs-5 text-highlight" id="grandTotal">
+                @String.Format("{0:N0} VNĐ", Model.Sum(x => x.DisplayPrice * x.Quantity))
+              </span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="fw-bold fs-6">Tổng đã chọn:</span>
+              <span class="fw-bold fs-6 text-primary" id="selectedTotal">0 VNĐ</span>
+            </div>
+          </div>
+
+          <!-- Nút thanh toán -->
+          <form id="checkoutForm" method="get" action="@Url.Action("CheckoutCart", "Orders")" class="text-center mb-3">
+            <button type="submit" id="checkoutBtn" class="btn btn-primary btn-lg px-5 py-3 fw-semibold">
+              <i class="fas fa-shopping-bag me-2"></i>THANH TOÁN NGAY
+            </button>
+          </form>
+
+          <!-- Nút mua sắm -->
+          <div class="text-center mb-4">
+            <a href="@Url.Action("Index", "Home")" class="btn btn-primary btn-lg px-5 py-3 fw-semibold">
+              <i class="fas fa-arrow-left me-2"></i>TIẾP TỤC MUA SẮM
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+  else
+  {
+    <!-- Giỏ hàng trống -->
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="card shadow-lg border-0">
+          <div class="card-header bg-light py-4 text-center">
+            <i class="bi bi-cart-x text-muted display-1 mb-3"></i>
+            <h3 class="fw-bold text-dark mb-2">GIỎ HÀNG TRỐNG</h3>
+            <p class="text-muted mb-0">Bạn chưa thêm sản phẩm nào vào giỏ hàng</p>
+          </div>
+          <div class="card-body p-5 text-center">
+            <a class="btn btn-primary btn-lg px-5 py-3 fw-semibold" href="@Url.Action("Index", "Home")">
+              <i class="fas fa-shopping-bag me-2"></i>TIẾP TỤC MUA SẮM
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
 </div>
 
-<!-- Scripts -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/abp/5.3.0/abp.js"></script>
 <script>
-    const checkoutUrl = '@Url.Action("CheckoutCart", "Orders")';
-    const updateQuantityUrl = '@Url.Action("UpdateQuantityAjax", "Carts")';
+  const checkoutUrl = '@Url.Action("CheckoutCart", "Orders")';
+  const updateQuantityUrl = '@Url.Action("UpdateQuantityAjax", "Carts")';
 </script>
-
 <script src="~/view-resources/Views/Carts/CheckOut.js" asp-append-version="true"></script>
 <script src="~/view-resources/Views/Carts/buyNowQuantity.js" asp-append-version="true"></script>

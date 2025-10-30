@@ -8,5 +8,7 @@ namespace SimpleTaskApp.MobilePhones.Dto
         public long UserId { get; set; }
         public int MobilePhoneId { get; set; }
         public int Quantity { get; set; } = 1;
-    }
+        public int? MobilePhoneColorId { get; set; } // ✅ thêm dòng này
+
+  }
 }

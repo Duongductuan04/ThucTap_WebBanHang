@@ -199,42 +199,51 @@
                                         <th class="text-end">Thành tiền</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    @if (Model.OrderDetails != null && Model.OrderDetails.Any())
-                                    {
-                                        foreach (var item in Model.OrderDetails)
-                                        {
-                                            <tr class="cart-item" data-product-id="@item.MobilePhoneId" data-unit-price="@item.UnitPrice">
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        @if (!string.IsNullOrEmpty(item.ImageUrl))
-                                                        {
-                                                            <img src="@item.ImageUrl" class="img-thumbnail me-3" width="60" alt="@item.MobilePhoneName" />
-                                                        }
-                                                        <div>
-                                                            <div class="fw-semibold">@item.MobilePhoneName</div>
-                                                            <small class="text-muted">Mã SP: @item.MobilePhoneId</small>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td class="text-center align-middle">
-                                                    <span class="badge bg-secondary">@item.Quantity</span>
-                                                </td>
-                                                <td class="text-end align-middle">@item.UnitPrice.ToString("N0") đ</td>
-                                                <td class="text-end align-middle fw-bold">@((item.Quantity * item.UnitPrice).ToString("N0")) đ</td>
-                                            </tr>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <tr>
-                                            <td colspan="4" class="text-center py-4">
-                                                <i class="fas fa-shopping-cart fa-2x text-muted mb-2"></i>
-                                                <p class="text-muted">Đơn hàng trống</p>
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
+                <tbody>
+                  @if (Model.OrderDetails != null && Model.OrderDetails.Any())
+                  {
+                    foreach (var item in Model.OrderDetails)
+                    {
+                      <tr class="cart-item" data-product-id="@item.MobilePhoneId" data-unit-price="@item.UnitPrice" data-color-id="@item.MobilePhoneColorId">
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <img src="@item.ImageUrl" class="img-thumbnail me-3" width="60" alt="@item.MobilePhoneName" />
+                            <div>
+                              <div class="fw-semibold">@item.MobilePhoneName</div>
+                              <small class="text-muted d-block">Mã SP: @item.MobilePhoneId</small>
+                              @if (!string.IsNullOrEmpty(item.ColorName))
+                              {
+                                <small class="text-muted d-block">
+                                  Màu: <span class="fw-semibold">@item.ColorName</span>
+                                  @if (!string.IsNullOrEmpty(item.ColorImageUrl))
+                                  {
+                                    <img src="@item.ColorImageUrl" width="30" class="ms-1" alt="@item.ColorName" />
+                                  }
+                                </small>
+                              }
+                            </div>
+                          </div>
+
+                        </td>
+
+                        <td class="text-center align-middle">
+                          <span class="badge bg-secondary">@item.Quantity</span>
+                        </td>
+                        <td class="text-end align-middle">@item.UnitPrice.ToString("N0") đ</td>
+                        <td class="text-end align-middle fw-bold">@((item.Quantity * item.UnitPrice).ToString("N0")) đ</td>
+                      </tr>
+                    }
+                  }
+                  else
+                  {
+                    <tr>
+                      <td colspan="4" class="text-center py-4">
+                        <i class="fas fa-shopping-cart fa-2x text-muted mb-2"></i>
+                        <p class="text-muted">Đơn hàng trống</p>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
                             </table>
                         </div>
 

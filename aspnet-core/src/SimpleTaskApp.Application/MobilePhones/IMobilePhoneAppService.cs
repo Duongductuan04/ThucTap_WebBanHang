@@ -14,7 +14,8 @@ namespace SimpleTaskApp.MobilePhones
         Task<MobilePhoneDto> GetAsync(EntityDto<int> input);
         Task<PagedResultDto<MobilePhoneDto>> GetAllAsync(PagedMobilePhoneResultRequestDto input);
         Task<List<string>> GetBrandsByCategoryAsync(int? categoryId);
+         Task<List<MobilePhoneColorDto>> GetColorsByMobilePhoneIdAsync(int mobilePhoneId);
 
 
-    }
+  }
 }

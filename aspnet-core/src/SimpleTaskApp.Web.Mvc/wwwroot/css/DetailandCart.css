@@ -681,4 +681,57 @@ p.mb-4 {
 }
 
 .modal-footer {
-    border-top: 2px solid #dee2e6;
+  border-top: 2px solid #dee2e6;
+}
+
+
+
+.color-radio-container {
+  display: flex;
+  flex-wrap: wrap; /* xuống dòng nếu quá nhiều */
+  gap: 8px; /* khoảng cách giữa các ô */
+  justify-content: flex-start;
+}
+
+.color-radio-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px; /* nhỏ hơn trước */
+  border: 1px solid #ccc;
+  border-radius: 10px; /* bo tròn vừa phải */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: #fff;
+  flex: 0 0 auto; /* width tự co theo nội dung */
+}
+
+  .color-radio-box:hover {
+    border-color: #000;
+    background-color: #f8f9fa;
+  }
+
+  .color-radio-box input[type="radio"] {
+    display: none; /* ẩn radio thật */
+  }
+
+.color-circle {
+  width: 20px; /* nhỏ hơn */
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid #aaa;
+  flex-shrink: 0;
+}
+
+.color-radio-box input[type="radio"]:checked + .color-circle {
+  border: 2px solid #000;
+}
+
+.color-radio-box.selected {
+  border: 2px solid #000; /* viền ô khi chọn */
+}
+
+.color-name {
+  font-size: 0.85rem; /* chữ nhỏ hơn */
+  color: #333;
+}

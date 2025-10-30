@@ -1,202 +1,251 @@
 ﻿@model SimpleTaskApp.MobilePhones.Dto.MobilePhoneDto
 
 @{
-    Layout = "~/Views/Shared/Layout/_LayoutFrontend.cshtml";
-    ViewBag.Title = Model?.Name ?? "Chi tiết sản phẩm";
+  Layout = "~/Views/Shared/Layout/_LayoutFrontend.cshtml";
+  ViewBag.Title = Model?.Name ?? "Chi tiết sản phẩm";
 
-    // Sản phẩm liên quan
-    var relatedProducts = ViewBag.RelatedProducts as List<SimpleTaskApp.MobilePhones.Dto.MobilePhoneDto> ?? new List<SimpleTaskApp.MobilePhones.Dto.MobilePhoneDto>();
-    int relatedPage = ViewBag.RelatedPage ?? 1;
-    int relatedPageSize = ViewBag.RelatedPageSize ?? 8;
-    int relatedTotalCount = ViewBag.RelatedTotalCount ?? 0;
+  var relatedProducts = ViewBag.RelatedProducts as List<SimpleTaskApp.MobilePhones.Dto.MobilePhoneDto> ?? new List<SimpleTaskApp.MobilePhones.Dto.MobilePhoneDto>();
+  int relatedPage = ViewBag.RelatedPage ?? 1;
+  int relatedPageSize = ViewBag.RelatedPageSize ?? 8;
+  int relatedTotalCount = ViewBag.RelatedTotalCount ?? 0;
+
+  var colors = ViewBag.Colors as List<SimpleTaskApp.MobilePhones.Dto.MobilePhoneColorDto> ?? new List<SimpleTaskApp.MobilePhones.Dto.MobilePhoneColorDto>();
 }
 
 <div class="container my-5">
-    <h3 class="mb-3">Chi Tiết Sản Phẩm</h3>
-    <div class="row">
-        <!-- Ảnh sản phẩm -->
-        <div class="col-lg-6 col-md-6 mb-4 position-relative">
-            <div class="card border-0 shadow-sm">
-                <img src="@Model.ImageUrl" class="card-img-top img-fluid" alt="@Model.Name" style="object-fit: contain; max-height: 500px;" />
-                @if (Model.IsOnSale)
-                {
-                    <span class="badge bg-danger position-absolute top-0 end-0 m-2">SALE</span>
-                }
-            </div>
+  <h3 class="mb-3">Chi Tiết Sản Phẩm</h3>
+  <div class="row">
+    <!-- Ảnh sản phẩm -->
+    <div class="col-lg-6 col-md-6 mb-4 position-relative">
+      <div class="card border-0 shadow-sm">
+        <img id="mainProductImage" src="@Model.ImageUrl" class="card-img-top img-fluid" alt="@Model.Name" style="object-fit: contain; max-height: 500px;" />
+        @if (Model.IsOnSale)
+        {
+          <span class="badge bg-danger position-absolute top-0 end-0 m-2">SALE</span>
+        }
+      </div>
+    </div>
+
+    <!-- Thông tin sản phẩm -->
+    <div class="col-lg-6 col-md-6">
+      <h1 class="fw-bold">@Model.Name</h1>
+      <h5 class="text-muted mb-3">@Model.Brand</h5>
+
+      <div class="mb-3">
+        @if (Model.IsOnSale && Model.DiscountPrice.HasValue)
+        {
+          <span class="h4 text-danger fw-bold">@String.Format("{0:N0} VNĐ", Model.DiscountPrice)</span>
+          <span class="text-muted text-decoration-line-through ms-2">@String.Format("{0:N0} VNĐ", Model.Price)</span>
+        }
+        else
+        {
+          <span class="h4 fw-bold">@String.Format("{0:N0} VNĐ", Model.Price)</span>
+        }
+      </div>
+
+      <p class="mb-4">@Model.Description</p>
+      <!-- Chọn màu theo style Apple Store -->
+      @if (colors.Any())
+      {
+        <div class="mt-4">
+          <div class="color-radio-container">
+            @foreach (var color in colors)
+            {
+              <label class="color-radio-box">
+                <input type="radio" name="selectedColor" value="@color.ColorHex" data-image-url="@color.ImageUrl">
+                <span class="color-circle" style="background-color:@color.ColorHex;"></span>
+                <span class="color-name">@color.ColorName</span>
+              </label>
+            }
+          </div>
         </div>
+      }
 
-        <!-- Thông tin sản phẩm -->
-        <div class="col-lg-6 col-md-6">
-            <h1 class="fw-bold">@Model.Name</h1>
-            <h5 class="text-muted mb-3">@Model.Brand</h5>
+      <div class="d-flex flex-column align-items-start gap-3 mt-4">
+        <button type="button" class="btn btn-primary btn-lg fw-semibold w-100 add-to-cart-btn"
+                style="max-width:250px;" data-action="addToCart">
+          <i class="fas fa-cart-plus me-2"></i>THÊM VÀO GIỎ
+        </button>
 
-            <div class="mb-3">
-                @if (Model.IsOnSale && Model.DiscountPrice.HasValue)
+        <button type="button" class="btn btn-danger btn-lg fw-semibold w-100 buy-now-btn"
+                style="max-width:250px;" data-action="buyNow">
+          <i class="fas fa-bolt me-2"></i>MUA NGAY
+        </button>
+      </div>
+
+      <!-- Form ẩn -->
+      <form id="addToCartForm" asp-controller="Carts" asp-action="AddToCart" method="post" style="display: none;">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="mobilePhoneId" value="@Model.Id" />
+        <input type="hidden" name="quantity" id="cartQuantity" value="1" />
+        <input type="hidden" name="MobilePhoneColorId" />
+      </form>
+
+      <form id="buyNowForm" method="get" action="@Url.Action("CheckoutBuyNow","Orders")" style="display: none;">
+        <input type="hidden" name="mobilePhoneId" value="@Model.Id" />
+        <input type="hidden" name="quantity" id="buyNowQuantity" value="1" />
+        <input type="hidden" name="MobilePhoneColorId" id="buyNowColorId" /> <!-- ✅ thêm dòng này -->
+
+      </form>
+
+      <ul class="list-unstyled mt-4">
+        <li><strong>Kho hàng:</strong> @Model.StockQuantity</li>
+        <li><strong>Danh mục:</strong> @Model.CategoryName</li>
+        <li><strong>Ngày ra mắt:</strong> @Model.CreationTime.ToString("dd/MM/yyyy")</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Sản phẩm liên quan -->
+  <h3 class="mb-3">Sản phẩm liên quan</h3>
+  @if (relatedProducts.Any())
+  {
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
+      @foreach (var item in relatedProducts)
+      {
+        <div class="col">
+          <div class="card h-100 shadow-sm product-card border-0">
+            <div class="position-relative">
+              <img src="@item.ImageUrl" class="card-img-top p-3" alt="@item.Name" style="object-fit: contain; height:200px;" />
+              @if (item.IsOnSale && item.DiscountPrice.HasValue)
+              {
+                <span class="badge bg-danger position-absolute top-0 end-0 m-2">SALE</span>
+              }
+            </div>
+            <div class="card-body text-center">
+              <h6 class="card-title mb-2">@item.Name</h6>
+              <p class="card-text mb-2">
+                @if (item.IsOnSale && item.DiscountPrice.HasValue)
                 {
-                    <span class="h4 text-danger fw-bold">@String.Format("{0:N0} VNĐ", Model.DiscountPrice)</span>
-                    <span class="text-muted text-decoration-line-through ms-2">@String.Format("{0:N0} VNĐ", Model.Price)</span>
+                  <span class="text-muted text-decoration-line-through me-2">@item.Price.ToString("N0") đ</span>
+                  <span class="text-danger fw-bold">@item.DiscountPrice.Value.ToString("N0") đ</span>
                 }
                 else
                 {
-                    <span class="h4 fw-bold">@String.Format("{0:N0} VNĐ", Model.Price)</span>
+                  <span class="fw-bold text-dark">@item.Price.ToString("N0") đ</span>
                 }
+              </p>
+              <a asp-controller="Products" asp-action="Detail" asp-route-id="@item.Id" class="btn btn-outline-primary btn-sm w-100">Xem chi tiết</a>
             </div>
-
-
-            <p class="mb-4">@Model.Description</p>
-
-            <div class="d-flex flex-column align-items-start gap-3 mt-4">
-                <!-- Thêm vào giỏ -->
-                <button type="button" class="btn btn-primary btn-lg fw-semibold w-100 add-to-cart-btn"
-                        style="max-width:250px;" data-action="addToCart">
-                    <i class="fas fa-cart-plus me-2"></i>THÊM VÀO GIỎ
-                </button>
-
-                <!-- Mua ngay -->
-                <button type="button" class="btn btn-danger btn-lg fw-semibold w-100 buy-now-btn"
-                        style="max-width:250px;" data-action="buyNow">
-                    <i class="fas fa-bolt me-2"></i>MUA NGAY
-                </button>
-            </div>
-
-            <!-- Form ẩn -->
-            <form id="addToCartForm" asp-controller="Carts" asp-action="AddToCart" method="post" style="display: none;">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="mobilePhoneId" value="@Model.Id" />
-                <input type="hidden" name="quantity" id="cartQuantity" value="1" />
-            </form>
-
-            <form id="buyNowForm" method="get" action="@Url.Action("CheckoutBuyNow","Orders")" style="display: none;">
-                <input type="hidden" name="mobilePhoneId" value="@Model.Id" />
-                <input type="hidden" name="quantity" id="buyNowQuantity" value="1" />
-            </form>
-
-            <ul class="list-unstyled mt-4">
-                <li><strong>Kho hàng:</strong> @Model.StockQuantity</li>
-                <li><strong>Danh mục:</strong> @Model.CategoryName</li>
-                <li><strong>Ngày ra mắt:</strong> @Model.CreationTime.ToString("dd/MM/yyyy")</li>
-            </ul>
+          </div>
         </div>
+      }
     </div>
 
-    <!-- Sản phẩm liên quan -->
-    <h3 class="mb-3">Sản phẩm liên quan</h3>
-    @if (relatedProducts.Any())
+    @* Pagination rút gọn *@
+    @if (relatedTotalCount > relatedPageSize)
     {
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
-            @foreach (var item in relatedProducts)
+      var totalPages = (int)Math.Ceiling((double)relatedTotalCount / relatedPageSize);
+      int displayPages = 5;
+      int startPage = Math.Max(1, relatedPage - 2);
+      int endPage = Math.Min(totalPages, startPage + displayPages - 1);
+
+      <nav class="mt-3">
+        <ul class="pagination justify-content-center">
+          <li class="page-item @(relatedPage == 1 ? "disabled" : "")">
+            <a class="page-link" href="@Url.Action("Detail", "Products", new { id = Model.Id, relatedPage = relatedPage - 1 })">Trước</a>
+          </li>
+
+          @if (startPage > 1)
+          {
+            <li class="page-item"><a class="page-link" href="@Url.Action("Detail", "Products", new { id = Model.Id, relatedPage = 1 })">1</a></li>
+            @if (startPage > 2)
             {
-                <div class="col">
-                    <div class="card h-100 shadow-sm product-card border-0">
-                        <div class="position-relative">
-                            <img src="@item.ImageUrl" class="card-img-top p-3" alt="@item.Name" style="object-fit: contain; height:200px;" />
-                            @if (item.IsOnSale && item.DiscountPrice.HasValue)
-                            {
-                                <span class="badge bg-danger position-absolute top-0 end-0 m-2">SALE</span>
-                            }
-                        </div>
-                        <div class="card-body text-center">
-                            <h6 class="card-title mb-2">@item.Name</h6>
-                            <p class="card-text mb-2">
-                                @if (item.IsOnSale && item.DiscountPrice.HasValue)
-                                {
-                                    <span class="text-muted text-decoration-line-through me-2">@item.Price.ToString("N0") đ</span>
-                                    <span class="text-danger fw-bold">@item.DiscountPrice.Value.ToString("N0") đ</span>
-                                }
-                                else
-                                {
-                                    <span class="fw-bold text-dark">@item.Price.ToString("N0") đ</span>
-                                }
-                            </p>
-                            <a asp-controller="Products" asp-action="Detail" asp-route-id="@item.Id" class="btn btn-outline-primary btn-sm w-100">Xem chi tiết</a>
-                        </div>
-                    </div>
-                </div>
+              <li class="page-item disabled"><span class="page-link">…</span></li>
             }
-        </div>
+          }
 
-        @* Pagination rút gọn *@
-        @if (relatedTotalCount > relatedPageSize)
-        {
-            var totalPages = (int)Math.Ceiling((double)relatedTotalCount / relatedPageSize);
-            int displayPages = 5;
-            int startPage = Math.Max(1, relatedPage - 2);
-            int endPage = Math.Min(totalPages, startPage + displayPages - 1);
+          @for (int i = startPage; i <= endPage; i++)
+          {
+            <li class="page-item @(i == relatedPage ? "active" : "")">
+              <a class="page-link" href="@Url.Action("Detail", "Products", new { id = Model.Id, relatedPage = i })">@i</a>
+            </li>
+          }
 
-            <nav class="mt-3">
-                <ul class="pagination justify-content-center">
-                    <li class="page-item @(relatedPage == 1 ? "disabled" : "")">
-                        <a class="page-link" href="@Url.Action("Detail", "Products", new { id = Model.Id, relatedPage = relatedPage - 1 })">Trước</a>
-                    </li>
+          @if (endPage < totalPages)
+          {
+            @if (endPage < totalPages - 1)
+            {
+              <li class="page-item disabled"><span class="page-link">…</span></li>
+            }
+            <li class="page-item"><a class="page-link" href="@Url.Action("Detail", "Products", new { id = Model.Id, relatedPage = totalPages })">@totalPages</a></li>
+          }
 
-                    @if (startPage > 1)
-                    {
-                        <li class="page-item"><a class="page-link" href="@Url.Action("Detail", "Products", new { id = Model.Id, relatedPage = 1 })">1</a></li>
-                        @if (startPage > 2)
-                        {
-                            <li class="page-item disabled"><span class="page-link">…</span></li>
-                        }
-                    }
-
-                    @for (int i = startPage; i <= endPage; i++)
-                    {
-                        <li class="page-item @(i == relatedPage ? "active" : "")">
-                            <a class="page-link" href="@Url.Action("Detail", "Products", new { id = Model.Id, relatedPage = i })">@i</a>
-                        </li>
-                    }
-
-                    @if (endPage < totalPages)
-                    {
-                        @if (endPage < totalPages - 1)
-                        {
-                            <li class="page-item disabled"><span class="page-link">…</span></li>
-                        }
-                        <li class="page-item"><a class="page-link" href="@Url.Action("Detail", "Products", new { id = Model.Id, relatedPage = totalPages })">@totalPages</a></li>
-                    }
-
-                    <li class="page-item @(relatedPage == totalPages ? "disabled" : "")">
-                        <a class="page-link" href="@Url.Action("Detail", "Products", new { id = Model.Id, relatedPage = relatedPage + 1 })">Sau</a>
-                    </li>
-                </ul>
-            </nav>
-        }
+          <li class="page-item @(relatedPage == totalPages ? "disabled" : "")">
+            <a class="page-link" href="@Url.Action("Detail", "Products", new { id = Model.Id, relatedPage = relatedPage + 1 })">Sau</a>
+          </li>
+        </ul>
+      </nav>
     }
-    else
-    {
-        <p class="text-muted">Không có sản phẩm liên quan</p>
-    }
+  }
+  else
+  {
+    <p class="text-muted">Không có sản phẩm liên quan</p>
+  }
 </div>
-<!-- Modal chọn số lượng -->
+<!-- 🔸 Modal chọn màu sắc & số lượng -->
 <div class="modal fade" id="quantityModal" tabindex="-1" aria-labelledby="quantityModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="quantityModalLabel">Chọn số lượng</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="text-center mb-4">
-                    <h6 id="modalProductName">@Model.Name</h6>
-                    <p class="text-muted mb-0" id="modalStockInfo">Tồn kho: @Model.StockQuantity sản phẩm</p>
-                </div>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <!-- Header -->
+      <div class="modal-header">
+        <h5 class="modal-title" id="quantityModalLabel">Vui lòng chọn thông tin sản phẩm</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
 
-                <div class="quantity-control d-flex justify-content-center align-items-center gap-3 mb-4">
-                    <button type="button" class="btn btn-outline-secondary btn-qty decrease" style="width: 45px; height: 45px;">-</button>
-                    <input type="number" id="modalQuantity" value="1" min="1" max="@Model.StockQuantity" readonly
-                           class="form-control text-center" style="width: 80px;" />
-                    <button type="button" class="btn btn-outline-secondary btn-qty increase" style="width: 45px; height: 45px;">+</button>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                <button type="button" class="btn btn-primary" id="confirmAction">Đồng ý</button>
-            </div>
+      <!-- Body -->
+      <div class="modal-body">
+        <!-- 🔹 Tên sản phẩm -->
+        <div class="text-center mb-3">
+          <h6 id="modalProductName" data-id="@Model.Id">@Model.Name</h6>
+          <p class="text-muted mb-0" id="modalStockInfo">Tồn kho: @Model.StockQuantity sản phẩm</p>
         </div>
+
+        <!-- 🔹 Chọn màu sắc -->
+        @if (colors.Any())
+        {
+          <div class="mt-4 text-center">
+            <div class="color-radio-container d-flex flex-wrap justify-content-center gap-3">
+              @foreach (var color in colors)
+              {
+                <label class="color-radio-box text-center">
+                  <!-- ✅ Thêm data-color-id -->
+                  <input type="radio"
+                         name="selectedColor"
+                         value="@color.ColorHex"
+                         data-color-id="@color.Id"
+                         data-image-url="@color.ImageUrl"
+                         class="d-none">
+                  <span class="color-circle" style="background-color:@color.ColorHex;"></span>
+                  <div class="color-name mt-1">@color.ColorName</div>
+                </label>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- 🔸 Chọn số lượng -->
+        <div class="quantity-control d-flex justify-content-center align-items-center gap-3 mt-4">
+          <button type="button" class="btn btn-outline-secondary btn-qty decrease" style="width:45px; height:45px;">-</button>
+          <input type="number" id="modalQuantity" value="1" min="1" max="@Model.StockQuantity" readonly
+                 class="form-control text-center" style="width:80px;" />
+          <button type="button" class="btn btn-outline-secondary btn-qty increase" style="width:45px; height:45px;">+</button>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+        <button type="button" class="btn btn-primary" id="confirmAction">Đồng ý</button>
+      </div>
     </div>
+  </div>
 </div>
+
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/abp/5.3.0/abp.js"></script>
-<script src="~/view-resources/Views/Carts/_Add-to-Cart.js" asp-append-version="true"></script>
+<script>
+  const updateQuantityUrl = '@Url.Action("UpdateQuantityAjax", "Carts")';
+</script>
 <script src="~/view-resources/Views/Carts/buyNowQuantity.js" asp-append-version="true"></script>
 
-<

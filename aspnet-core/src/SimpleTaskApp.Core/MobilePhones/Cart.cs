@@ -14,7 +14,11 @@ namespace SimpleTaskApp.MobilePhones
         public int MobilePhoneId { get; set; }
         [ForeignKey(nameof(MobilePhoneId))]
         public MobilePhone MobilePhone { get; set; }
-
-        public int Quantity { get; set; } = 1;
-    }
+    // 🆕 Thêm khóa ngoại tham chiếu đến bảng màu
+        public int? MobilePhoneColorId { get; set; }
+        [ForeignKey(nameof(MobilePhoneColorId))]
+        public MobilePhoneColor MobilePhoneColor { get; set; }
+      public int Quantity { get; set; } = 1;
+  
+  }
 }

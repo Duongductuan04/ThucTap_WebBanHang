@@ -42,42 +42,42 @@ namespace SimpleTaskApp.Web.Controllers
                 UserId = _abpSession.UserId.Value, MaxResultCount = 100 });
             return View(carts.Items);
         }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<JsonResult> AddToCart(int mobilePhoneId, int quantity)
-        {
-            if (!_abpSession.UserId.HasValue)
-            {
-                return Json(new { success = false, message = "Bạn cần đăng nhập trước!" });
-            }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<JsonResult> AddToCart(int mobilePhoneId, int quantity, int? mobilePhoneColorId) // <-- nullable
+    {
+      if (!_abpSession.UserId.HasValue)
+      {
+        return Json(new { success = false, message = "Bạn cần đăng nhập trước!" });
+      }
 
-            if (mobilePhoneId <= 0 || quantity <= 0)
-            {
-                return Json(new { success = false, message = "Dữ liệu không hợp lệ!" });
-            }
+      if (mobilePhoneId <= 0 || quantity <= 0)
+      {
+        return Json(new { success = false, message = "Dữ liệu không hợp lệ!" });
+      }
 
-            var cartDto = await _cartAppService.AddToCartAsync(new CreateCartDto
-            {
-                MobilePhoneId = mobilePhoneId,
-                Quantity = quantity,
-                UserId = _abpSession.UserId.Value
-            });
+      var cartDto = await _cartAppService.AddToCartAsync(new CreateCartDto
+      {
+        MobilePhoneId = mobilePhoneId,
+        Quantity = quantity,
+        MobilePhoneColorId = mobilePhoneColorId , // nếu null có thể gán 0 hoặc xử lý trong service
+        UserId = _abpSession.UserId.Value
+      });
 
-            if (cartDto == null)
-            {
-                return Json(new { success = false, message = "Thêm vào giỏ hàng thất bại!" });
-            }
+      if (cartDto == null)
+      {
+        return Json(new { success = false, message = "Thêm vào giỏ hàng thất bại!" });
+      }
 
-            return Json(new
-            {
-                success = true,
-                message = $"Đã thêm \"{cartDto.Name}\" (x{cartDto.Quantity}) vào giỏ hàng!",
-                cart = cartDto
-            });
-        }
+      return Json(new
+      {
+        success = true,
+        message = $"Đã thêm \"{cartDto.Name}\" (x{cartDto.Quantity}) vào giỏ hàng!",
+        cart = cartDto
+      });
+    }
 
-
-        [HttpPost]
+    [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> UpdateQuantityAjax(int cartId, int quantity)
         {

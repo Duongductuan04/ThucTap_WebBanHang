@@ -206,18 +206,29 @@
                                         foreach (var item in Model.OrderDetails)
                                         {
                                             <tr class="cart-item" data-product-id="@item.MobilePhoneId" data-unit-price="@item.UnitPrice">
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        @if (!string.IsNullOrEmpty(item.ImageUrl))
-                                                        {
-                                                            <img src="@item.ImageUrl" class="img-thumbnail me-3" width="60" alt="@item.MobilePhoneName" />
-                                                        }
-                                                        <div>
-                                                            <div class="fw-semibold">@item.MobilePhoneName</div>
-                                                            <small class="text-muted">Mã SP: @item.MobilePhoneId</small>
-                                                        </div>
-                                                    </div>
-                                                </td>
+                                      <td>
+                                        <div class="d-flex align-items-center">
+                                          @if (!string.IsNullOrEmpty(item.ColorImageUrl ?? item.ImageUrl))
+                                          {
+                                            <img src="@(item.ColorImageUrl ?? item.ImageUrl)"
+                                                 class="img-thumbnail me-3"
+                                                 width="60"
+                                                 alt="@item.MobilePhoneName" />
+                                          }
+                                          <div>
+                                            <div class="fw-semibold">@item.MobilePhoneName</div>
+                                            <small class="text-muted d-block">Mã SP: @item.MobilePhoneId</small>
+
+                                            @if (!string.IsNullOrEmpty(item.ColorName))
+                                            {
+                                              <small class="text-muted d-block">
+                                                Màu: <span class="fw-semibold">@item.ColorName</span>
+                                              </small>
+                                            }
+                                          </div>
+                                        </div>
+                                      </td>
+
                                                 <td class="text-center align-middle">
                                                     <span class="badge bg-secondary">@item.Quantity</span>
                                                 </td>

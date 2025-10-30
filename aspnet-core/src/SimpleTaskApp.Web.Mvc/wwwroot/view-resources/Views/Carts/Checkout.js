@@ -58,7 +58,9 @@ $(function () {
     const updateShippingFee = () => {
         let fee = { '0': 20000, '1': 40000, '2': 60000 }[$shippingSelect.val()] || 20000;
         $shippingFee.text(formatCurrency(fee)).data('value', fee);
-        updateFinalAmount();
+      updateFinalAmount();
+      $shippingSelect.on('change', updateShippingFee);
+
     };
 
     const resetDiscountInput = () => {

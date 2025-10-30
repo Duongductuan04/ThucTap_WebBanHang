@@ -226,9 +226,30 @@ namespace SimpleTaskApp.MobilePhones
                 .Distinct()
                 .ToListAsync();
         }
+    public async Task<List<MobilePhoneColorDto>> GetColorsByMobilePhoneIdAsync(int mobilePhoneId)
+    {
+      // Lấy màu kèm MobilePhone
+      var colors = await _colorRepository.GetAll()
+          .Include(c => c.MobilePhone) // Include entity MobilePhone
+          .Where(c => c.MobilePhoneId == mobilePhoneId)
+          .OrderBy(c => c.Id)
+          .ToListAsync();
 
-        // ✅ MAP ENTITY -> DTO
-        private MobilePhoneDto MapToDto(MobilePhone phone)
+      // Map thủ công
+      var colorDtos = colors.Select(c => new MobilePhoneColorDto
+      {
+        Id = c.Id,
+        MobilePhoneId = c.MobilePhoneId,
+        ColorName = c.ColorName,
+        ColorHex = c.ColorHex,
+        ImageUrl = c.ImageUrl,
+        MobilePhoneName = c.MobilePhone != null ? c.MobilePhone.Name : null
+      }).ToList();
+
+      return colorDtos;
+    }
+    // ✅ MAP ENTITY -> DTO
+    private MobilePhoneDto MapToDto(MobilePhone phone)
         {
             if (phone == null) return null;
 
