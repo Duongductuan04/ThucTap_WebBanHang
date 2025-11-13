@@ -44,22 +44,28 @@
       </div>
 
       <p class="mb-4">@Model.Description</p>
-    <!-- Chọn màu theo style Apple Store -->
-        @if (colors.Any())
-        {
+      @if (colors.Any())
+      {
         <div class="mt-4">
           <div class="color-radio-container">
             @foreach (var color in colors)
             {
-              <label class="color-radio-box">
-                <input type="radio" name="selectedColor" value="@color.ColorHex" data-image-url="@color.ImageUrl">
+              <label class="color-radio-box text-center">
+                <input type="radio"
+                       name="selectedColor"
+                       value="@color.ColorHex"
+                       data-color-id="@color.Id"
+                       data-image-url="@color.ImageUrl"
+                       data-stock="@color.StockQuantity"
+                       class="d-none">
                 <span class="color-circle" style="background-color:@color.ColorHex;"></span>
-                <span class="color-name">@color.ColorName</span>
+                <div class="color-name mt-1">@color.ColorName</div>
               </label>
             }
+
           </div>
         </div>
-        }
+      }
 
       <div class="d-flex flex-column align-items-start gap-3 mt-4">
         <button type="button" class="btn btn-primary btn-lg fw-semibold w-100 add-to-cart-btn"
@@ -78,7 +84,7 @@
         @Html.AntiForgeryToken()
         <input type="hidden" name="mobilePhoneId" value="@Model.Id" />
         <input type="hidden" name="quantity" id="cartQuantity" value="1" />
-        <input type="hidden" name="MobilePhoneColorId" /> 
+        <input type="hidden" name="MobilePhoneColorId" />
       </form>
 
       <form id="buyNowForm" method="get" action="@Url.Action("CheckoutBuyNow","Orders")" style="display: none;">
@@ -89,7 +95,10 @@
       </form>
 
       <ul class="list-unstyled mt-4">
-        <li><strong>Kho hàng:</strong> @Model.StockQuantity</li>
+        <li>
+          <strong>Kho hàng:</strong>
+          <span name="modalStockInfo"> @Model.StockQuantity sản phẩm</span>
+        </li>
         <li><strong>Danh mục:</strong> @Model.CategoryName</li>
         <li><strong>Ngày ra mắt:</strong> @Model.CreationTime.ToString("dd/MM/yyyy")</li>
       </ul>
@@ -198,7 +207,7 @@
         <!-- 🔹 Tên sản phẩm -->
         <div class="text-center mb-3">
           <h6 id="modalProductName" data-id="@Model.Id">@Model.Name</h6>
-          <p class="text-muted mb-0" id="modalStockInfo">Tồn kho: @Model.StockQuantity sản phẩm</p>
+          <p class="text-muted mb-0" name="modalStockInfo"> @Model.StockQuantity sản phẩm </p>
         </div>
 
         <!-- 🔹 Chọn màu sắc -->
@@ -209,13 +218,14 @@
               @foreach (var color in colors)
               {
                 <label class="color-radio-box text-center">
-                  <!-- ✅ Thêm data-color-id -->
+                  <!-- ✅ Input radio đúng cú pháp -->
                   <input type="radio"
                          name="selectedColor"
                          value="@color.ColorHex"
                          data-color-id="@color.Id"
                          data-image-url="@color.ImageUrl"
-                         class="d-none">
+                         data-stock="@color.StockQuantity"
+                         class="d-none" />
                   <span class="color-circle" style="background-color:@color.ColorHex;"></span>
                   <div class="color-name mt-1">@color.ColorName</div>
                 </label>
@@ -227,10 +237,11 @@
         <!-- 🔸 Chọn số lượng -->
         <div class="quantity-control d-flex justify-content-center align-items-center gap-3 mt-4">
           <button type="button" class="btn btn-outline-secondary btn-qty decrease" style="width:45px; height:45px;">-</button>
-          <input type="number" id="modalQuantity" value="1" min="1" max="@Model.StockQuantity" readonly
+          <input type="number" name="modalQuantity" value="1" min="1" max="@Model.StockQuantity" readonly
                  class="form-control text-center" style="width:80px;" />
           <button type="button" class="btn btn-outline-secondary btn-qty increase" style="width:45px; height:45px;">+</button>
         </div>
+
       </div>
 
       <!-- Footer -->

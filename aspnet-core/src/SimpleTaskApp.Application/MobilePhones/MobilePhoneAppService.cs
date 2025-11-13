@@ -61,7 +61,9 @@ namespace SimpleTaskApp.MobilePhones
                         MobilePhoneId = phone.Id,
                         ColorName = colorDto.ColorName,
                         ColorHex = colorDto.ColorHex,
-                        ImageUrl = colorDto.ImageUrl
+                        ImageUrl = colorDto.ImageUrl,
+                        StockQuantity = 0 
+
                     };
                     await _colorRepository.InsertAsync(color);
                 }
@@ -243,6 +245,7 @@ namespace SimpleTaskApp.MobilePhones
         ColorName = c.ColorName,
         ColorHex = c.ColorHex,
         ImageUrl = c.ImageUrl,
+        StockQuantity = c.StockQuantity, // ✅ Đảm bảo map đúng trường tồn kho
         MobilePhoneName = c.MobilePhone != null ? c.MobilePhone.Name : null
       }).ToList();
 
@@ -275,7 +278,9 @@ namespace SimpleTaskApp.MobilePhones
                     Id = c.Id,
                     ColorName = c.ColorName,
                     ColorHex = c.ColorHex,
-                    ImageUrl = c.ImageUrl
+                    ImageUrl = c.ImageUrl,
+                  StockQuantity = c.StockQuantity // <-- map tồn kho
+
                 }).ToList()
             };
 

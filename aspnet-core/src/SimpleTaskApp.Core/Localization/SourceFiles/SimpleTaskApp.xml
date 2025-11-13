@@ -114,6 +114,7 @@
 		<text name="NewImage" value="New Image" />
 		<text name="Image" value="Image" />
 		<text name="ImageUploadHint" value="Select an image file (jpg, png, webp)" />
+		<text name="ColorStock" value="Color Stock" />
 
 		<!-- Validation / Required -->
 		<text name="DescriptionMaxLength" value="Maximum 500 characters" />
@@ -136,6 +137,7 @@
 		<text name="Detail" value="Details" />
 		<text name="Cancel" value="Cancel" />
 		<text name="Save" value="Save" />
+		<text name="Stock" value="Stock" />
 
 		<!-- Cart -->
 		<text name="Cart" value="Cart" />

@@ -16,7 +16,10 @@ namespace SimpleTaskApp.MobilePhones
         [ForeignKey(nameof(MobilePhoneId))]
         public MobilePhone MobilePhone { get; set; }
 
-        public int Quantity { get; set; } // Số lượng nhập
+      public int? MobilePhoneColorId { get; set; } // ✅ Có thể null (nếu sp không có màu)
+      [ForeignKey(nameof(MobilePhoneColorId))]
+      public MobilePhoneColor MobilePhoneColor { get; set; }
+    public int Quantity { get; set; } // Số lượng nhập
         [Column(TypeName = "decimal(18,2)")]
         public decimal ImportPrice { get; set; } // Giá nhập
     }

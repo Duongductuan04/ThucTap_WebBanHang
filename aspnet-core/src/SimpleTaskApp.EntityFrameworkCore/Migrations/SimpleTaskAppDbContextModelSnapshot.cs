@@ -1754,6 +1754,9 @@ namespace SimpleTaskApp.Migrations
                     b.Property<decimal>("ImportPrice")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int?>("MobilePhoneColorId")
+                        .HasColumnType("int");
+
                     b.Property<int>("MobilePhoneId")
                         .HasColumnType("int");
 
@@ -1763,6 +1766,8 @@ namespace SimpleTaskApp.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ImportId");
+
+                    b.HasIndex("MobilePhoneColorId");
 
                     b.HasIndex("MobilePhoneId");
 
@@ -1857,6 +1862,9 @@ namespace SimpleTaskApp.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("MobilePhoneId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StockQuantity")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -2315,6 +2323,10 @@ namespace SimpleTaskApp.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("SimpleTaskApp.MobilePhones.MobilePhoneColor", "MobilePhoneColor")
+                        .WithMany()
+                        .HasForeignKey("MobilePhoneColorId");
+
                     b.HasOne("SimpleTaskApp.MobilePhones.MobilePhone", "MobilePhone")
                         .WithMany()
                         .HasForeignKey("MobilePhoneId")
@@ -2324,6 +2336,8 @@ namespace SimpleTaskApp.Migrations
                     b.Navigation("Import");
 
                     b.Navigation("MobilePhone");
+
+                    b.Navigation("MobilePhoneColor");
                 });
 
             modelBuilder.Entity("SimpleTaskApp.MobilePhones.MobilePhone", b =>

@@ -15,5 +15,7 @@ namespace SimpleTaskApp.MobilePhones
         public string ColorHex { get; set; }  // Mã màu dạng #000000 (tùy chọn)
 
         public string ImageUrl { get; set; } // ✅ Ảnh của màu đó
-    }
+       public int StockQuantity { get; set; } // ✅ Số lượng tồn kho theo màu
+
+  }
 }

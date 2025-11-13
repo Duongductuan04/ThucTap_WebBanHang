@@ -67,6 +67,7 @@ namespace SimpleTaskApp.MobilePhones.Dto
     public string ImageUrl { get; set; }
     public string ColorName { get; set; }
     public string ColorImageUrl { get; set; }
+    public int ColorStockQuantity { get; set; } 
 
   }
 }

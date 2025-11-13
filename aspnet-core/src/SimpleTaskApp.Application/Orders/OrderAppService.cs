@@ -8,6 +8,7 @@ using SimpleTaskApp.MobilePhones.Dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 
 namespace SimpleTaskApp.MobilePhones
@@ -69,12 +70,19 @@ namespace SimpleTaskApp.MobilePhones
       {
         var phone = await _mobilePhoneRepository.GetAsync(od.MobilePhoneId);
         var color = od.MobilePhoneColorId.HasValue
-       ? await _colorRepository.FirstOrDefaultAsync(c => c.Id == od.MobilePhoneColorId.Value)
-       : null;
+            ? await _colorRepository.FirstOrDefaultAsync(c => c.Id == od.MobilePhoneColorId.Value)
+            : null;
+
         // Kiểm tra tồn kho
-        if (phone.StockQuantity < od.Quantity)
+        if (color != null)
         {
-          throw new UserFriendlyException($"Sản phẩm {phone.Name} chỉ còn {phone.StockQuantity} trong kho");
+          if (color.StockQuantity < od.Quantity)
+            throw new UserFriendlyException($"Sản phẩm {phone.Name} màu {color.ColorName} chỉ còn {color.StockQuantity} trong kho");
+        }
+        else
+        {
+          if (phone.StockQuantity < od.Quantity)
+            throw new UserFriendlyException($"Sản phẩm {phone.Name} chỉ còn {phone.StockQuantity} trong kho");
         }
 
         var unitPrice = phone.DiscountPrice.HasValue && phone.DiscountPrice.Value > 0
@@ -86,17 +94,26 @@ namespace SimpleTaskApp.MobilePhones
           OrderId = order.Id,
           MobilePhoneId = od.MobilePhoneId,
           MobilePhoneColorId = od.MobilePhoneColorId, // có thể null
-
           Quantity = od.Quantity,
           UnitPrice = unitPrice
         };
 
         await _orderDetailRepository.InsertAsync(orderDetail);
 
-        // Trừ tồn kho
-        phone.StockQuantity -= od.Quantity;
-        await _mobilePhoneRepository.UpdateAsync(phone);
+        // Trừ tồn kho đúng chỗ
+        if (color != null)
+        {
+          color.StockQuantity -= od.Quantity;
+          phone.StockQuantity -= od.Quantity;
+          await _colorRepository.UpdateAsync(color);
+        }
+        else
+        {
+          phone.StockQuantity -= od.Quantity;
+          await _mobilePhoneRepository.UpdateAsync(phone);
+        }
       }
+
 
       // Load lại order cùng OrderDetails để tính tổng
       order = await _orderRepository.GetAll()
@@ -342,9 +359,22 @@ namespace SimpleTaskApp.MobilePhones
       {
         foreach (var od in order.OrderDetails)
         {
-          var phone = await _mobilePhoneRepository.GetAsync(od.MobilePhoneId);
-          phone.StockQuantity += od.Quantity;
-          await _mobilePhoneRepository.UpdateAsync(phone);
+          if (od.MobilePhoneColorId.HasValue)
+          {
+            var color = await _colorRepository.GetAsync(od.MobilePhoneColorId.Value);
+            var phone = await _mobilePhoneRepository.GetAsync(od.MobilePhoneId);
+
+            color.StockQuantity += od.Quantity;
+            phone.StockQuantity += od.Quantity;
+
+            await _colorRepository.UpdateAsync(color);
+          }
+          else
+          {
+            var phone = await _mobilePhoneRepository.GetAsync(od.MobilePhoneId);
+            phone.StockQuantity += od.Quantity;
+            await _mobilePhoneRepository.UpdateAsync(phone);
+          }
         }
       }
 
@@ -653,27 +683,47 @@ namespace SimpleTaskApp.MobilePhones
     }
     public async Task UpdateStatusAsync(int orderId, int status)
     {
+      // Lấy order cùng chi tiết
       var order = await _orderRepository.GetAll()
-          .Include(o => o.OrderDetails)
-          .FirstOrDefaultAsync(o => o.Id == orderId);
+             .Include(o => o.OrderDetails)
+             .FirstOrDefaultAsync(o => o.Id == orderId);
 
-      if (order != null)
+      if (order == null)
+        throw new UserFriendlyException($"Order not found! Id = {orderId}");
+
+      // Chỉ xử lý nếu trạng thái thay đổi
+      if (order.Status != status)
       {
-        // Trả lại tồn kho nếu hủy đơn và chưa hủy trước đó
+        // Nếu đang hủy đơn và trước đó chưa hủy, trả lại tồn kho
         if (status == 3 && order.Status != 3)
         {
           foreach (var od in order.OrderDetails)
           {
-            var phone = await _mobilePhoneRepository.GetAsync(od.MobilePhoneId);
-            phone.StockQuantity += od.Quantity;
-            await _mobilePhoneRepository.UpdateAsync(phone);
+            if (od.MobilePhoneColorId.HasValue)
+            {
+              var color = await _colorRepository.GetAsync(od.MobilePhoneColorId.Value);
+              var phone = await _mobilePhoneRepository.GetAsync(od.MobilePhoneId);
+
+              color.StockQuantity += od.Quantity;
+              phone.StockQuantity += od.Quantity;
+
+            }
+            else
+            {
+              var phone = await _mobilePhoneRepository.GetAsync(od.MobilePhoneId);
+              phone.StockQuantity += od.Quantity;
+            }
           }
         }
 
+        // Cập nhật trạng thái
         order.Status = status;
-        await _orderRepository.UpdateAsync(order);
+
+        // Chỉ gọi SaveChanges một lần duy nhất, ABP UnitOfWork sẽ commit tất cả
         await CurrentUnitOfWork.SaveChangesAsync();
       }
     }
+
+
   }
 }

@@ -116,6 +116,7 @@
 		<text name="NewImage" value="Ảnh mới" />
 		<text name="Image" value="Ảnh" />
 		<text name="ImageUploadHint" value="Chọn file ảnh (jpg, png, webp)" />
+		<text name="Stock" value="Tồn kho" />
 
 		<!-- Validation / Required -->
 		<text name="DescriptionMaxLength" value="Tối đa 500 ký tự" />
@@ -199,6 +200,8 @@
 		<!-- Sale period -->
 		<text name="SaleStart" value="Ngày bắt đầu giảm giá" />
 		<text name="SaleEnd" value="Ngày kết thúc giảm giá" />
+		<text name="ColorStock" value="Số lượng tồn kho" />
+
 
 		<!-- Common -->
 		<text name="Select" value="Chọn" />

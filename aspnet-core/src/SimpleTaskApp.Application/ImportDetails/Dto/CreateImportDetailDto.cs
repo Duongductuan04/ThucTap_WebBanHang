@@ -8,8 +8,10 @@ namespace SimpleTaskApp.MobilePhones.Dto
     {
         [Required]
         public int MobilePhoneId { get; set; }
+        public int? MobilePhoneColorId { get; set; } // ✅ Thêm vào
 
-        [Required]
+
+         [Required]
         public int Quantity { get; set; }
 
         [Required]

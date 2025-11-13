@@ -4,147 +4,151 @@
 @model MobilePhoneDto
 
 @{
-    Layout = null;
+  Layout = null;
 }
 
 @await Html.PartialAsync(
-        "~/Areas/Admin/Views/Shared/Modals/_ModalHeader.cshtml",
-        new ModalHeaderViewModel(L("MobilePhoneDetail"))
-    )
+      "~/Areas/Admin/Views/Shared/Modals/_ModalHeader.cshtml",
+      new ModalHeaderViewModel(L("MobilePhoneDetail"))
+  )
 
 <div class="modal-body">
-    <div class="row">
-        <!-- Bên trái: Ảnh -->
-        <div class="col-md-4 text-center">
-            <div class="card shadow-sm border-0">
-                <div class="card-body p-2">
-                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
-                    {
-                        <img src="@Model.ImageUrl" alt="@Model.Name"
-                             class="img-fluid rounded mb-2"
-                             style="max-height: 250px; object-fit: cover;" />
-                    }
-                    else
-                    {
-                        <div class="text-muted border rounded py-5">
-                            <i class="fa fa-mobile-alt fa-3x"></i>
-                            <p>@L("NoImage")</p>
-                        </div>
-                    }
-
-                    <h5 class="mt-2 font-weight-bold">@Model.Name</h5>
-                    <span class="badge badge-info">@Model.Brand</span>
-                    @if (Model.IsNew)
-                    {
-                        <span class="badge badge-success ml-1">@L("New")</span>
-                    }
-                    @if (Model.IsOnSale)
-                    {
-                        <span class="badge badge-warning ml-1">@L("OnSale")</span>
-                    }
-                </div>
+  <div class="row">
+    <!-- Bên trái: Ảnh -->
+    <div class="col-md-4 text-center">
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-2">
+          @if (!string.IsNullOrEmpty(Model.ImageUrl))
+          {
+            <img src="@Model.ImageUrl" alt="@Model.Name"
+                 class="img-fluid rounded mb-2"
+                 style="max-height: 250px; object-fit: cover;" />
+          }
+          else
+          {
+            <div class="text-muted border rounded py-5">
+              <i class="fa fa-mobile-alt fa-3x"></i>
+              <p>@L("NoImage")</p>
             </div>
+          }
+
+          <h5 class="mt-2 font-weight-bold">@Model.Name</h5>
+          <span class="badge badge-info">@Model.Brand</span>
+          @if (Model.IsNew)
+          {
+            <span class="badge badge-success ml-1">@L("New")</span>
+          }
+          @if (Model.IsOnSale)
+          {
+            <span class="badge badge-warning ml-1">@L("OnSale")</span>
+          }
         </div>
-
-        <!-- Bên phải: Thông tin -->
-        <div class="col-md-8">
-            <div class="card shadow-sm border-0">
-                <div class="card-body">
-                    <!-- Giá -->
-                    <div class="row mb-3">
-                        <div class="col-sm-4 text-muted">@L("Price")</div>
-                        <div class="col-sm-8">
-                            <span class="font-weight-bold">@Model.Price.ToString("0.00")</span>
-                            @if (Model.IsOnSale && Model.DiscountPrice.HasValue && Model.DiscountPrice.Value > 0)
-                            {
-                                <span class="text-danger font-weight-bold ml-2">
-                                    @Model.DiscountPrice.Value.ToString("0.00")
-                                </span>
-                            }
-                        </div>
-                    </div>
-
-                    <!-- Số lượng tồn -->
-                    <div class="row mb-3">
-                        <div class="col-sm-4 text-muted">@L("StockQuantity")</div>
-                        <div class="col-sm-8">@Model.StockQuantity</div>
-                    </div>
-
-                    <!-- Danh mục -->
-                    <div class="row mb-3">
-                        <div class="col-sm-4 text-muted">@L("Category")</div>
-                        <div class="col-sm-8">@Model.CategoryName</div>
-                    </div>
-
-                    <!-- Thời gian khuyến mãi -->
-                    <div class="row mb-3">
-                        <div class="col-sm-4 text-muted">@L("SalePeriod")</div>
-                        <div class="col-sm-8">
-                            @if (Model.IsOnSale && Model.SaleStart.HasValue && Model.SaleEnd.HasValue)
-                            {
-                                <span>@Model.SaleStart.Value.ToString("dd/MM/yyyy HH:mm") - @Model.SaleEnd.Value.ToString("dd/MM/yyyy HH:mm")</span>
-                            }
-                            else
-                            {
-                                <span class="text-muted">-</span>
-                            }
-                        </div>
-                    </div>
-
-                    <!-- Mô tả -->
-                    <div class="row">
-                        <div class="col-sm-4 text-muted">@L("Description")</div>
-                        <div class="col-sm-8">@Model.Description</div>
-                    </div>
-                    <!-- Màu sắc -->
-
-                    @if (Model.Colors != null && Model.Colors.Any())
-                    {
-                        <hr />
-                        <div class="row mt-3">
-                            <div class="col-sm-4 text-muted">@L("Colors")</div>
-                            <div class="col-sm-8">
-                                <div class="d-flex flex-wrap">
-                                    @foreach (var color in Model.Colors)
-                                    {
-                                        <div class="text-center mr-3 mb-3" style="width: 80px;">
-                                            @if (!string.IsNullOrEmpty(color.ImageUrl))
-                                            {
-                                                <img src="@color.ImageUrl" alt="@color.ColorName"
-                                                     class="img-thumbnail"
-                                                     style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px;" />
-                                            }
-                                            else
-                                            {
-                                                <div class="border rounded d-flex align-items-center justify-content-center"
-                                                     style="width: 60px; height: 60px; background-color: @color.ColorHex;">
-                                                    <span class="text-white font-weight-bold">#</span>
-                                                </div>
-                                            }
-                                            <div class="mt-1 small">@color.ColorName</div>
-                                        </div>
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                    }
-                    else
-                    {
-                        <hr />
-                        <div class="row mt-3">
-                            <div class="col-sm-4 text-muted">@L("Colors")</div>
-                            <div class="col-sm-8 text-muted">-</div>
-                        </div>
-                    }
-
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
+
+    <!-- Bên phải: Thông tin -->
+    <div class="col-md-8">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+          <!-- Giá -->
+          <div class="row mb-3">
+            <div class="col-sm-4 text-muted">@L("Price")</div>
+            <div class="col-sm-8">
+              <span class="font-weight-bold">@Model.Price.ToString("0.00")</span>
+              @if (Model.IsOnSale && Model.DiscountPrice.HasValue && Model.DiscountPrice.Value > 0)
+              {
+                <span class="text-danger font-weight-bold ml-2">
+                  @Model.DiscountPrice.Value.ToString("0.00")
+                </span>
+              }
+            </div>
+          </div>
+
+          <!-- Số lượng tồn -->
+          <div class="row mb-3">
+            <div class="col-sm-4 text-muted">@L("StockQuantity")</div>
+            <div class="col-sm-8">@Model.StockQuantity</div>
+          </div>
+
+          <!-- Danh mục -->
+          <div class="row mb-3">
+            <div class="col-sm-4 text-muted">@L("Category")</div>
+            <div class="col-sm-8">@Model.CategoryName</div>
+          </div>
+
+          <!-- Thời gian khuyến mãi -->
+          <div class="row mb-3">
+            <div class="col-sm-4 text-muted">@L("SalePeriod")</div>
+            <div class="col-sm-8">
+              @if (Model.IsOnSale && Model.SaleStart.HasValue && Model.SaleEnd.HasValue)
+              {
+                <span>
+                  @Model.SaleStart.Value.ToString("dd/MM/yyyy HH:mm") -
+                  @Model.SaleEnd.Value.ToString("dd/MM/yyyy HH:mm")
+                </span>
+              }
+              else
+              {
+                <span class="text-muted">-</span>
+              }
+            </div>
+          </div>
+
+          <!-- Mô tả -->
+          <div class="row">
+            <div class="col-sm-4 text-muted">@L("Description")</div>
+            <div class="col-sm-8">@Model.Description</div>
+          </div>
+
+          <!-- Màu sắc -->
+          @if (Model.Colors != null && Model.Colors.Any())
+          {
+            <hr />
+            <div class="row mt-3">
+              <div class="col-sm-4 text-muted">@L("Colors")</div>
+              <div class="col-sm-8">
+                <div class="d-flex flex-wrap">
+                  @foreach (var color in Model.Colors)
+                  {
+                    <div class="text-center mr-3 mb-3" style="width: 100px;">
+                      @if (!string.IsNullOrEmpty(color.ImageUrl))
+                      {
+                        <img src="@color.ImageUrl" alt="@color.ColorName"
+                             class="img-thumbnail"
+                             style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px;" />
+                      }
+                      else
+                      {
+                        <div class="border rounded d-flex align-items-center justify-content-center"
+                             style="width: 60px; height: 60px; background-color: @color.ColorHex;">
+                          <span class="text-white font-weight-bold">#</span>
+                        </div>
+                      }
+                      <div class="mt-1 small font-weight-bold">@color.ColorName</div>
+                      <div class="small text-muted">@L("Stock"): @color.StockQuantity</div>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+          else
+          {
+            <hr />
+            <div class="row mt-3">
+              <div class="col-sm-4 text-muted">@L("Colors")</div>
+              <div class="col-sm-8 text-muted">-</div>
+            </div>
+          }
+
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="modal-footer border-0">
-    <button type="button" class="btn btn-secondary" data-dismiss="modal">
-        <i class="fa fa-times"></i> @L("Close")
-    </button>
+  <button type="button" class="btn btn-secondary" data-dismiss="modal">
+    <i class="fa fa-times"></i> @L("Close")
+  </button>
 </div>

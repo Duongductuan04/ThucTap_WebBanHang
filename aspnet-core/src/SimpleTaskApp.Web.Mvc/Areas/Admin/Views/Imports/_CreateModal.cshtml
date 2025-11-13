@@ -1,6 +1,8 @@
 ﻿@using SimpleTaskApp.MobilePhones.Dto
 @using SimpleTaskApp.Areas.Admin.Models.Common.Modals
 @using SimpleTaskApp.Areas.Admin.Models.Imports
+@using System.Text.Json
+
 @model CreateImportViewModel
 
 @{
@@ -75,11 +77,27 @@
 </form>
 
 <!-- Chuyển danh sách sản phẩm sang JS -->
+<!-- Chuyển danh sách sản phẩm sang JS -->
 <script>
+    // Danh sách điện thoại
     window.availablePhones = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(
-        Model.MobilePhones.Select(p => new { id = p.Value, name = p.Text })
+        Model.MobilePhones.Select(p => new { 
+            id = int.Parse(p.Value), 
+            name = p.Text 
+        })
+    ));
+
+    // Danh sách màu
+    window.availableColors = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(
+        Model.MobilePhoneColors.Select(c => new
+        {
+            id = c.Id,                  // Id màu
+            mobilePhoneId = c.MobilePhoneId, // Id sản phẩm cha
+            colorName = c.ColorName     // Tên màu
+        })
     ));
 </script>
+
 
 <!-- JS libraries -->
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
