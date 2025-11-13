@@ -150,6 +150,7 @@
 		<text name="Total" value="Tổng" />
 		<text name="EditCart" value="Sửa giỏ hàng" />
 		<text name="QuantityRequired" value="Bắt buộc" />
+		<text name="Color" value="Màu sắc" />
 
 		<!-- Order -->
 		<text name="Order" value="Đơn hàng" />

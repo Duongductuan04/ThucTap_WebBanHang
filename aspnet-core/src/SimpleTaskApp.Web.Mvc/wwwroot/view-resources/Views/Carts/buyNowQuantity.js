@@ -126,6 +126,11 @@
     }
 
     const selected = $('input[name="selectedColor"]:checked');
+    // validate bắt buộc chọn màu nếu có
+    if ($('input[name="selectedColor"]').length > 0 && selected.length === 0) {
+      alert("Vui lòng chọn màu sản phẩm!");
+      return;
+    }
     const colorId = selected.length ? selected.data('color-id') : null;
 
     const $form = currentAction === "addToCart" ? $('#addToCartForm') : $('#buyNowForm');

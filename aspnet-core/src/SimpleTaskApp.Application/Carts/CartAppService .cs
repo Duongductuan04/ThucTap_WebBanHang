@@ -202,6 +202,8 @@ namespace SimpleTaskApp.MobilePhones
         DisplayPrice = GetEffectivePrice(phone),
         Quantity = cart.Quantity,
         StockQuantity = phone?.StockQuantity ?? 0,
+        MobilePhoneColorId = cart.MobilePhoneColorId, // ⚡ Thêm dòng này
+
         ColorName = color?.ColorName ?? cart.MobilePhoneColor?.ColorName,
         ColorImageUrl = color?.ImageUrl ?? cart.MobilePhoneColor?.ImageUrl,
         IsAvailable = phone != null,

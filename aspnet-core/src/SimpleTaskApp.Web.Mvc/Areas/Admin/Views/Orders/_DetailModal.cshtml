@@ -118,32 +118,52 @@
                     </div>
 
                     <!-- Nếu muốn hiển thị danh sách sản phẩm trong đơn hàng -->
-                    @if (Model.OrderDetails != null && Model.OrderDetails.Any())
-                    {
-                        <hr />
-                        <h6>@L("Products")</h6>
-                        <table class="table table-sm table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>@L("Name")</th>
-                                    <th>@L("Quantity")</th>
-                                    <th>@L("Price")</th>
-                                    <th>@L("Total")</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model.OrderDetails)
-                                {
-                                    <tr>
-                                        <td>@item.MobilePhoneName</td>
-                                        <td>@item.Quantity</td>
-                                        <td>@item.UnitPrice.ToString("N0", new System.Globalization.CultureInfo("vi-VN")) đ</td>
-                                        <td>@item.ItemTotal.ToString("N0", new System.Globalization.CultureInfo("vi-VN")) đ</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    }
+          @if (Model.OrderDetails != null && Model.OrderDetails.Any())
+          {
+            <hr />
+            <h6>@L("Products")</h6>
+            <table class="table table-sm table-bordered align-middle">
+              <thead>
+                <tr>
+                  <th>@L("Image")</th>
+                  <th>@L("Name")</th>
+                  <th>@L("Color")</th>
+                  <th>@L("Quantity")</th>
+                  <th>@L("Price")</th>
+                  <th>@L("Total")</th>
+                </tr>
+              </thead>
+              <tbody>
+                @foreach (var item in Model.OrderDetails)
+                {
+                  <tr>
+                    <td class="text-center">
+                      <img src="@(!string.IsNullOrEmpty(item.ColorImageUrl) ? item.ColorImageUrl : item.ImageUrl)"
+                           alt="@item.MobilePhoneName"
+                           style="width:50px; height:50px; object-fit:cover; border-radius:4px;" />
+                    </td>
+                    <td>@item.MobilePhoneName</td>
+                    <td>
+                      @if (!string.IsNullOrEmpty(item.ColorName))
+                      {
+                        <span class="d-flex align-items-center gap-1">
+                          @item.ColorName
+                        </span>
+                      }
+                      else
+                      {
+                        <span>-</span>
+                      }
+                    </td>
+                    <td>@item.Quantity</td>
+                    <td>@item.UnitPrice.ToString("N0", new System.Globalization.CultureInfo("vi-VN")) đ</td>
+                    <td>@item.ItemTotal.ToString("N0", new System.Globalization.CultureInfo("vi-VN")) đ</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
+
                 </div>
             </div>
         </div>

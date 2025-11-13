@@ -128,40 +128,31 @@ public class OrdersController : AbpController
   {
     var myCart = await _cartAppService.GetMyCartAsync() ?? new List<CartDto>();
     var selectedItems = myCart.Where(c => cartIds.Contains(c.Id)).ToList();
-    if (!selectedItems.Any()) return RedirectToAction("Index", "Cart");
+    if (!selectedItems.Any()) return RedirectToAction("Index", "Carts");
 
-    var orderDetails = new List<CreateOrderDetailDto>();
-
-    foreach (var c in selectedItems)
+    var orderDetails = selectedItems.Select(c => new CreateOrderDetailDto
     {
-      var phone = await _mobilePhoneAppService.GetAsync(new EntityDto<int>(c.MobilePhoneId));
-      var unitPrice = GetEffectivePrice(phone);
+      MobilePhoneId = c.MobilePhoneId,
+      Quantity = c.Quantity,
+      UnitPrice = c.DisplayPrice,          // ✅ dùng DisplayPrice đã tính sẵn
+      MobilePhoneName = c.Name,
+      ImageUrl = c.ImageUrl,
+      MobilePhoneColorId = c.MobilePhoneColorId,
+      ColorName = c.ColorName,             // ✅ lấy trực tiếp từ CartDto
+      ColorImageUrl = c.ColorImageUrl      // ✅ lấy trực tiếp từ CartDto
+    }).ToList();
 
-      var colors = await _mobilePhoneAppService.GetColorsByMobilePhoneIdAsync(c.MobilePhoneId);
+    var orderDto = new CreateOrderDto
+    {
+      OrderDetails = orderDetails,
+      TotalAmount = orderDetails.Sum(od => od.Quantity * od.UnitPrice),
+      ShippingFee = 20000,
+      DiscountAmount = 0m
+    };
 
-      // Lấy màu đã chọn, nếu có
-      var selectedColor = colors.FirstOrDefault(clr => clr.Id == c.MobilePhoneColorId);
-      orderDetails.Add(new CreateOrderDetailDto
-      {
-        MobilePhoneId = c.MobilePhoneId,
-        Quantity = c.Quantity,
-        UnitPrice = unitPrice,
-        MobilePhoneName = c.Name,
-        ImageUrl = selectedColor?.ImageUrl ?? phone.ImageUrl,
-        ColorName = selectedColor?.ColorName,
-        ColorImageUrl = selectedColor?.ImageUrl,
-        MobilePhoneColorId = c.MobilePhoneColorId
-      });
-
-    }
-
-    var orderDto = new CreateOrderDto { OrderDetails = orderDetails };
-
-    orderDto.TotalAmount = orderDetails.Sum(od => od.Quantity * od.UnitPrice);
-    orderDto.ShippingFee = 20000;
-    orderDto.DiscountAmount = 0m;
     orderDto.FinalAmount = orderDto.TotalAmount + orderDto.ShippingFee;
 
+    // Lấy ưu đãi
     var availableDiscounts = await _orderAppService.GetAvailableDiscountsAsync(
         orderDetails.Select(od => new OrderItemDto
         {
@@ -179,11 +170,11 @@ public class OrdersController : AbpController
 
   // ========================== Thanh toán mua ngay ==========================
   [HttpPost]
-  public async Task<IActionResult> BuyNow(
+  public async Task<IActionResult> BuyNowPost(
       CreateOrderDto input,
       [FromForm] int MobilePhoneId,
       [FromForm] int Quantity,
-      [FromForm] int MobilePhoneColorId,  // 👈 thêm màu sắc
+      [FromForm] int? MobilePhoneColorId,  // 👈 thêm màu sắc
       [FromForm] string DiscountCode,
       [FromForm] int PaymentMethod,
       [FromForm] string OtpCode)
@@ -248,10 +239,9 @@ public class OrdersController : AbpController
 
   // ========================== Thanh toán giỏ hàng ==========================
   [HttpPost]
-  public async Task<IActionResult> CheckoutCart(
+  public async Task<IActionResult> CheckoutCartPost(
       CreateOrderDto input,
       [FromForm] List<int> cartIds,
-      [FromForm] List<int> MobilePhoneColorIds,  // 👈 thêm danh sách màu
       [FromForm] string DiscountCode,
       [FromForm] int PaymentMethod,
       [FromForm] string OtpCode)
@@ -292,12 +282,9 @@ public class OrdersController : AbpController
         UnitPrice = unitPrice,
         MobilePhoneName = c.Name,
         ImageUrl = c.ImageUrl,
-        MobilePhoneColorId = (MobilePhoneColorIds != null && i < MobilePhoneColorIds.Count)
-              ? MobilePhoneColorIds[i]
-              : null
+        MobilePhoneColorId = c.MobilePhoneColorId
       });
     }
-
     input.OrderDetails = orderDetails;
     input.DiscountCode = DiscountCode;
     input.PaymentMethod = PaymentMethod;

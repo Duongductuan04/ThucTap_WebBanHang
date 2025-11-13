@@ -16,7 +16,7 @@
             @TempData["Error"]
         </div>
     }
-    <form asp-action="CheckoutCart" asp-controller="Orders" id="checkoutForm" method="post" class="needs-validation" novalidate>
+    <form asp-action="CheckoutCartPost" asp-controller="Orders" id="checkoutForm" method="post" class="needs-validation" novalidate>
         <input type="hidden" id="DiscountId" name="DiscountId" value="@Model.DiscountId" />
         <input type="hidden" id="OtpCode" name="OtpCode" />
 
@@ -207,7 +207,11 @@
                       <tr class="cart-item" data-product-id="@item.MobilePhoneId" data-unit-price="@item.UnitPrice" data-color-id="@item.MobilePhoneColorId">
                         <td>
                           <div class="d-flex align-items-center">
-                            <img src="@item.ImageUrl" class="img-thumbnail me-3" width="60" alt="@item.MobilePhoneName" />
+                            @{
+                              // Nếu có ảnh màu, dùng ảnh màu, còn không dùng ảnh chính
+                              var displayImage = !string.IsNullOrEmpty(item.ColorImageUrl) ? item.ColorImageUrl : item.ImageUrl;
+                            }
+                            <img src="@displayImage" class="img-thumbnail me-3" width="60" alt="@item.MobilePhoneName" />
                             <div>
                               <div class="fw-semibold">@item.MobilePhoneName</div>
                               <small class="text-muted d-block">Mã SP: @item.MobilePhoneId</small>
@@ -215,16 +219,12 @@
                               {
                                 <small class="text-muted d-block">
                                   Màu: <span class="fw-semibold">@item.ColorName</span>
-                                  @if (!string.IsNullOrEmpty(item.ColorImageUrl))
-                                  {
-                                    <img src="@item.ColorImageUrl" width="30" class="ms-1" alt="@item.ColorName" />
-                                  }
                                 </small>
                               }
                             </div>
                           </div>
-
                         </td>
+
 
                         <td class="text-center align-middle">
                           <span class="badge bg-secondary">@item.Quantity</span>

@@ -17,7 +17,7 @@
             @TempData["Error"]
         </div>
     }
-    <form asp-action="BuyNow" asp-controller="Orders" id="checkoutForm" method="post" class="needs-validation" novalidate>
+  <form asp-action="BuyNowPost" asp-controller="Orders" id="checkoutForm" method="post" class="needs-validation" novalidate>
         <input type="hidden" id="DiscountId" name="DiscountId" value="@Model.DiscountId" />
         <input type="hidden" id="OtpCode" name="OtpCode" />
 
@@ -33,6 +33,8 @@
                         {
                             <input type="hidden" name="MobilePhoneId" value="@Model.OrderDetails[0].MobilePhoneId" />
                             <input type="hidden" name="Quantity" value="@Model.OrderDetails[0].Quantity" />
+                            <input type="hidden" name="MobilePhoneColorId" value="@Model.OrderDetails[0].MobilePhoneColorId" />
+
                         }
 
                         <div class="mb-3">

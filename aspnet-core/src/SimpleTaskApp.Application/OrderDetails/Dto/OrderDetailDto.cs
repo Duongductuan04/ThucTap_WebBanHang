@@ -17,5 +17,7 @@ namespace SimpleTaskApp.MobilePhones.Dto
     public DateTime CreationTime { get; set; }
     public int? MobilePhoneColorId { get; set; }  // ID màu, có thể null nếu không có màu
     public string ColorName { get; set; }         // Tên màu để hiển thị
+    public string ColorImageUrl { get; set; }
+
   }
 }

@@ -102,21 +102,28 @@
                                 <th>Thành tiền</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            @foreach (var item in order.OrderDetails)
-                            {
-                                <tr>
-                                    <td>
-                                        <img src="@item.ImageUrl" alt="@item.MobilePhoneName"
-                                             class="img-thumbnail" style="width:70px;height:70px;object-fit:cover;" />
-                                    </td>
-                                    <td>@item.MobilePhoneName</td>
-                                    <td>@item.Quantity</td>
-                                    <td>@item.UnitPrice.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</td>
-                                    <td>@((item.Quantity * item.UnitPrice).ToString("C0", new System.Globalization.CultureInfo("vi-VN")))</td>
-                                </tr>
-                            }
-                        </tbody>
+            <tbody>
+              @foreach (var item in order.OrderDetails)
+              {
+                var displayImage = !string.IsNullOrEmpty(item.ColorImageUrl) ? item.ColorImageUrl : item.ImageUrl;
+                <tr>
+                  <td>
+                    <img src="@displayImage" alt="@item.MobilePhoneName"
+                         class="img-thumbnail" style="width:70px;height:70px;object-fit:cover;" />
+                  </td>
+                  <td>
+                    @item.MobilePhoneName
+                    @if (!string.IsNullOrEmpty(item.ColorName))
+                    {
+                      <div class="text-muted small">Màu: @item.ColorName</div>
+                    }
+                  </td>
+                  <td>@item.Quantity</td>
+                  <td>@item.UnitPrice.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</td>
+                  <td>@((item.Quantity * item.UnitPrice).ToString("C0", new System.Globalization.CultureInfo("vi-VN")))</td>
+                </tr>
+              }
+            </tbody>
                     </table>
                 </div>
 

@@ -148,6 +148,7 @@
 		<text name="EditCart" value="Edit Cart" />
 		<text name="QuantityRequired" value="Required" />
 		<text name="Flags" value="Flags" />
+		<text name="Color" value="Color" />
 
 		<!-- Order -->
 		<text name="Order" value="Order" />
