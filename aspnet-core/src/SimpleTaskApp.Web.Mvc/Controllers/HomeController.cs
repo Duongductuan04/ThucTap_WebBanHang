@@ -37,7 +37,7 @@ namespace SimpleTaskApp.Web.Controllers
                 MaxResultCount = pageSize,
                 IsNew = true
             };
-            var newProductsResult = await _mobilePhoneAppService.GetAllAsync(newRequest);
+            var newProductsResult = await _mobilePhoneAppService.GetAllByUserAsync(newRequest);
             ViewBag.NewProducts = newProductsResult.Items;
             ViewBag.NewTotalCount = newProductsResult.TotalCount;
             ViewBag.NewPage = newPage;
@@ -49,7 +49,7 @@ namespace SimpleTaskApp.Web.Controllers
                 MaxResultCount = pageSize,
                 IsOnSale = true
             };
-            var promoProductsResult = await _mobilePhoneAppService.GetAllAsync(promoRequest);
+            var promoProductsResult = await _mobilePhoneAppService.GetAllByUserAsync(promoRequest);
             ViewBag.PromotionProducts = promoProductsResult.Items;
             ViewBag.PromotionTotalCount = promoProductsResult.TotalCount;
             ViewBag.PromotionPage = promotionPage;
@@ -72,7 +72,7 @@ namespace SimpleTaskApp.Web.Controllers
                 CategoryId = product.CategoryId
             };
 
-            var relatedProductsAll = await _mobilePhoneAppService.GetAllAsync(request);
+            var relatedProductsAll = await _mobilePhoneAppService.GetAllByUserAsync(request);
             var relatedProducts = relatedProductsAll.Items.Where(p => p.Id != product.Id).ToList();
       var colors = await _mobilePhoneAppService.GetColorsByMobilePhoneIdAsync(id);
 

@@ -120,11 +120,49 @@ namespace SimpleTaskApp.Areas.Admin.Controllers
             var phone = await _mobilePhoneAppService.GetAsync(new EntityDto<int>(mobilePhoneId));
             return PartialView("_DetailModal", phone);
         }
+    // =================== EXPORT EXCEL ===================
+    [HttpGet]
+    public async Task<IActionResult> ExportToExcel(int? categoryId, string fromDate, string toDate)
+    {
+      DateTime? from = null;
+      DateTime? to = null;
+
+      if (!string.IsNullOrWhiteSpace(fromDate) && DateTime.TryParse(fromDate, out var f))
+        from = f.Date; // từ đầu ngày
+
+      if (!string.IsNullOrWhiteSpace(toDate) && DateTime.TryParse(toDate, out var t))
+        to = t.Date.AddDays(1).AddTicks(-1); // tới cuối ngày
+
+      var fileBytes = await _mobilePhoneAppService.ExportToExcelByFilterAsync(categoryId, from, to);
+      var fileName = $"MobilePhones_{DateTime.Now:yyyyMMddHHmmss}.xlsx";
+      return File(fileBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+    }
 
 
-        #region Upload File 
+    // =================== IMPORT EXCEL ===================
+    [HttpPost]
+    public async Task<IActionResult> ImportFromExcel(IFormFile file)
+    {
+      if (file == null || file.Length == 0)
+        return Json(new { success = false, message = "Vui lòng chọn file Excel" });
 
-        public async Task<IActionResult> UploadImage(IFormFile file)
+      int importedCount = 0;
+
+      using (var stream = file.OpenReadStream())
+      {
+        importedCount = await _mobilePhoneAppService.ImportFromExcelAsync(stream);
+      }
+
+      return Json(new
+      {
+        success = true,
+        message = $"{importedCount} sản phẩm đã được import thành công."
+      });
+    }
+
+    #region Upload File 
+
+    public async Task<IActionResult> UploadImage(IFormFile file)
         {
             if (file == null || file.Length == 0)
                 return Ok(new { fileUrl = "" }); // Trả về fileUrl rỗng thay vì BadRequest

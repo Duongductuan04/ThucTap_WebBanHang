@@ -157,7 +157,66 @@
             return false;
         }
     });
+  // Mở modal khi click nút Export
+  $('#btnExportExcel').click(function () {
+    $('#ExportExcelModal').modal('show');
+  });
 
+  // Khi nhấn đồng ý xuất Excel
+  $('#exportExcelConfirm').click(function () {
+    var categoryId = $('#exportCategory').val();
+    var fromDate = $('#exportFrom').val();
+    var toDate = $('#exportTo').val();
+
+    var url = abp.appPath + 'Admin/MobilePhones/ExportToExcel?';
+
+    if (categoryId) url += 'categoryId=' + categoryId + '&';
+    if (fromDate) url += 'fromDate=' + fromDate + '&';
+    if (toDate) url += 'toDate=' + toDate + '&';
+
+    url = url.slice(0, -1); // Xóa dấu & cuối cùng
+
+    // Tải file Excel
+    window.location.href = url;
+
+    // Đóng modal
+    $('#ExportExcelModal').modal('hide');
+  });
+
+  // ================= Import Excel =================
+  $('#importExcelForm').submit(function (e) {
+    e.preventDefault();
+    var formData = new FormData(this);
+
+    abp.ui.setBusy($('#ImportExcelModal'));
+
+    $.ajax({
+      url: '/Admin/MobilePhones/ImportFromExcel',
+      type: 'POST',
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function (result) {
+        abp.ui.clearBusy($('#ImportExcelModal'));
+        if (result.success) {
+          abp.notify.success(result.message);
+          _$mobilePhonesTable.ajax.reload();
+
+          // Đóng modal (Bootstrap 4)
+          $('#ImportExcelModal').modal('hide');
+
+          // Reset form
+          $('#importExcelForm')[0].reset();
+        } else {
+          abp.notify.error(result.message);
+        }
+      },
+      error: function () {
+        abp.ui.clearBusy($('#ImportExcelModal'));
+        abp.notify.error('Đã có lỗi xảy ra khi import file.');
+      }
+    });
+  });
     // Clear filter
     $('#MobilePhonesSearchForm .btn-clear').on('click', function () {
         $('#MobilePhonesSearchForm')[0].reset();
@@ -183,3 +242,4 @@
     });
 
 })(jQuery);
+

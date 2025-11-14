@@ -1,13 +1,10 @@
 ﻿$(function () {
   // ======== MODAL (chỉ chạy nếu tồn tại) ========
   const modalEl = document.getElementById('quantityModal');
-  const modalQuantity = $('#modalQuantity');
+  const modalQuantity = $('[name="modalQuantity"]'); // thay cho $('#modalQuantity')
   let currentAction = '';
-  const stockQuantity = modalQuantity.length ? parseInt(modalQuantity.attr('max')) || 100 : 100;
   let modal;
-  if (modalEl) {
-    modal = new bootstrap.Modal(modalEl);
-  }
+  if (modalEl) modal = new bootstrap.Modal(modalEl);
 
   // ======== HÀM TÍNH TỔNG GIỎ HÀNG ========
   function updateCartTotals() {
@@ -40,7 +37,7 @@
       data: {
         __RequestVerificationToken: token,
         mobilePhoneId: mobilePhoneId,
-        MobilePhoneColorId: colorId, // có thể null
+        MobilePhoneColorId: colorId,
         quantity: quantity
       },
       success: function (response) {
@@ -64,7 +61,7 @@
   // ======== Tăng/Giảm số lượng ========
   $(document).on('click', '.btn-qty', function () {
     const $btn = $(this);
-    const $input = $btn.siblings('.cartQuantity, #buyNowQuantity, #modalQuantity');
+    const $input = $btn.siblings('.cartQuantity, #buyNowQuantity, [name="modalQuantity"]');
     let val = parseInt($input.val()) || 1;
     const max = parseInt($input.attr('max')) || 100;
     const min = parseInt($input.attr('min')) || 1;
@@ -103,9 +100,25 @@
   $(document).on('change', 'input[name="selectedColor"]', function () {
     selectedColorId = $(this).data('color-id') || null;
     const imageUrl = $(this).data('image-url');
+    const colorStock = parseInt($(this).data('stock')) || 0;
+
     if (imageUrl) $('#mainProductImage').attr('src', imageUrl);
     $('.color-radio-box').removeClass('selected');
     $(this).closest('.color-radio-box').addClass('selected');
+
+    // ✅ Cập nhật tồn kho và max số lượng bằng name
+    const quantityInput = $('[name="modalQuantity"]'); // đổi từ id sang name
+    quantityInput.attr('max', colorStock);
+
+    // Nếu có nhiều phần tử cùng name, dùng each để đảm bảo cập nhật tất cả
+    $('[name="modalStockInfo"]').each(function () {
+      $(this).text(` ${colorStock} sản phẩm`);
+    });
+
+
+    // Nếu số lượng hiện tại > tồn kho mới
+    let currentQty = parseInt(quantityInput.val()) || 1;
+    if (currentQty > colorStock) quantityInput.val(colorStock > 0 ? colorStock : 1);
   });
 
   // ======== Mua ngay / Thêm vào giỏ ========
@@ -116,25 +129,27 @@
     modal.show();
   });
 
+  // ======== Xác nhận hành động ========
   $('#confirmAction').click(function () {
     if (!modal) return;
 
     const quantity = parseInt(modalQuantity.val()) || 1;
+    const stockQuantity = parseInt(modalQuantity.attr('max')) || 100; // ✅ lấy stock động theo màu
+
     if (quantity < 1 || quantity > stockQuantity) {
       alert("Số lượng không hợp lệ!");
       return;
     }
 
     const selected = $('input[name="selectedColor"]:checked');
-    // validate bắt buộc chọn màu nếu có
     if ($('input[name="selectedColor"]').length > 0 && selected.length === 0) {
       alert("Vui lòng chọn màu sản phẩm!");
       return;
     }
-    const colorId = selected.length ? selected.data('color-id') : null;
 
+    const colorId = selected.length ? selected.data('color-id') : null;
     const $form = currentAction === "addToCart" ? $('#addToCartForm') : $('#buyNowForm');
-    $form.find('input[name="MobilePhoneColorId"]').val(colorId); // ✅ đúng tên trùng controller
+    $form.find('input[name="MobilePhoneColorId"]').val(colorId);
 
     if (currentAction === "addToCart") {
       $form.find('#cartQuantity').val(quantity);
@@ -142,10 +157,9 @@
       $form.find('#buyNowQuantity').val(quantity);
     }
 
-    $form.submit(); // ✅ submit form đúng cách
+    $form.submit();
     modal.hide();
   });
-
 
   // ======== Đóng modal ========
   $('.btn-secondary').click(function () {

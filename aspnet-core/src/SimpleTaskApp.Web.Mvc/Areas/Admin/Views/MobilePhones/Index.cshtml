@@ -27,6 +27,16 @@
                 <button type="button" class="btn bg-blue create-mobilephone">
                     <i class="fa fa-plus-square"></i> @L("Create")
                 </button>
+                <button type="button" class="btn btn-success" id="btnExportExcel">
+                  <i class="fa fa-file-excel"></i> @L("ExportExcel")
+                </button>
+        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#ImportExcelModal">
+          <i class="fa fa-file-excel"></i> @L("ImportExcel")
+        </button>
+
+        @await Html.PartialAsync("~/Areas/Admin/Views/MobilePhones/_ImportModal.cshtml")
+
+
             </div>
         </div>
     </div>
@@ -93,4 +103,46 @@
             @* Nội dung Detail load qua AJAX *@
         </div>
     </div>
+</div>
+
+<!-- Modal Export Excel -->
+<div class="modal fade" id="ExportExcelModal" tabindex="-1" role="dialog" aria-labelledby="ExportExcelModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">@L("ExportExcel")</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="@L("Close")">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="exportExcelForm">
+          <div class="form-group">
+            <label>@L("Category")</label>
+            <select id="exportCategory" class="form-control">
+              <option value="">-- @L("AllCategories") --</option>
+              @foreach (var c in ViewBag.Categories as List<SelectListItem>)
+              {
+                <option value="@c.Value">@c.Text</option>
+              }
+            </select>
+          </div>
+          <div class="form-group">
+            <label>@L("FromDate")</label>
+            <input type="date" id="exportFrom" class="form-control" />
+          </div>
+          <div class="form-group">
+            <label>@L("ToDate")</label>
+            <input type="date" id="exportTo" class="form-control" />
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="exportExcelConfirm" class="btn btn-success">
+          <i class="fa fa-file-excel"></i> @L("ExportExcel")
+        </button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">@L("Cancel")</button>
+      </div>
+    </div>
+  </div>
 </div>

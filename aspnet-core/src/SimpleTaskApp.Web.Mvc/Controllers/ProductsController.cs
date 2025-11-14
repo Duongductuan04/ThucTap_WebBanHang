@@ -59,7 +59,7 @@ namespace SimpleTaskApp.Web.Controllers
                 Sort = sort // cần thêm Sort trong DTO để service xử lý
             };
 
-            var products = await _mobilePhoneAppService.GetAllAsync(request);
+            var products = await _mobilePhoneAppService.GetAllByUserAsync(request);
 
             ViewBag.SelectedCategoryId = categoryId;
             ViewBag.SelectedCategoryName = categoryId != null ? await _mobilePhoneCategoryAppService.GetNameAsync(categoryId.Value) : null;
@@ -88,7 +88,7 @@ namespace SimpleTaskApp.Web.Controllers
                 CategoryId = product.CategoryId
             };
 
-            var relatedProductsAll = await _mobilePhoneAppService.GetAllAsync(request);
+            var relatedProductsAll = await _mobilePhoneAppService.GetAllByUserAsync(request);
             var relatedProducts = relatedProductsAll.Items.Where(p => p.Id != product.Id).ToList();
              var colors = await _mobilePhoneAppService.GetColorsByMobilePhoneIdAsync(id);
 

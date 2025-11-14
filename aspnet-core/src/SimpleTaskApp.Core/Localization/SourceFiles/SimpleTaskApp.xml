@@ -115,7 +115,11 @@
 		<text name="Image" value="Image" />
 		<text name="ImageUploadHint" value="Select an image file (jpg, png, webp)" />
 		<text name="ColorStock" value="Color Stock" />
-
+		<text name="ExportExcel" value="Export Excel" />
+		<text name="ImportExcel" value="Import Excel" />
+		<text name="SelectExcelFile" value="Select Excel File" />
+		<text name="Import" value="Import" />
+		<text name="ImportMobilePhones" value="Import MobilePhones" />
 		<!-- Validation / Required -->
 		<text name="DescriptionMaxLength" value="Maximum 500 characters" />
 		<text name="Price_Required" value="Please enter the product price" />
@@ -123,7 +127,8 @@
 		<text name="Brand_Invalid" value="Invalid brand" />
 		<text name="Category_Required" value="Please select a product category" />
 		<text name="Photo_Required" value="Please upload a product image" />
-
+		<text name="FromDate" value="From Date" />
+		<text name="ToDate" value="To Date" />
 		<!-- Other fields -->
 		<text name="Description" value="Description" />
 		<text name="Price" value="Price" />
