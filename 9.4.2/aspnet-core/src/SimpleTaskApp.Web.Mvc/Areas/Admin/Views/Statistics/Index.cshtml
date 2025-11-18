@@ -5,250 +5,91 @@
 }
 
 <div class="container mt-4">
-  <h2 class="mb-4">📊 Thống kê Dashboard</h2>
+<h2 class="mb-4">📈 Dashboard Thống kê Doanh thu & Sản phẩm</h2>
 
-  <!-- Bộ lọc -->
-  <form method="get" class="row g-3 mb-4">
-    <div class="col-md-2">
-      <label for="day" class="form-label">Ngày</label>
-      <input type="number" name="Day" class="form-control" id="day"
-             value="@(filter?.Day.HasValue == true ? filter.Day.ToString() : "")"
-             min="1" max="31" />
-    </div>
-    <div class="col-md-2">
-      <label for="month" class="form-label">Tháng</label>
-      <input type="number" name="Month" class="form-control" id="month"
-             value="@(filter?.Month.HasValue == true ? filter.Month.ToString() : "")" min="1" max="12" />
-    </div>
-    <div class="col-md-2">
-      <label for="year" class="form-label">Năm</label>
-      <input type="number" name="Year" class="form-control" id="year"
-             value="@(filter?.Year ?? DateTime.Now.Year)" min="2000" max="2100" />
-    </div>
-    <div class="col-md-2 align-self-end">
-      <button type="submit" class="btn btn-primary w-100">Lọc</button>
-    </div>
-    <div class="col-md-2 align-self-end">
-      <a href="@Url.Action("Index", "Statistics", new { area = "Admin" })"
-         class="btn btn-secondary w-100">Reset</a>
-    </div>
-  </form>
 
   <!-- 4 Info Boxes -->
-  <div class="row">
-    <div class="col-md-3">
-      <div class="card text-white bg-info mb-3 shadow">
-        <div class="card-body">
-          <h5 class="card-title">📱 Sản phẩm đã bán</h5>
-          <p class="card-text fs-4 fw-bold">@Model.TotalProductsSold</p>
+  @await Html.PartialAsync("Partials/_InfoBoxes", Model)
+
+  <!-- Biểu đồ doanh thu theo tháng -->
+  @await Html.PartialAsync("Partials/_RevenueByMonth", Model.RevenuesByMonth)
+
+  <div class="card shadow mt-4">
+    <div class="card-body">
+      <h5 class="fw-bold mb-4">Bộ lọc thống kê</h5>
+
+      <div class="row g-3 align-items-center">
+        <!-- Bộ lọc -->
+        <div class="col-12 col-md-6">
+          @await Html.PartialAsync("Partials/_Filter", filter)
         </div>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card text-white bg-success mb-3 shadow">
-        <div class="card-body">
-          <h5 class="card-title">📦 Đơn hàng</h5>
-          <p class="card-text fs-4 fw-bold">@Model.TotalOrders</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card text-white bg-warning mb-3 shadow">
-        <div class="card-body">
-          <h5 class="card-title">👤 Khách hàng</h5>
-          <p class="card-text fs-4 fw-bold">@Model.TotalCustomers</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card text-white bg-danger mb-3 shadow">
-        <div class="card-body">
-          <h5 class="card-title">💰 Doanh thu</h5>
-          <p class="card-text fs-4 fw-bold">@Model.MonthlyRevenue.ToString("N0") đ</p>
+
+        <!-- Chọn loại thống kê -->
+        <div class="col-12 col-md-6">
+          <label for="statisticSelect" class="form-label fw-bold">Chọn loại thống kê</label>
+          <select id="statisticSelect" class="form-select">
+            <option value="">-- Chọn thống kê --</option>
+            <option value="TopProducts">Top sản phẩm bán chạy</option>
+            <option value="BrandRevenue">Doanh thu theo thương hiệu</option>
+            <option value="LowStock">Sản phẩm tồn kho thấp</option>
+            <option value="TopCustomers">Top khách hàng mua nhiều</option>
+          </select>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Biểu đồ doanh thu theo tháng -->
- @*  <div class="card shadow mt-4">
-    <div class="card-body">
-      <h5 class="card-title mb-3">
-        📈 Doanh thu theo tháng (@(filter?.Year ?? DateTime.Now.Year))
-      </h5>
-      <canvas id="revenueChart" height="100"
-              data-revenues='@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.RevenuesByMonth))'>
-      </canvas>
-    </div>
-  </div> *@
 
-  <!-- Biểu đồ theo thương hiệu -->
-  @if (Model.RevenueByBrandPerCategory != null && Model.RevenueByBrandPerCategory.Any())
-  {
-    <h4 class="mt-4 mb-3 text-center">
-      💼 Doanh thu theo từng Thương hiệu
-      @((filter?.Day.HasValue == true && filter?.Month.HasValue == true)
-          ? $"Ngày {filter.Day}/{filter.Month}/{filter.Year ?? DateTime.Now.Year}"
-          : (filter?.Month.HasValue == true
-          ? $"Tháng {filter.Month}/{filter.Year ?? DateTime.Now.Year}"
-          : $"Năm {filter?.Year ?? DateTime.Now.Year}"))
-    </h4>
-
-    @foreach (var cat in Model.RevenueByBrandPerCategory)
-    {
-      <div class="card shadow mt-3">
-        <div class="card-body text-center">
-          <h5 class="card-title mb-3">🍏 @cat.CategoryName</h5>
-          @if (cat.BrandRevenues != null && cat.BrandRevenues.Any())
-          {
-            <canvas class="pie-chart" id="pieChart_@cat.CategoryId"
-                    width="250" height="250"
-                    data-brands='@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(cat.BrandRevenues))'>
-            </canvas>
-          }
-          else
-          {
-            <p>📌 Biểu đồ tròn không có dữ liệu cho khoảng thời gian đã chọn</p>
-          }
-        </div>
-      </div>
-    }
-  }
-  else
-  {
-    <p class="text-center mt-3">
-      📌 Không có dữ liệu doanh thu theo thương hiệu cho khoảng thời gian đã chọn
-    </p>
-  }
-
-  @if (Model.TopProducts != null && Model.TopProducts.Any())
-  {
-    <div class="card shadow mt-4">
-      <div class="card-body">
-        <h5 class="card-title mb-3">
-          🏆 Top 10 sản phẩm bán chạy nhất
-          @if (filter?.Day.HasValue == true && filter?.Month.HasValue == true)
-          {
-            <text> - Ngày @filter.Day/@filter.Month/@(filter.Year ?? DateTime.Now.Year)</text>
-          }
-          else if (filter?.Month.HasValue == true)
-          {
-            <text> - Tháng @filter.Month/@(filter.Year ?? DateTime.Now.Year)</text>
-          }
-          else
-          {
-            <text> - Năm @(filter?.Year ?? DateTime.Now.Year)</text>
-          }
-        </h5>        <table class="table table-striped table-bordered text-center">
-          <thead class="table-dark">
-            <tr>
-              <th>#</th>
-              <th>Sản phẩm</th>
-              <th>Số lượng bán</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (int i = 0; i < Model.TopProducts.Count; i++)
-            {
-              <tr>
-                <td>@(i + 1)</td>
-                <td>@Model.TopProducts[i].ProductName</td>
-                <td>@Model.TopProducts[i].QuantitySold</td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-    </div>
-  }
-  else
-  {
-    <p class="text-center mt-3">📌 Không có dữ liệu Top sản phẩm bán chạy trong khoảng thời gian đã chọn</p>
-  }
-  @if (Model.LowStockProducts != null && Model.LowStockProducts.Any())
-  {
-    <div class="card shadow mt-4">
-      <div class="card-body">
-        <h5 class="card-title mb-3">⚠️ Sản phẩm tồn kho báo động</h5>
-        <table class="table table-striped table-bordered text-center">
-          <thead class="table-danger">
-            <tr>
-              <th>#</th>
-              <th>Sản phẩm</th>
-              <th>Tồn kho</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (int i = 0; i < Model.LowStockProducts.Count; i++)
-            {
-              <tr>
-                <td>@(i + 1)</td>
-                <td>@Model.LowStockProducts[i].ProductName</td>
-                <td>@Model.LowStockProducts[i].StockQuantity</td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-    </div>
-  }
-  else
-  {
-    <p class="text-center mt-3">📌 Không có sản phẩm tồn kho báo động</p>
-  }
-  @if (Model.TopCustomers != null && Model.TopCustomers.Any())
-  {
-    <div class="card shadow mt-4">
-      <div class="card-body">
-        <h5 class="card-title mb-3">
-          🏅 Top  khách hàng tiềm năng
-          @if (filter?.Day.HasValue == true && filter?.Month.HasValue == true)
-          {
-            <text> - Ngày @filter.Day/@filter.Month/@(filter.Year ?? DateTime.Now.Year)</text>
-          }
-          else if (filter?.Month.HasValue == true)
-          {
-            <text> - Tháng @filter.Month/@(filter.Year ?? DateTime.Now.Year)</text>
-          }
-          else
-          {
-            <text> - Năm @(filter?.Year ?? DateTime.Now.Year)</text>
-          }
-        </h5>
-        <table class="table table-striped table-bordered text-center">
-          <thead class="table-dark">
-            <tr>
-              <th>#</th>
-              <th>Khách hàng</th>
-              <th>Số đơn hàng</th>
-              <th>Tổng chi tiêu (VNĐ)</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (int i = 0; i < Model.TopCustomers.Count; i++)
-            {
-              <tr>
-                <td>@(i + 1)</td>
-                <td>@Model.TopCustomers[i].UserName</td>
-                <td>@Model.TopCustomers[i].TotalOrders</td>
-                <td>@Model.TopCustomers[i].TotalSpent.ToString("N0") đ</td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-    </div>
-  }
-  else
-  {
-    <p class="text-center mt-3">📌 Không có dữ liệu khách hàng tiềm năng trong khoảng thời gian đã chọn</p>
-  }
-
-
+  <!-- Khu vực load partial -->
+  <div id="statisticContainer" class="mt-4"></div>
 </div>
 
 @section scripts {
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="~/view-resources/Views/Statistics/Index.js"></script>
-  <script src="~/view-resources/Views/Statistics/statistics-pie.js"></script>
+@*   <script src="~/view-resources/Views/Statistics/Index.js"></script>
+ *@  <script src="~/view-resources/Views/Statistics/statistics-pie.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterForm = document.querySelector('form');
+        const select = document.getElementById("statisticSelect");
+        const container = document.getElementById("statisticContainer");
+
+        // Submit form bằng AJAX
+        filterForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const day = this.querySelector('input[name="Day"]').value;
+            const month = this.querySelector('input[name="Month"]').value;
+            const year = this.querySelector('input[name="Year"]').value;
+            const type = select.value;
+
+            fetch(`/Admin/Statistics/LoadPartial?type=${type}&Day=${day}&Month=${month}&Year=${year}`)
+                .then(res => res.text())
+                .then(html => {
+                    container.innerHTML = html;
+                    if(type === "BrandRevenue" && typeof initPieCharts === "function") {
+                        initPieCharts(container);
+                    }
+                });
+        });
+
+        // Khi thay đổi select
+        select.addEventListener('change', function() {
+            const type = this.value;
+            const day = filterForm.querySelector('input[name="Day"]').value;
+            const month = filterForm.querySelector('input[name="Month"]').value;
+            const year = filterForm.querySelector('input[name="Year"]').value;
+
+            if(!type) return;
+
+            fetch(`/Admin/Statistics/LoadPartial?type=${type}&Day=${day}&Month=${month}&Year=${year}`)
+                .then(res => res.text())
+                .then(html => {
+                    container.innerHTML = html;
+                    if(type === "BrandRevenue" && typeof initPieCharts === "function") {
+                        initPieCharts(container);
+                    }
+                });
+        });
+    });
+  </script>
 }

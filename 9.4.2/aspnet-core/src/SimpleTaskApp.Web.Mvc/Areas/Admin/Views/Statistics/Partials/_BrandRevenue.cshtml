@@ -1,0 +1,20 @@
+﻿@model List<SimpleTaskApp.Statistics.Dto.CategoryRevenueDto>
+
+@foreach (var cat in Model)
+{
+  <div class="card shadow mt-3">
+    <div class="card-body text-center">
+      <h5 class="card-title mb-3">@cat.CategoryName</h5>
+      @if (cat.BrandRevenues != null && cat.BrandRevenues.Any())
+      {
+        <canvas class="pie-chart"
+                data-brands='@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(cat.BrandRevenues))'>
+        </canvas>
+      }
+      else
+      {
+        <p>Không có dữ liệu</p>
+      }
+    </div>
+  </div>
+}

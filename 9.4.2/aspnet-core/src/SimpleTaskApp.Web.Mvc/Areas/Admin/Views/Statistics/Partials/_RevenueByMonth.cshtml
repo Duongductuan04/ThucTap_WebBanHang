@@ -1,0 +1,84 @@
+﻿@model List<decimal>
+
+<div class="card shadow mt-4">
+  <div class="card-body">
+    <h5 class="card-title">📈 Doanh thu sản phẩm năm  @DateTime.Now.Year</h5>
+    <canvas id="revenueChart"
+            height="100"
+            data-revenues='@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model))'>
+    </canvas>
+  </div>
+</div>
+
+<!-- Thêm Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      var ctx = document.getElementById('revenueChart').getContext('2d');
+      var revenues = JSON.parse(ctx.canvas.dataset.revenues);
+
+      var colors = [
+          'rgba(0, 123, 255, 0.8)',
+          'rgba(40, 167, 69, 0.8)',
+          'rgba(255, 193, 7, 0.8)',
+          'rgba(220, 53, 69, 0.8)',
+          'rgba(23, 162, 184, 0.8)',
+          'rgba(108, 117, 125, 0.8)',
+          'rgba(255, 87, 51, 0.8)',
+          'rgba(102, 16, 242, 0.8)',
+          'rgba(3, 201, 169, 0.8)',
+          'rgba(255, 159, 28, 0.8)',
+          'rgba(52, 58, 64, 0.8)',
+          'rgba(13, 202, 240, 0.8)'
+      ];
+
+      new Chart(ctx, {
+          type: 'bar',
+          data: {
+              labels: [
+                  'Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6',
+                  'Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'
+              ],
+              datasets: [{
+                  label: 'Doanh thu (VNĐ)',
+                  data: revenues,
+                  backgroundColor: colors,
+                  borderColor: 'rgba(0,0,0,0.7)',
+                  borderWidth: 1,
+                  borderRadius: 8
+              }]
+          },
+          options: {
+              responsive: true,
+              plugins: {
+                  tooltip: {
+                      callbacks: {
+                          label: function(context) {
+                              return context.dataset.label + ': ' + context.raw.toLocaleString('vi-VN') + ' đ';
+                          }
+                      }
+                  },
+                  datalabels: {
+                                    display: false // tắt hiển thị số trên cột
+
+                  }
+              },
+              scales: {
+                  y: {
+                      beginAtZero: true,
+                      ticks: {
+                          callback: function(value) {
+                              return value.toLocaleString('vi-VN') + ' đ';
+                          }
+                      },
+                      grid: { color: 'rgba(0,0,0,0.1)' }
+                  },
+                  x: { grid: { display: false } }
+              }
+          },
+          plugins: [ChartDataLabels]
+      });
+  });
+</script>

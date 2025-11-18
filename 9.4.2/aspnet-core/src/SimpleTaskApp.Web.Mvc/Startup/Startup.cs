@@ -114,10 +114,10 @@ namespace SimpleTaskApp.Web.Startup
             app.UseAuthentication();
             app.UseAuthorization();
 
-            // =====================
-            // Bật session
-            // =====================
-            app.UseSession();
+      // =====================
+      // Bật session
+      // =====================
+      app.UseSession();
 
             app.UseJwtTokenMiddleware();
 

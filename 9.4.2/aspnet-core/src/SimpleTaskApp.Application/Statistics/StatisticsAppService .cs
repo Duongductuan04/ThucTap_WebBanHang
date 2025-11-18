@@ -56,31 +56,33 @@ namespace SimpleTaskApp.Statistics
         startDate = new DateTime(year, 1, 1);
         endDate = startDate.AddYears(1);
       }
-
-      // Tổng sản phẩm, đơn hàng, khách hàng, doanh thu
+      // Tổng sản phẩm đã bán
       var totalProductsSold = await _orderDetailRepository.GetAll()
-          .Where(od => od.Order.CreationTime >= startDate && od.Order.CreationTime < endDate)
           .SumAsync(od => (int?)od.Quantity) ?? 0;
 
+      // Tổng đơn hàng
       var totalOrders = await _orderRepository.GetAll()
-          .Where(o => o.CreationTime >= startDate && o.CreationTime < endDate)
           .CountAsync();
 
+      // Tổng khách hàng
       var totalCustomers = await _orderRepository.GetAll()
-          .Where(o => o.CreationTime >= startDate && o.CreationTime < endDate)
           .Select(o => o.UserId)
           .Distinct()
           .CountAsync();
 
+      // Tổng doanh thu
       var totalRevenue = await _orderRepository.GetAll()
-          .Where(o => o.CreationTime >= startDate && o.CreationTime < endDate)
           .SumAsync(o => (decimal?)o.FinalAmount) ?? 0;
+
+
+      // Lấy năm hiện tại
+      int currentYear = DateTime.Now.Year;
 
       // Doanh thu theo 12 tháng
       var revenuesByMonth = new List<decimal>();
       for (int m = 1; m <= 12; m++)
       {
-        var startOfMonth = new DateTime(year, m, 1);
+        var startOfMonth = new DateTime(currentYear, m, 1);
         var endOfMonth = startOfMonth.AddMonths(1);
 
         var revenueMonth = await _orderRepository.GetAll()
@@ -89,6 +91,7 @@ namespace SimpleTaskApp.Statistics
 
         revenuesByMonth.Add(revenueMonth);
       }
+
 
       // Doanh thu theo brand trong từng danh mục
       var revenueByCategory = await _orderDetailRepository.GetAll()
@@ -177,4 +180,4 @@ namespace SimpleTaskApp.Statistics
       };
     }
   }
-  }
+}
