@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace SimpleTaskApp.Statistics.Dto
 {
-    public class StatisticsFilterDto
-    {
-        public int? Day { get; set; }     // Ngày cụ thể
-        public int? Month { get; set; }   // Tháng
-        public int? Year { get; set; }    // Năm
-    }
+  public class StatisticsFilterDto
+  {
+    public string StartDate { get; set; }
+    public string EndDate { get; set; }
+  }
 }

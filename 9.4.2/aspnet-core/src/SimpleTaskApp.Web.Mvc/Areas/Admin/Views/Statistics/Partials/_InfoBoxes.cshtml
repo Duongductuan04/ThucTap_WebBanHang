@@ -3,43 +3,44 @@
 <!-- Font Awesome -->
 <link rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 <div class="row g-4">
   <div class="col-md-3 col-sm-6">
-    <div class="card shadow border-0 text-white bg-gradient-info rounded-4" style="height: 110px;">
+    <div class="card shadow border-0 text-white bg-gradient-info rounded-4" style="height: 120px;">
       <div class="card-body text-center d-flex flex-column justify-content-center">
-        <i class="fas fa-box-open fa-lg mb-1"></i>
-        <h6 class="mb-1">Sản phẩm đã bán</h6>
-        <p class="fs-5 fw-bold mb-0">@Model.TotalProductsSold</p>
+        <i class="fas fa-box-open fa-2x mb-2"></i>
+        <h6 class="mb-1 mt-1">Sản phẩm đã bán</h6>
+        <p class="fs-5 fw-bold mt-1">@Model.TotalProductsSold</p>
       </div>
     </div>
   </div>
 
   <div class="col-md-3 col-sm-6">
-    <div class="card shadow border-0 text-white bg-gradient-success rounded-4" style="height: 110px;">
+    <div class="card shadow border-0 text-white bg-gradient-success rounded-4" style="height: 120px;">
       <div class="card-body text-center d-flex flex-column justify-content-center">
-        <i class="fas fa-shopping-cart fa-lg mb-1"></i>
-        <h6 class="mb-1">Đơn hàng</h6>
-        <p class="fs-5 fw-bold mb-0">@Model.TotalOrders</p>
+        <i class="fas fa-shopping-cart fa-2x mb-2"></i>
+        <h6 class="mb-1 mt-1">Đơn hàng</h6>
+        <p class="fs-5 fw-bold mt-1">@Model.TotalOrders</p>
       </div>
     </div>
   </div>
 
   <div class="col-md-3 col-sm-6">
-    <div class="card shadow border-0 text-white bg-gradient-warning rounded-4" style="height: 110px;">
+    <div class="card shadow border-0 text-white bg-gradient-warning rounded-4" style="height: 120px;">
       <div class="card-body text-center d-flex flex-column justify-content-center">
-        <i class="fas fa-users fa-lg mb-1"></i>
-        <h6 class="mb-1">Khách hàng</h6>
-        <p class="fs-5 fw-bold mb-0">@Model.TotalCustomers</p>
+        <i class="fas fa-users fa-2x mb-2"></i>
+        <h6 class="mb-1 mt-1">Khách hàng</h6>
+        <p class="fs-5 fw-bold mt-1">@Model.TotalCustomers</p>
       </div>
     </div>
   </div>
 
   <div class="col-md-3 col-sm-6">
-    <div class="card shadow border-0 text-white bg-gradient-danger rounded-4" style="height: 110px;">
+    <div class="card shadow border-0 text-white bg-gradient-danger rounded-4" style="height: 120px;">
       <div class="card-body text-center d-flex flex-column justify-content-center">
-        <i class="fas fa-dollar-sign fa-lg mb-1"></i>
-        <h6 class="mb-1">Doanh thu</h6>
-        <p class="fs-5 fw-bold mb-0">@Model.MonthlyRevenue.ToString("N0") đ</p>
+        <i class="fas fa-dollar-sign fa-2x mb-2"></i>
+        <h6 class="mb-1 mt-1">Doanh thu</h6>
+        <p class="fs-5 fw-bold mt-1">@Model.MonthlyRevenue.ToString("N0") đ</p>
       </div>
     </div>
   </div>

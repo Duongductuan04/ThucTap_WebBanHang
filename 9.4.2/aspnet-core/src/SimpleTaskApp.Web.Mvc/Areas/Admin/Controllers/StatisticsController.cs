@@ -3,6 +3,7 @@ using SimpleTaskApp.Controllers;
 using SimpleTaskApp.Statistics;
 using SimpleTaskApp.Statistics.Dto;
 using System.Threading.Tasks;
+using System;
 
 namespace SimpleTaskApp.Areas.Admin.Controllers
 {
@@ -19,17 +20,29 @@ namespace SimpleTaskApp.Areas.Admin.Controllers
     // GET: /Admin/Statistics/Index
     public async Task<IActionResult> Index(StatisticsFilterDto filter)
     {
-      // Nếu chưa chọn năm → mặc định năm hiện tại
-      if (filter.Year == null)
+      // ========================
+      // XỬ LÝ KHOẢNG NGÀY MẶC ĐỊNH
+      // ========================
+      if (string.IsNullOrWhiteSpace(filter.StartDate) || string.IsNullOrWhiteSpace(filter.EndDate))
       {
-        filter.Year = System.DateTime.Now.Year;
+        // Mặc định tháng hiện tại
+        var now = DateTime.Now;
+        var startOfMonth = new DateTime(now.Year, now.Month, 1);
+        var endOfMonth = now; // đến thời điểm hiện tại
+
+        filter.StartDate = startOfMonth.ToString("yyyy-MM-dd");
+        filter.EndDate = endOfMonth.ToString("yyyy-MM-dd");
       }
 
+      // ========================
+      // Lấy thống kê
+      // ========================
       var stats = await _statisticsAppService.GetDashboardStatisticsAsync(filter);
 
+      // Truyền filter xuống View để Date Range Picker hiển thị đúng
       ViewBag.Filter = filter;
 
-      // Trả về 4 box + biểu đồ doanh thu
+      // Trả về View
       return View(stats);
     }
 

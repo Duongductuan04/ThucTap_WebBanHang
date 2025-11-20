@@ -1,95 +1,60 @@
 ﻿@model SimpleTaskApp.Statistics.Dto.StatisticsDto
 @{
   ViewBag.Title = "Thống kê";
-  var filter = ViewBag.Filter as SimpleTaskApp.Statistics.Dto.StatisticsFilterDto;
 }
 
 <div class="container mt-4">
-<h2 class="mb-4">📈 Dashboard Thống kê Doanh thu & Sản phẩm</h2>
+  <h2 class="mb-4">📈 Dashboard Thống kê Doanh thu & Sản phẩm</h2>
 
-
-  <!-- 4 Info Boxes -->
-  @await Html.PartialAsync("Partials/_InfoBoxes", Model)
-
-  <!-- Biểu đồ doanh thu theo tháng -->
-  @await Html.PartialAsync("Partials/_RevenueByMonth", Model.RevenuesByMonth)
-
-  <div class="card shadow mt-4">
-    <div class="card-body">
-      <h5 class="fw-bold mb-4">Bộ lọc thống kê</h5>
-
-      <div class="row g-3 align-items-center">
-        <!-- Bộ lọc -->
-        <div class="col-12 col-md-6">
-          @await Html.PartialAsync("Partials/_Filter", filter)
-        </div>
-
-        <!-- Chọn loại thống kê -->
-        <div class="col-12 col-md-6">
-          <label for="statisticSelect" class="form-label fw-bold">Chọn loại thống kê</label>
-          <select id="statisticSelect" class="form-select">
-            <option value="">-- Chọn thống kê --</option>
-            <option value="TopProducts">Top sản phẩm bán chạy</option>
-            <option value="BrandRevenue">Doanh thu theo thương hiệu</option>
-            <option value="LowStock">Sản phẩm tồn kho thấp</option>
-            <option value="TopCustomers">Top khách hàng mua nhiều</option>
-          </select>
-        </div>
+  <div class="row">
+    <!-- Bộ lọc -->
+    <div class="col-lg-3 mb-3">
+      <div class="card shadow p-3">
+        <h5 class="fw-bold mb-3">Bộ lọc thống kê</h5>
+        <form id="filterForm">
+          <div class="mb-3">
+            <label for="StartEndRange" class="form-label">Chọn khoảng thời gian</label>
+            <input id="StartEndRange" type="text" class="form-control date-range-picker" placeholder="Từ ngày - đến ngày" />
+          </div>
+          <div class="mb-3">
+            <label for="statisticSelect" class="form-label">Chọn loại thống kê</label>
+            <select id="statisticSelect" class="form-select">
+              <option value="">-- Không chọn thống kê --</option>
+              <option value="TopProducts">Top sản phẩm bán chạy nhất</option>
+              <option value="BrandRevenue">Doanh thu theo thương hiệu</option>
+              <option value="LowStock">Sản phẩm tồn kho thấp</option>
+              <option value="TopCustomers"> Khách hàng tiềm năng</option>
+            </select>
+          </div>
+          <button type="button" id="btnLoadStatistics" class="btn btn-secondary w-100">Thống kê</button>
+        </form>
       </div>
     </div>
+
+    <!-- Nội dung chính -->
+    <div class="col-lg-9">
+      <div id="statsContent">
+        <!-- 4 Info Boxes -->
+        @await Html.PartialAsync("Partials/_InfoBoxes", Model)
+
+        <!-- Biểu đồ doanh thu theo tháng -->
+        @await Html.PartialAsync("Partials/_RevenueByMonth", Model.RevenuesByMonth)
+      </div>
+
+      <!-- Khu vực load partial -->
+      <div id="statisticContainer" class="mt-4"></div>
+    </div>
   </div>
-
-
-  <!-- Khu vực load partial -->
-  <div id="statisticContainer" class="mt-4"></div>
 </div>
+
 
 @section scripts {
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-@*   <script src="~/view-resources/Views/Statistics/Index.js"></script>
- *@  <script src="~/view-resources/Views/Statistics/statistics-pie.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const filterForm = document.querySelector('form');
-        const select = document.getElementById("statisticSelect");
-        const container = document.getElementById("statisticContainer");
+  <script src="https://cdn.jsdelivr.net/npm/moment/min/moment.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+  <script src="~/view-resources/Views/Statistics/statistics-pie.js"></script>
+  <script src="~/view-resources/Views/Statistics/Index.js"></script>
 
-        // Submit form bằng AJAX
-        filterForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const day = this.querySelector('input[name="Day"]').value;
-            const month = this.querySelector('input[name="Month"]').value;
-            const year = this.querySelector('input[name="Year"]').value;
-            const type = select.value;
-
-            fetch(`/Admin/Statistics/LoadPartial?type=${type}&Day=${day}&Month=${month}&Year=${year}`)
-                .then(res => res.text())
-                .then(html => {
-                    container.innerHTML = html;
-                    if(type === "BrandRevenue" && typeof initPieCharts === "function") {
-                        initPieCharts(container);
-                    }
-                });
-        });
-
-        // Khi thay đổi select
-        select.addEventListener('change', function() {
-            const type = this.value;
-            const day = filterForm.querySelector('input[name="Day"]').value;
-            const month = filterForm.querySelector('input[name="Month"]').value;
-            const year = filterForm.querySelector('input[name="Year"]').value;
-
-            if(!type) return;
-
-            fetch(`/Admin/Statistics/LoadPartial?type=${type}&Day=${day}&Month=${month}&Year=${year}`)
-                .then(res => res.text())
-                .then(html => {
-                    container.innerHTML = html;
-                    if(type === "BrandRevenue" && typeof initPieCharts === "function") {
-                        initPieCharts(container);
-                    }
-                });
-        });
-    });
-  </script>
 }
+

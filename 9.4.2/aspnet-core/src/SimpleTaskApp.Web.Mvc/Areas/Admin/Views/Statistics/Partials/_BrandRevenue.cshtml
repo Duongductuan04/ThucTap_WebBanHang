@@ -2,18 +2,45 @@
 
 @foreach (var cat in Model)
 {
-  <div class="card shadow mt-3">
-    <div class="card-body text-center">
-      <h5 class="card-title mb-3">@cat.CategoryName</h5>
+  <div class="card shadow-sm mt-4 rounded-4">
+    <div class="card-header bg-secondary text-white text-center">
+      <h5 class="mb-0">@cat.CategoryName</h5>
+    </div>
+    <div class="card-body">
       @if (cat.BrandRevenues != null && cat.BrandRevenues.Any())
       {
-        <canvas class="pie-chart"
-                data-brands='@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(cat.BrandRevenues))'>
-        </canvas>
+        <div class="row align-items-center">
+          <!-- Chart lớn hơn -->
+          <div class="col-lg-5 col-md-12 text-center mb-3 mb-lg-0">
+            <canvas class="pie-chart"
+                    data-brands='@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(cat.BrandRevenues))'
+                    style="width:100%; max-width:400px; height:400px;">
+            </canvas>
+          </div>
+
+          <!-- Chi tiết doanh thu từng brand -->
+          <div class="col-lg-6 col-md-12 mx-auto">
+            <ul class="list-group">
+              @foreach (var b in cat.BrandRevenues.OrderByDescending(x => x.Revenue))
+              {
+                <li class="list-group-item d-flex justify-content-between align-items-center mb-2 p-3 shadow-sm rounded-3 brand-item"
+                    style="background-color:#ffffff;">
+                  <span class="fw-semibold">@b.BrandName</span>
+                  <span class="badge rounded-pill px-3 py-1"
+                        style="background: linear-gradient(90deg, #4caf50, #81c784); color:white;">
+                    @b.Revenue.ToString("N0")
+                  </span>
+                </li>
+              }
+            </ul>
+          </div>
+
+
+        </div>
       }
       else
       {
-        <p>Không có dữ liệu</p>
+        <p class="text-center text-muted fst-italic mb-0">Không có dữ liệu</p>
       }
     </div>
   </div>

@@ -54,9 +54,6 @@
     <EditorConfigFiles Remove="E:\SimpleTaskApp\9.4.2\aspnet-core\src\SimpleTaskApp.Web.Mvc\Models\.editorconfig" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="E:\SimpleTaskApp\9.4.2\aspnet-core\src\SimpleTaskApp.Web.Mvc\Models\.editorconfig" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Update="wwwroot\view-resources\Views\Imports\_CreateModal.js">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>

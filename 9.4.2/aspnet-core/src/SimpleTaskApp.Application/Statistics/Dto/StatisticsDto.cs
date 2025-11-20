@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using DocumentFormat.OpenXml.Wordprocessing;
 using SimpleTaskApp.MobilePhones.Dto;
+using System;
 namespace SimpleTaskApp.Statistics.Dto
 {
     // DTO cho doanh thu theo từng brand trong một danh mục
@@ -16,26 +18,40 @@ namespace SimpleTaskApp.Statistics.Dto
         public string CategoryName { get; set; }                  // Tên danh mục
         public List<BrandRevenueDto> BrandRevenues { get; set; } = new List<BrandRevenueDto>();
     }
-  // DTO cho Top sản phẩm bán chạy
   public class TopProductDto
   {
-    public int MobilePhoneId { get; set; }    // Id sản phẩm
-    public string ProductName { get; set; }   // Tên sản phẩm
-    public int QuantitySold { get; set; }     // Số lượng bán ra
+    public int MobilePhoneId { get; set; }        // Id sản phẩm
+    public string ProductName { get; set; }        // Tên sản phẩm
+    public string ImageUrl { get; set; }           // Ảnh sản phẩm (ảnh chính)
+
+    public int? MobilePhoneColorId { get; set; }   // Id màu người mua đã chọn
+    public string ColorName { get; set; }          // Tên màu người mua đã chọn
+    public string ColorImageUrl { get; set; }      // Ảnh màu (nếu có)
+
+    public int QuantitySold { get; set; }          // Số lượng đã bán theo từng màu
   }
   // DTO cho Top sản phẩm tồn kho báo động
-  public class LowStockProductDto
+  public class LowStockProductVariantDto
   {
-    public int MobilePhoneId { get; set; }     // Id sản phẩm
-    public string ProductName { get; set; }    // Tên sản phẩm
-    public int StockQuantity { get; set; }     // Số lượng tồn
+    public int MobilePhoneId { get; set; }
+    public string ProductName { get; set; }
+    public string ImageUrl { get; set; }
+    public string Color { get; set; }  // màu
+    public int ColorStockQuantity { get; set; } // tồn kho màu
+    public int TotalStockQuantity { get; set; } // tổng tồn kho sản phẩm
+    public DateTime? LastImportDate { get; set; } // ngày nhập cuối cùng
   }
+
+  // DTO mới
   public class TopCustomerDto
   {
     public long UserId { get; set; }          // Id khách hàng
-    public string UserName { get; set; }     // Tên khách hàng
-    public int TotalOrders { get; set; }     // Tổng số đơn hàng
-    public decimal TotalSpent { get; set; }  // Tổng chi tiêu
+    public string UserName { get; set; }      // Tên khách hàng
+    public string PhoneNumber { get; set; }   // Số điện thoại
+    public string Address { get; set; }       // Địa chỉ
+    public int TotalOrders { get; set; }      // Tổng số đơn hàng
+    public int TotalProducts { get; set; }    // Tổng số sản phẩm đã mua
+    public decimal TotalSpent { get; set; }   // Tổng chi tiêu
   }
   // DTO tổng hợp cho dashboard
   public class StatisticsDto
@@ -52,7 +68,7 @@ namespace SimpleTaskApp.Statistics.Dto
         // Doanh thu theo brand trong từng danh mục
         public List<CategoryRevenueDto> RevenueByBrandPerCategory { get; set; } = new List<CategoryRevenueDto>();
        public List<TopProductDto> TopProducts { get; set; } = new List<TopProductDto>();
-    public List<LowStockProductDto> LowStockProducts { get; set; } = new List<LowStockProductDto>();
+    public List<LowStockProductVariantDto> LowStockProducts { get; set; } = new List<LowStockProductVariantDto>();
     public List<TopCustomerDto> TopCustomers { get; set; } = new List<TopCustomerDto>();
 
 

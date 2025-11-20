@@ -16,10 +16,10 @@ namespace SimpleTaskApp.Web.Startup
         
           .AddItem(
               new MenuItemDefinition(
-                  PageNames.Home,
-                  L("HomePage"),
+                  PageNames.Statistics,
+                  L("Statistics"),
                   url: "/Admin/Statistics", // đường dẫn đến trang thống kê
-                  icon: "fas fa-home",
+                     icon: "fas fa-chart-bar",     // icon thống kê
                  permissionDependency: new SimplePermissionDependency(
                       PermissionNames.Pages_Statistics
                   ))
