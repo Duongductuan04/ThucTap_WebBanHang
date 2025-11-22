@@ -2,15 +2,12 @@
   'use strict';
 
   // === Khởi tạo giá trị mặc định của tháng hiện tại ===
-  var _selectedDateRange = {
-    startDate: null,
-    endDate: null
-  };
+  var _selectedDateRange = { startDate: null, endDate: null };
 
   var filterForm = $('#filterForm');
   var select = $('#statisticSelect');
   var container = $('#statisticContainer');
-  var statsContent = $('#statsContent'); // phần info boxes + biểu đồ
+  var statsContent = $('#statsContent'); // info boxes + biểu đồ
 
   // === Khởi tạo Date Range Picker với các ranges mặc định ===
   $('#StartEndRange').daterangepicker({
@@ -23,7 +20,8 @@
       cancelLabel: 'Hủy',
       customRangeLabel: 'Tùy chỉnh',
       daysOfWeek: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'],
-      monthNames: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
+      monthNames: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6',
+        'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
       firstDay: 1
     },
     ranges: {
@@ -47,44 +45,56 @@
     _selectedDateRange.startDate = null;
     _selectedDateRange.endDate = null;
   });
+  // Khi input bị xóa (trống) thì reset giống nút hủy
+  $('#StartEndRange').on('input', function () {
+    if ($(this).val().trim() === '') {
+      _selectedDateRange.startDate = null;
+      _selectedDateRange.endDate = null;
+    }
+  });
+ 
 
-  // === Hàm load thống kê ===
+  // ==============================
+  // Hàm load thống kê
+  // ==============================
   function loadStatistics() {
     const type = select.val();
 
-    if (!type) {
-      // Nếu không chọn thống kê → hiện lại stats
+    let startDate = _selectedDateRange.startDate;
+    let endDate = _selectedDateRange.endDate;
+
+    // Overview → hiển thị info boxes + biểu đồ
+    if (type === "Overview") {
       statsContent.show();
-      container.html('');
-      return;
+    } else {
+      statsContent.hide();
     }
 
-    // Nếu chọn thống kê → ẩn stats
-    statsContent.hide();
-
-    let startDate = _selectedDateRange.startDate || '';
-    let endDate = _selectedDateRange.endDate || '';
-
-    // Nếu loại thống kê là LowStock → hủy thời gian
-    if (type === 'LowStock') {
-      startDate = '';
-      endDate = '';
-      _selectedDateRange.startDate = null;
-      _selectedDateRange.endDate = null;
-      $('#StartEndRange').val(''); // xóa hiển thị
+    // Tạo URL với filter thời gian nếu có
+    let url = `/Admin/Statistics/LoadPartial?type=${type}`;
+    if (type !== "LowStock") {
+      if (startDate) url += `&StartDate=${startDate}`;
+      if (endDate) url += `&EndDate=${endDate}`;
     }
 
-    fetch(`/Admin/Statistics/LoadPartial?type=${type}&StartDate=${startDate}&EndDate=${endDate}`)
+    fetch(url)
       .then(res => res.text())
       .then(html => {
         container.html(html);
+        // Khởi tạo pie chart nếu là BrandRevenue
         if (type === "BrandRevenue" && typeof initPieCharts === "function") {
           initPieCharts(container);
+        }
+        // Khởi tạo chart doanh thu nếu Overview
+        if (type === "Overview" && typeof renderRevenueChart === "function") {
+          renderRevenueChart();
         }
       });
   }
 
-  // === Nhấn nút Thống kê mới load ===
+  // ==============================
+  // Nhấn nút Thống kê
+  // ==============================
   $('#btnLoadStatistics').on('click', function () {
     loadStatistics();
   });

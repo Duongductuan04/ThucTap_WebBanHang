@@ -61,16 +61,18 @@ namespace SimpleTaskApp.Statistics.Dto
         public int TotalCustomers { get; set; }
         public decimal MonthlyRevenue { get; set; }
 
-        // Doanh thu theo tháng (12 tháng)
-        public List<decimal> RevenuesByMonth { get; set; } = new List<decimal>();
-        //10 don hang moi nhat
+    // Doanh thu theo tháng (12 tháng)
+    // Biểu đồ doanh thu theo filter
+    public List<string> RevenueChartLabels { get; set; } = new List<string>();
+    public List<decimal> RevenueChartData { get; set; } = new List<decimal>();        //10 don hang moi nhat
 
-        // Doanh thu theo brand trong từng danh mục
-        public List<CategoryRevenueDto> RevenueByBrandPerCategory { get; set; } = new List<CategoryRevenueDto>();
+    // Doanh thu theo brand trong từng danh mục
+    public List<CategoryRevenueDto> RevenueByBrandPerCategory { get; set; } = new List<CategoryRevenueDto>();
        public List<TopProductDto> TopProducts { get; set; } = new List<TopProductDto>();
     public List<LowStockProductVariantDto> LowStockProducts { get; set; } = new List<LowStockProductVariantDto>();
     public List<TopCustomerDto> TopCustomers { get; set; } = new List<TopCustomerDto>();
 
+    public StatisticsFilterDto Filter { get; set; }
 
 
   }

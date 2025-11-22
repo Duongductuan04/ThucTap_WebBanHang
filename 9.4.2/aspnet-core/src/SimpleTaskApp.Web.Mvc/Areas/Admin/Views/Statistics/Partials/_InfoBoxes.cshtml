@@ -1,47 +1,178 @@
 ﻿@model SimpleTaskApp.Statistics.Dto.StatisticsDto
 
-<!-- Font Awesome -->
-<link rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<div class="overview-wrapper p-4 rounded-4 border shadow-sm bg-white">
 
-<div class="row g-4">
-  <div class="col-md-3 col-sm-6">
-    <div class="card shadow border-0 text-white bg-gradient-info rounded-4" style="height: 120px;">
-      <div class="card-body text-center d-flex flex-column justify-content-center">
-        <i class="fas fa-box-open fa-2x mb-2"></i>
-        <h6 class="mb-1 mt-1">Sản phẩm đã bán</h6>
-        <p class="fs-5 fw-bold mt-1">@Model.TotalProductsSold</p>
+  <!-- Tiêu đề -->
+  <div class="overview-header mb-4 text-center">
+    <h2 class="fw-bold text-primary">
+      📊 Báo cáo tổng quan
+      @if (Model.Filter != null)
+      {
+        var start = DateTime.Parse(Model.Filter.StartDate).ToString("dd/MM/yyyy");
+        var end = DateTime.Parse(Model.Filter.EndDate).ToString("dd/MM/yyyy");
+
+        if (start == end)
+        {
+          <small class="text-primary d-block" style="font-size:0.8em;">(@start)</small>
+        }
+        else
+        {
+          <small class="text-primary d-block" style="font-size:0.8em;">(Từ @start đến @end)</small>
+        }
+      }
+    </h2>
+    <p class="text-muted">Thống kê nhanh các chỉ số quan trọng của cửa hàng</p>
+  </div>
+  <div class="row g-4">
+    <!-- Sản phẩm đã bán -->
+    <div class="col-md-3 col-sm-6">
+      <div class="card rounded-4 shadow-sm border border-light text-center py-4 bg-white hover-scale">
+        <div class="card-body">
+          <div class="icon-wrapper bg-info-light rounded-circle mb-3">
+            <i class="fas fa-box-open fa-2x text-info"></i>
+          </div>
+          <h6 class="fw-semibold text-muted">Sản phẩm đã bán</h6>
+          <h3 class="fw-bold text-dark counter" data-count="@Model.TotalProductsSold">0</h3>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="col-md-3 col-sm-6">
-    <div class="card shadow border-0 text-white bg-gradient-success rounded-4" style="height: 120px;">
-      <div class="card-body text-center d-flex flex-column justify-content-center">
-        <i class="fas fa-shopping-cart fa-2x mb-2"></i>
-        <h6 class="mb-1 mt-1">Đơn hàng</h6>
-        <p class="fs-5 fw-bold mt-1">@Model.TotalOrders</p>
+    <!-- Đơn hàng -->
+    <div class="col-md-3 col-sm-6">
+      <div class="card rounded-4 shadow-sm border border-light text-center py-4 bg-white hover-scale">
+        <div class="card-body">
+          <div class="icon-wrapper bg-success-light rounded-circle mb-3">
+            <i class="fas fa-shopping-cart fa-2x text-success"></i>
+          </div>
+          <h6 class="fw-semibold text-muted">Đơn hàng</h6>
+          <h3 class="fw-bold text-dark counter" data-count="@Model.TotalOrders">0</h3>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="col-md-3 col-sm-6">
-    <div class="card shadow border-0 text-white bg-gradient-warning rounded-4" style="height: 120px;">
-      <div class="card-body text-center d-flex flex-column justify-content-center">
-        <i class="fas fa-users fa-2x mb-2"></i>
-        <h6 class="mb-1 mt-1">Khách hàng</h6>
-        <p class="fs-5 fw-bold mt-1">@Model.TotalCustomers</p>
+    <!-- Khách hàng -->
+    <div class="col-md-3 col-sm-6">
+      <div class="card rounded-4 shadow-sm border border-light text-center py-4 bg-white hover-scale">
+        <div class="card-body">
+          <div class="icon-wrapper bg-warning-light rounded-circle mb-3">
+            <i class="fas fa-users fa-2x text-warning"></i>
+          </div>
+          <h6 class="fw-semibold text-muted">Khách hàng</h6>
+          <h3 class="fw-bold text-dark counter" data-count="@Model.TotalCustomers">0</h3>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="col-md-3 col-sm-6">
-    <div class="card shadow border-0 text-white bg-gradient-danger rounded-4" style="height: 120px;">
-      <div class="card-body text-center d-flex flex-column justify-content-center">
-        <i class="fas fa-dollar-sign fa-2x mb-2"></i>
-        <h6 class="mb-1 mt-1">Doanh thu</h6>
-        <p class="fs-5 fw-bold mt-1">@Model.MonthlyRevenue.ToString("N0") đ</p>
+    <!-- Doanh thu -->
+    <div class="col-md-3 col-sm-6">
+      <div class="card rounded-4 shadow-sm border border-light text-center py-4 bg-white hover-scale">
+        <div class="card-body">
+          <div class="icon-wrapper bg-danger-light rounded-circle mb-3">
+            <i class="fas fa-dollar-sign fa-2x text-danger"></i>
+          </div>
+          <h6 class="fw-semibold text-muted">Doanh thu</h6>
+          <h3 class="fw-bold text-dark counter" data-count="@Model.MonthlyRevenue">0</h3>
+        </div>
       </div>
     </div>
   </div>
 </div>
+<div class="row mt-4">
+  <div class="col-12">
+    <div class="card rounded-4 shadow-sm p-3">
+      <h6 class="fw-semibold mb-3">
+        <i class="fas fa-chart-bar me-2"></i>Doanh thu theo thời gian
+        @if (Model.Filter != null)
+        {
+          <small class="text-muted">
+            (@(string.IsNullOrEmpty(Model.Filter.StartDate) ? "--" : Model.Filter.StartDate.Substring(0, 10))
+            - @(string.IsNullOrEmpty(Model.Filter.EndDate) ? "--" : Model.Filter.EndDate.Substring(0, 10)))
+          </small>
+        }
+      </h6>
+      <canvas id="overviewRevenueChart" height="100"></canvas>
+    </div>
+  </div>
+</div>
+<style>
+  .overview-wrapper {
+    border: 1px solid #dee2e6;
+  }
+
+  .hover-scale:hover {
+    transform: translateY(-5px);
+    transition: all 0.3s ease;
+  }
+
+  .icon-wrapper {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .bg-info-light {
+    background-color: #e0f3ff;
+  }
+
+  .bg-success-light {
+    background-color: #e6f9f0;
+  }
+
+  .bg-warning-light {
+    background-color: #fff7e6;
+  }
+
+  .bg-danger-light {
+    background-color: #ffe6e6;
+  }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  // Animation đếm số liệu với "đ" phía sau
+  document.querySelectorAll('.counter').forEach(el => {
+      const count = parseInt(el.dataset.count);
+      let current = 0;
+      const step = Math.ceil(count / 100);
+      const interval = setInterval(() => {
+          current += step;
+          if(current >= count) {
+              el.innerText = count.toLocaleString('vi-VN') + ' đ';
+              clearInterval(interval);
+          } else {
+              el.innerText = current.toLocaleString('vi-VN') + ' đ';
+          }
+      }, 15);
+  });
+ 
+  
+  var ctx = document.getElementById('overviewRevenueChart').getContext('2d');
+  var overviewChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+          labels: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.RevenueChartLabels)),
+          datasets: [{
+              label: 'Doanh thu',
+              data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.RevenueChartData)),
+              backgroundColor: 'rgba(54, 162, 235, 0.6)',
+              borderColor: 'rgba(54, 162, 235, 1)',
+              borderWidth: 1
+          }]
+      },
+      options: {
+          responsive: true,
+          scales: {
+              y: {
+                  beginAtZero: true,
+                  ticks: {
+                      callback: function(value) {
+                          return value.toLocaleString('vi-VN') + ' đ';
+                      }
+                  }
+              }
+          }
+      }
+  });
+</script>

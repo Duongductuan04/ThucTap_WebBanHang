@@ -1,55 +1,61 @@
 ﻿@model List<SimpleTaskApp.Statistics.Dto.TopProductDto>
 
-<div class="card shadow rounded-4">
-  <div class="card-body">
-    <h5 class="card-title mb-4">
-      <i class="fas fa-fire text-danger me-2"></i>Top sản phẩm bán chạy
-    </h5>
-
-    <div class="table-responsive">
-      <table class="table table-hover align-middle text-center">
-        <thead class="table-dark">
-          <tr>
-            <th>#</th>
-            <th>Sản phẩm</th>
-            <th>Màu</th>
-            <th>Số lượng bán</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          @for (int i = 0; i < Model.Count; i++)
-          {
-            var item = Model[i];
-            <tr>
-              <td class="fw-bold">@((i + 1))</td>
-
-              <!-- Cột sản phẩm -->
-              <td class="text-start">
-                <div class="d-flex align-items-center">
-                  <img src="@( !string.IsNullOrEmpty(item.ColorImageUrl) ? item.ColorImageUrl : item.ImageUrl )"
-                       class="rounded me-3"
-                       style="width: 55px; height: 55px; object-fit: cover;" />
-                  <span class="fw-semibold">@item.ProductName</span>
-                </div>
-              </td>
-
-              <td>
-                @if (!string.IsNullOrEmpty(item.ColorName))
-                {
-                  <span class="fw-semibold">@item.ColorName</span>
-                }
-              </td>
-
-              <!-- Cột số lượng -->
-              <td class="fw-bold text-primary">
-                @item.QuantitySold
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-
+@if (Model == null || !Model.Any())
+{
+  <div class="alert alert-warning text-center my-3">
+    Không có sản phẩm bán chạy nào
   </div>
-</div>
+}
+else
+{
+  <div class="card shadow rounded-4">
+    <div class="card-body">
+      <h5 class="card-title mb-4">
+        <i class="fas fa-fire text-danger me-2"></i>Top sản phẩm bán chạy
+      </h5>
+
+      <div class="table-responsive">
+        <table class="table table-hover align-middle text-center">
+          <thead class="table-dark">
+            <tr>
+              <th>#</th>
+              <th>Sản phẩm</th>
+              <th>Màu</th>
+              <th>Số lượng bán</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (int i = 0; i < Model.Count; i++)
+            {
+              var item = Model[i];
+              <tr>
+                <td class="fw-bold">@((i + 1))</td>
+                <!-- Cột sản phẩm -->
+                <td class="text-start">
+                  <div class="d-flex align-items-center">
+                    <img src="@( !string.IsNullOrEmpty(item.ColorImageUrl) ? item.ColorImageUrl : item.ImageUrl )"
+                         class="rounded me-3"
+                         style="width: 55px; height: 55px; object-fit: cover;" />
+                    <span class="fw-semibold">@item.ProductName</span>
+                  </div>
+                </td>
+
+                <td>
+                  @if (!string.IsNullOrEmpty(item.ColorName))
+                  {
+                    <span class="fw-semibold">@item.ColorName</span>
+                  }
+                </td>
+
+                <!-- Cột số lượng -->
+                <td class="fw-bold text-primary">
+                  @item.QuantitySold
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+}

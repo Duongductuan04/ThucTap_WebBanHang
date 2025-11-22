@@ -19,11 +19,11 @@
           <div class="mb-3">
             <label for="statisticSelect" class="form-label">Chọn loại thống kê</label>
             <select id="statisticSelect" class="form-select">
-              <option value="">-- Không chọn thống kê --</option>
-              <option value="TopProducts">Top sản phẩm bán chạy nhất</option>
-              <option value="BrandRevenue">Doanh thu theo thương hiệu</option>
-              <option value="LowStock">Sản phẩm tồn kho thấp</option>
-              <option value="TopCustomers"> Khách hàng tiềm năng</option>
+              <option value="Overview" selected>📊 Báo cáo tổng quan</option>
+              <option value="TopProducts">🔥 Top sản phẩm</option>
+              <option value="BrandRevenue">🏷 Doanh thu theo thương hiệu</option>
+              <option value="LowStock">⚠ Tồn kho thấp</option>
+              <option value="TopCustomers">👑 Khách hàng tiềm năng</option>
             </select>
           </div>
           <button type="button" id="btnLoadStatistics" class="btn btn-secondary w-100">Thống kê</button>
@@ -33,20 +33,13 @@
 
     <!-- Nội dung chính -->
     <div class="col-lg-9">
-      <div id="statsContent">
-        <!-- 4 Info Boxes -->
-        @await Html.PartialAsync("Partials/_InfoBoxes", Model)
-
-        <!-- Biểu đồ doanh thu theo tháng -->
-        @await Html.PartialAsync("Partials/_RevenueByMonth", Model.RevenuesByMonth)
-      </div>
+    
 
       <!-- Khu vực load partial -->
       <div id="statisticContainer" class="mt-4"></div>
     </div>
   </div>
 </div>
-
 
 @section scripts {
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -57,4 +50,6 @@
   <script src="~/view-resources/Views/Statistics/Index.js"></script>
 
 }
+
+
 

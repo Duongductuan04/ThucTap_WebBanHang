@@ -49,53 +49,45 @@ namespace SimpleTaskApp.Statistics
           !string.IsNullOrWhiteSpace(filter.EndDate))
       {
         startDate = DateTime.Parse(filter.StartDate);
-        endDate = DateTime.Parse(filter.EndDate);
+        endDate = DateTime.Parse(filter.EndDate).AddDays(1); // để < endDate
       }
+
+      // ================================
+      // FILTER CHO ORDER
+      // ================================
+      var ordersInRange = _orderRepository.GetAll()
+          .Where(o => o.CreationTime >= startDate && o.CreationTime < endDate);
+
+      // ================================
+      // TỔNG DOANH THU
+      // ================================
+      var totalRevenue = await ordersInRange
+          .SumAsync(x => (decimal?)x.FinalAmount) ?? 0;
+
+      // ================================
+      // TỔNG ĐƠN HÀNG
+      // ================================
+      var totalOrders = await ordersInRange
+          .CountAsync();
+
+      // ================================
+      // TỔNG KHÁCH HÀNG
+      // ================================
+      var totalCustomers = await ordersInRange
+          .Select(x => x.UserId)
+          .Distinct()
+          .CountAsync();
 
       // ================================
       // TỔNG SẢN PHẨM ĐÃ BÁN
       // ================================
       var totalProductsSold = await _orderDetailRepository.GetAll()
-     .SumAsync(x => (int?)x.Quantity) ?? 0;
+          .Where(od => od.Order.CreationTime >= startDate && od.Order.CreationTime < endDate)
+          .SumAsync(x => (int?)x.Quantity) ?? 0;
 
-      // ================================
-      // TỔNG ĐƠN HÀNG
-      // ================================
-      var totalOrders = await _orderRepository.GetAll()
-       .CountAsync();
 
-      // ================================
-      // TỔNG KHÁCH HÀNG
-      // ================================
-      var totalCustomers = await _orderRepository.GetAll()
-        .Select(x => x.UserId)
-        .Distinct()
-        .CountAsync();
-
-      // ================================
-      // TỔNG DOANH THU
-      // ================================
-      var totalRevenue = await _orderRepository.GetAll()
-       .SumAsync(x => (decimal?)x.FinalAmount) ?? 0;
-
-      // ================================
-      // DOANH THU THEO 12 THÁNG
-      // (không theo filter, vì đây là biểu đồ cả năm)
-      // ================================
-      int currentYear = DateTime.Now.Year;
-      var revenuesByMonth = new List<decimal>();
-
-      for (int m = 1; m <= 12; m++)
-      {
-        var mStart = new DateTime(currentYear, m, 1);
-        var mEnd = mStart.AddMonths(1);
-
-        var revenueMonth = await _orderRepository.GetAll()
-            .Where(x => x.CreationTime >= mStart && x.CreationTime < mEnd)
-            .SumAsync(x => (decimal?)x.FinalAmount) ?? 0;
-
-        revenuesByMonth.Add(revenueMonth);
-      }
+      // Lấy dữ liệu biểu đồ doanh thu theo filter
+      var (labels, data) = await GetRevenueChartAsync(startDate, endDate);
 
       // ================================
       // DOANH THU THEO DANH MỤC → BRAND
@@ -231,12 +223,82 @@ namespace SimpleTaskApp.Statistics
         TotalOrders = totalOrders,
         TotalCustomers = totalCustomers,
         MonthlyRevenue = totalRevenue,
-        RevenuesByMonth = revenuesByMonth,
+        RevenueChartLabels = labels,
+        RevenueChartData = data,
+        Filter = filter,
         RevenueByBrandPerCategory = revenueByBrandPerCategory,
         TopProducts = topProducts,
         LowStockProducts = lowStockProducts,
         TopCustomers = topCustomers
       };
     }
+    private async Task<(List<string> labels, List<decimal> data)> GetRevenueChartAsync(DateTime startDate, DateTime endDate)
+    {
+      var totalDays = (endDate - startDate).TotalDays + 1;
+      var labels = new List<string>();
+      var data = new List<decimal>();
+
+      if (totalDays <= 7)
+      {
+        // 1 ngày/ cột
+        for (var d = startDate; d <= endDate; d = d.AddDays(1))
+        {
+          labels.Add(d.ToString("dd/MM"));
+          var revenue = await _orderRepository.GetAll()
+              .Where(x => x.CreationTime.Date == d.Date)
+              .SumAsync(x => (decimal?)x.FinalAmount) ?? 0;
+          data.Add(revenue);
+        }
+      }
+      else if (totalDays <= 30)
+      {
+        // 2 ngày/ cột
+        var d = startDate;
+        while (d <= endDate)
+        {
+          var dEnd = d.AddDays(1) <= endDate ? d.AddDays(1) : endDate;
+          labels.Add($"{d:dd/MM}-{dEnd:dd/MM}");
+          var revenue = await _orderRepository.GetAll()
+              .Where(x => x.CreationTime.Date >= d.Date && x.CreationTime.Date <= dEnd.Date)
+              .SumAsync(x => (decimal?)x.FinalAmount) ?? 0;
+          data.Add(revenue);
+          d = dEnd.AddDays(1);
+        }
+      }
+      else if (totalDays <= 180)
+      {
+        // 1 tuần/ cột
+        var d = startDate;
+        while (d <= endDate)
+        {
+          var dEnd = d.AddDays(6) <= endDate ? d.AddDays(6) : endDate;
+          labels.Add($"{d:dd/MM}-{dEnd:dd/MM}");
+          var revenue = await _orderRepository.GetAll()
+              .Where(x => x.CreationTime.Date >= d.Date && x.CreationTime.Date <= dEnd.Date)
+              .SumAsync(x => (decimal?)x.FinalAmount) ?? 0;
+          data.Add(revenue);
+          d = dEnd.AddDays(1);
+        }
+      }
+      else
+      {
+        // > nửa năm → theo tháng
+        var d = new DateTime(startDate.Year, startDate.Month, 1);
+        var endMonth = new DateTime(endDate.Year, endDate.Month, 1);
+        while (d <= endMonth)
+        {
+          var monthEnd = d.AddMonths(1).AddDays(-1);
+          labels.Add(d.ToString("MM/yyyy"));
+          var revenue = await _orderRepository.GetAll()
+              .Where(x => x.CreationTime.Date >= d.Date && x.CreationTime.Date <= monthEnd.Date)
+              .SumAsync(x => (decimal?)x.FinalAmount) ?? 0;
+          data.Add(revenue);
+          d = d.AddMonths(1);
+        }
+      }
+
+      return (labels, data);
+    }
+
   }
 }

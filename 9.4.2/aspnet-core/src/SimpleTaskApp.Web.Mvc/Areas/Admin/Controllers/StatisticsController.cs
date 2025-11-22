@@ -20,56 +20,50 @@ namespace SimpleTaskApp.Areas.Admin.Controllers
     // GET: /Admin/Statistics/Index
     public async Task<IActionResult> Index(StatisticsFilterDto filter)
     {
-      // ========================
-      // XỬ LÝ KHOẢNG NGÀY MẶC ĐỊNH
-      // ========================
+      // Nếu không có ngày → mặc định là ngày hiện tại
       if (string.IsNullOrWhiteSpace(filter.StartDate) || string.IsNullOrWhiteSpace(filter.EndDate))
       {
-        // Mặc định tháng hiện tại
-        var now = DateTime.Now;
-        var startOfMonth = new DateTime(now.Year, now.Month, 1);
-        var endOfMonth = now; // đến thời điểm hiện tại
-
-        filter.StartDate = startOfMonth.ToString("yyyy-MM-dd");
-        filter.EndDate = endOfMonth.ToString("yyyy-MM-dd");
+        var today = DateTime.Today;
+        filter.StartDate = today.ToString("yyyy-MM-dd");
+        filter.EndDate = today.ToString("yyyy-MM-dd");
       }
 
-      // ========================
-      // Lấy thống kê
-      // ========================
       var stats = await _statisticsAppService.GetDashboardStatisticsAsync(filter);
+      stats.Filter = filter;
 
-      // Truyền filter xuống View để Date Range Picker hiển thị đúng
-      ViewBag.Filter = filter;
-
-      // Trả về View
       return View(stats);
     }
 
-
-    // 🔥 Load partial theo select dropdown
+    // Load partial theo loại thống kê
     public async Task<IActionResult> LoadPartial(string type, StatisticsFilterDto filter)
     {
-      // Luôn phải load lại thống kê dựa vào filter
-      var data = await _statisticsAppService.GetDashboardStatisticsAsync(filter);
-
-      switch (type)
+      // LowStock luôn load, không cần filter ngày
+      if (type == "LowStock")
       {
-        case "TopProducts":
-          return PartialView("Partials/_TopProducts", data.TopProducts);
-
-        case "BrandRevenue":
-          return PartialView("Partials/_BrandRevenue", data.RevenueByBrandPerCategory);
-
-        case "LowStock":
-          return PartialView("Partials/_LowStock", data.LowStockProducts);
-
-        case "TopCustomers":
-          return PartialView("Partials/_TopCustomers", data.TopCustomers);
-
-        default:
-          return Content("Không tìm thấy loại thống kê.");
+        filter.StartDate = null;
+        filter.EndDate = null;
       }
+      else
+      {
+        // Nếu không có filter ngày → trả về thông báo
+        if (string.IsNullOrWhiteSpace(filter.StartDate) || string.IsNullOrWhiteSpace(filter.EndDate))
+        {
+          return Content("Vui lòng chọn khoảng thời gian để xem thống kê.");
+        }
+      }
+
+      var data = await _statisticsAppService.GetDashboardStatisticsAsync(filter);
+      data.Filter = filter;
+
+      return type switch
+      {
+        "Overview" => PartialView("Partials/_InfoBoxes", data),
+        "TopProducts" => PartialView("Partials/_TopProducts", data.TopProducts),
+        "BrandRevenue" => PartialView("Partials/_BrandRevenue", data.RevenueByBrandPerCategory),
+        "LowStock" => PartialView("Partials/_LowStock", data.LowStockProducts),
+        "TopCustomers" => PartialView("Partials/_TopCustomers", data.TopCustomers),
+        _ => Content("Không tìm thấy loại thống kê.")
+      };
     }
   }
 }
