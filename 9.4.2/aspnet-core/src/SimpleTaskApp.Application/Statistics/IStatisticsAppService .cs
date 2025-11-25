@@ -10,7 +10,7 @@ namespace SimpleTaskApp.Statistics
         Task<StatisticsDto> GetDashboardStatisticsAsync(StatisticsFilterDto filter);
     Task<List<LowStockProductVariantDto>> GetLowStockProductsAsync(int lowStockThreshold);
     Task<byte[]> ExportStatisticsToExcelAsync(StatisticsDto statistics);
-    Task<byte[]> ExportTopProductsToExcelAsync(List<TopProductDto> topProducts, StatisticsFilterDto filter);
+    Task<byte[]> ExportTopProductsToExcelAsync(ExportTopProductsInput input);
 
   }
 }

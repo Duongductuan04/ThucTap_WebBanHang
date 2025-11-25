@@ -290,18 +290,20 @@ namespace SimpleTaskApp.Statistics
 
       return (labels, data);
     }
-    public async Task<byte[]> ExportTopProductsToExcelAsync(List<TopProductDto> topProducts, StatisticsFilterDto filter)
+
+    public async Task<byte[]> ExportTopProductsToExcelAsync(ExportTopProductsInput input)
     {
+      var topProducts = input.TopProducts;
+      var filter = input.Filter;
+
       using var workbook = new XLWorkbook();
       var ws = workbook.Worksheets.Add("Top Products");
 
-      // Tiêu đề và filter
       ws.Cell(1, 1).Value = "Báo cáo Top sản phẩm bán chạy";
       ws.Cell(2, 1).Value = $"Từ: {filter.StartDate ?? "--"}  Đến: {filter.EndDate ?? "--"}";
       ws.Range("A1:D1").Merge().Style.Font.Bold = true;
       ws.Range("A2:D2").Merge().Style.Font.Italic = true;
 
-      // Header
       ws.Cell(4, 1).Value = "STT";
       ws.Cell(4, 2).Value = "Tên sản phẩm";
       ws.Cell(4, 3).Value = "Màu";
@@ -317,15 +319,16 @@ namespace SimpleTaskApp.Statistics
         ws.Cell(5 + i, 2).Value = p.ProductName;
         ws.Cell(5 + i, 3).Value = p.ColorName ?? "";
         ws.Cell(5 + i, 4).Value = p.QuantitySold;
-        ws.Cell(5 + i, 4).Style.NumberFormat.Format = "#,##0"; // Không hiện .00
+        ws.Cell(5 + i, 4).Style.NumberFormat.Format = "#,##0";
       }
 
       ws.Columns().AdjustToContents();
 
       using var stream = new MemoryStream();
       workbook.SaveAs(stream);
-      return await Task.FromResult(stream.ToArray());
+      return stream.ToArray();
     }
+
 
 
     public async Task<byte[]> ExportStatisticsToExcelAsync(StatisticsDto stats)

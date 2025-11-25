@@ -37,27 +37,36 @@ namespace SimpleTaskApp.Areas.Admin.Controllers
     [HttpGet]
     public async Task<IActionResult> ExportTopProductsExcel(string startDate = null, string endDate = null)
     {
-      // Tạo filter giống dashboard
+      // Tạo filter
       var filter = new StatisticsFilterDto
       {
         StartDate = startDate,
         EndDate = endDate
       };
 
-      // Lấy danh sách TopProducts theo filter
+      // Lấy danh sách sản phẩm top theo filter
       var stats = await _statisticsAppService.GetDashboardStatisticsAsync(filter);
       var topProducts = stats.TopProducts;
 
-      // Xuất Excel, truyền luôn filter để hiển thị khoảng thời gian trong file
-      var fileContents = await _statisticsAppService.ExportTopProductsToExcelAsync(topProducts, filter);
+      // Gộp tất cả vào 1 DTO để truyền đúng chuẩn ABP
+      var input = new ExportTopProductsInput
+      {
+        TopProducts = topProducts,
+        Filter = filter
+      };
 
-      // Tạo tên file với ngày hiện tại
+      // Gọi trực tiếp AppService
+      var fileContents = await _statisticsAppService.ExportTopProductsToExcelAsync(input);
+
       var fileName = $"TopProducts_{DateTime.Now:yyyyMMdd}.xlsx";
 
-      return File(fileContents,
-                  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                  fileName);
+      return File(
+          fileContents,
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          fileName
+      );
     }
+
 
 
     [HttpGet]

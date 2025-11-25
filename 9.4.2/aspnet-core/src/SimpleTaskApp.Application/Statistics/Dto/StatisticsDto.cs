@@ -54,6 +54,11 @@ namespace SimpleTaskApp.Statistics.Dto
     public decimal TotalSpent { get; set; }   // Tổng chi tiêu
   }
   // DTO tổng hợp cho dashboard
+  public class ExportTopProductsInput
+  {
+    public List<TopProductDto> TopProducts { get; set; }
+    public StatisticsFilterDto Filter { get; set; }
+  }
   public class StatisticsDto
     {
         public int TotalProductsSold { get; set; }

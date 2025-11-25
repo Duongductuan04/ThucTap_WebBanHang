@@ -1,5 +1,5 @@
 ﻿(function ($) {
-    var _mobilePhoneService = abp.services.app.mobilePhone,
+  var _mobilePhoneService = abp.services.app.mobilePhone,
         l = abp.localization.getSource('SimpleTaskApp'),
         _$table = $('#MobilePhonesTable');
 
