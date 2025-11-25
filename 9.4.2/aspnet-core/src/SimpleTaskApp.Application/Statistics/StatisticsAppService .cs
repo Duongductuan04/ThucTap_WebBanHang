@@ -1,5 +1,6 @@
 ﻿using Abp.Application.Services;
 using Abp.Domain.Repositories;
+using Abp.Linq.Extensions;
 using Microsoft.EntityFrameworkCore;
 using SimpleTaskApp.MobilePhones;
 using SimpleTaskApp.Statistics.Dto;
@@ -7,8 +8,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Abp.Linq.Extensions;
-  
+using ClosedXML.Excel;
+using System.IO;
+using System.Threading.Tasks;
 namespace SimpleTaskApp.Statistics
 {
   public class StatisticsAppService : ApplicationService, IStatisticsAppService
@@ -18,7 +20,6 @@ namespace SimpleTaskApp.Statistics
     private readonly IRepository<MobilePhoneCategory, int> _categoryRepository;
     private readonly IRepository<MobilePhone, int> _mobilePhoneRepository;
     private readonly IRepository<MobilePhoneColor, int> _mobilePhoneColorRepository;
-
     private readonly IRepository<ImportDetail, int> _importDetailRepository;
 
     public StatisticsAppService(
@@ -37,11 +38,14 @@ namespace SimpleTaskApp.Statistics
       _mobilePhoneRepository = mobilePhoneRepository;
     }
 
+    // =========================
+    // Hàm chính trả dashboard
+    // =========================
     public async Task<StatisticsDto> GetDashboardStatisticsAsync(StatisticsFilterDto filter)
     {
-      // ================================
-      // XỬ LÝ StartDate – EndDate
-      // ================================
+      filter ??= new StatisticsFilterDto();
+
+      // Xử lý StartDate-EndDate
       DateTime startDate = DateTime.MinValue;
       DateTime endDate = DateTime.MaxValue;
 
@@ -49,49 +53,26 @@ namespace SimpleTaskApp.Statistics
           !string.IsNullOrWhiteSpace(filter.EndDate))
       {
         startDate = DateTime.Parse(filter.StartDate);
-        endDate = DateTime.Parse(filter.EndDate).AddDays(1); // để < endDate
+        endDate = DateTime.Parse(filter.EndDate).AddDays(1);
       }
 
-      // ================================
-      // FILTER CHO ORDER
-      // ================================
+      // Lọc order theo ngày
       var ordersInRange = _orderRepository.GetAll()
           .Where(o => o.CreationTime >= startDate && o.CreationTime < endDate);
 
-      // ================================
-      // TỔNG DOANH THU
-      // ================================
-      var totalRevenue = await ordersInRange
-          .SumAsync(x => (decimal?)x.FinalAmount) ?? 0;
+      var totalRevenue = await ordersInRange.SumAsync(x => (decimal?)x.FinalAmount) ?? 0;
+      var totalOrders = await ordersInRange.CountAsync();
+      var totalCustomers = await ordersInRange.Select(x => x.UserId).Distinct().CountAsync();
 
-      // ================================
-      // TỔNG ĐƠN HÀNG
-      // ================================
-      var totalOrders = await ordersInRange
-          .CountAsync();
-
-      // ================================
-      // TỔNG KHÁCH HÀNG
-      // ================================
-      var totalCustomers = await ordersInRange
-          .Select(x => x.UserId)
-          .Distinct()
-          .CountAsync();
-
-      // ================================
-      // TỔNG SẢN PHẨM ĐÃ BÁN
-      // ================================
+      // Tổng sản phẩm bán ra
       var totalProductsSold = await _orderDetailRepository.GetAll()
           .Where(od => od.Order.CreationTime >= startDate && od.Order.CreationTime < endDate)
           .SumAsync(x => (int?)x.Quantity) ?? 0;
 
-
-      // Lấy dữ liệu biểu đồ doanh thu theo filter
+      // Biểu đồ doanh thu
       var (labels, data) = await GetRevenueChartAsync(startDate, endDate);
 
-      // ================================
-      // DOANH THU THEO DANH MỤC → BRAND
-      // ================================
+      // Doanh thu theo danh mục (brand)
       var revenueQuery = await _orderDetailRepository.GetAll()
           .Include(x => x.Order)
           .Include(x => x.MobilePhone)
@@ -106,7 +87,6 @@ namespace SimpleTaskApp.Statistics
           .Select(g =>
           {
             var cat = categories.FirstOrDefault(c => c.Id == g.Key);
-
             return new CategoryRevenueDto
             {
               CategoryId = g.Key,
@@ -116,75 +96,48 @@ namespace SimpleTaskApp.Statistics
                                    {
                                      BrandName = b.Key,
                                      Revenue = b.Sum(x => x.Quantity * x.UnitPrice)
-                                       }).ToList()
+                                   }).ToList()
             };
           }).ToList();
 
-      // ================================
-      // TOP SẢN PHẨM BÁN CHẠY
-      // ================================
+      // Top sản phẩm bán chạy
       var topProducts = await _orderDetailRepository.GetAll()
-       .Include(x => x.MobilePhone)
-       .Include(x => x.MobilePhoneColor)
-       .WhereIf(filter.StartDate != null && filter.EndDate != null,
-           x => x.Order.CreationTime >= startDate && x.Order.CreationTime <= endDate)
-       .GroupBy(x => new
-       {
-         x.MobilePhoneId,
-         x.MobilePhone.Name,
-         x.MobilePhone.ImageUrl,
-         x.MobilePhoneColorId,
-         ColorName = x.MobilePhoneColor != null ? x.MobilePhoneColor.ColorName : null,
-         ColorImageUrl = x.MobilePhoneColor != null ? x.MobilePhoneColor.ImageUrl : null
-       })
-       .Select(g => new TopProductDto
-       {
-         MobilePhoneId = g.Key.MobilePhoneId,
-         ProductName = g.Key.Name,
-         ImageUrl = g.Key.ImageUrl,
-         MobilePhoneColorId = g.Key.MobilePhoneColorId,
-         ColorName = g.Key.ColorName,
-         ColorImageUrl = g.Key.ColorImageUrl,
-         QuantitySold = g.Sum(x => x.Quantity)
-       })
-       .OrderByDescending(x => x.QuantitySold)
-       .Take(20)
-       .ToListAsync();
-
-      // ================================
-      // SẢN PHẨM SẮP HẾT HÀNG
-      // ================================
-      int lowStockThreshold = 20;
-
-      var lowStockProducts = await _mobilePhoneRepository.GetAll()
-          .SelectMany(mp => mp.Colors.DefaultIfEmpty(), (mp, mc) => new LowStockProductVariantDto
+          .Include(x => x.MobilePhone)
+          .Include(x => x.MobilePhoneColor)
+          .WhereIf(filter.StartDate != null && filter.EndDate != null,
+              x => x.Order.CreationTime >= startDate && x.Order.CreationTime <= endDate)
+          .GroupBy(x => new
           {
-            MobilePhoneId = mp.Id,
-            ProductName = mp.Name,
-            ImageUrl = mp.ImageUrl,
-            Color = mc != null ? mc.ColorName : null, // nếu không có màu => null
-            ColorStockQuantity = mc != null ? mc.StockQuantity : 0, // nếu không có màu => 0
-            TotalStockQuantity = mp.StockQuantity,
-            LastImportDate = mc != null
-                  ? _importDetailRepository.GetAll()
-                      .Where(id => id.MobilePhoneId == mp.Id && id.MobilePhoneColorId == mc.Id)
-                      .OrderByDescending(id => id.Import.CreationTime)
-                      .Select(id => (DateTime?)id.Import.CreationTime)
-                      .FirstOrDefault()
-                  : null
+            x.MobilePhoneId,
+            x.MobilePhone.Name,
+            x.MobilePhone.ImageUrl,
+            x.MobilePhoneColorId,
+            ColorName = x.MobilePhoneColor != null ? x.MobilePhoneColor.ColorName : null,
+            ColorImageUrl = x.MobilePhoneColor != null ? x.MobilePhoneColor.ImageUrl : null
           })
-          .Where(x => (x.Color != null && x.ColorStockQuantity <= lowStockThreshold)
-                   || (x.Color == null && x.TotalStockQuantity <= lowStockThreshold))
-          .OrderBy(x => x.TotalStockQuantity)
+          .Select(g => new TopProductDto
+          {
+            MobilePhoneId = g.Key.MobilePhoneId,
+            ProductName = g.Key.Name,
+            ImageUrl = g.Key.ImageUrl,
+            MobilePhoneColorId = g.Key.MobilePhoneColorId,
+            ColorName = g.Key.ColorName,
+            ColorImageUrl = g.Key.ColorImageUrl,
+            QuantitySold = g.Sum(x => x.Quantity)
+          })
+          .OrderByDescending(x => x.QuantitySold)
+          .Take(20)
           .ToListAsync();
 
-      // ================================
-      // TOP KHÁCH HÀNG
-      // ================================
-      // 1. Lấy tất cả orders (lọc theo ngày nếu có)
-      var ordersQuery = _orderRepository.GetAll()
+      // =========================
+      // Tồn kho thấp
+      // =========================
+      var lowStockProducts = await GetLowStockProductsAsync(20);
+
+      // Top khách hàng
+      var ordersList = await _orderRepository.GetAll()
           .WhereIf(filter.StartDate != null && filter.EndDate != null,
-                   o => o.CreationTime >= startDate && o.CreationTime <= endDate)
+              o => o.CreationTime >= startDate && o.CreationTime <= endDate)
           .Select(o => new
           {
             o.UserId,
@@ -192,13 +145,9 @@ namespace SimpleTaskApp.Statistics
             o.RecipientPhone,
             o.RecipientAddress,
             o.FinalAmount,
-            TotalProducts = o.OrderDetails.Sum(od => od.Quantity) // EF Core translate được
-          });
+            TotalProducts = o.OrderDetails.Sum(od => od.Quantity)
+          }).ToListAsync();
 
-      // 2. Load ra list trong memory
-      var ordersList = await ordersQuery.ToListAsync();
-
-      // 3. GroupBy theo khách hàng thực tế (tên + số điện thoại)
       var topCustomers = ordersList
           .GroupBy(o => new { o.RecipientPhone, o.RecipientName })
           .Select(g => new TopCustomerDto
@@ -214,9 +163,7 @@ namespace SimpleTaskApp.Statistics
           .Take(20)
           .ToList();
 
-      // ================================
-      // TRẢ VỀ DTO
-      // ================================
+      // Trả về DTO
       return new StatisticsDto
       {
         TotalProductsSold = totalProductsSold,
@@ -225,22 +172,69 @@ namespace SimpleTaskApp.Statistics
         MonthlyRevenue = totalRevenue,
         RevenueChartLabels = labels,
         RevenueChartData = data,
-        Filter = filter,
         RevenueByBrandPerCategory = revenueByBrandPerCategory,
         TopProducts = topProducts,
         LowStockProducts = lowStockProducts,
-        TopCustomers = topCustomers
+        TopCustomers = topCustomers,
+        Filter = filter
       };
     }
+
+    // =========================
+    // Hàm riêng: lấy sản phẩm tồn kho thấp
+    // =========================
+    public async Task<List<LowStockProductVariantDto>> GetLowStockProductsAsync(int lowStockThreshold = 20)
+    {
+      var mobiles = await _mobilePhoneRepository.GetAll()
+          .Include(m => m.Colors)
+          .ToListAsync();
+
+      var importDetails = await _importDetailRepository.GetAll()
+          .Include(id => id.Import)
+          .ToListAsync();
+
+      var lowStockProducts = mobiles
+          .SelectMany(mp => mp.Colors.DefaultIfEmpty(), (mp, mc) =>
+          {
+            DateTime? lastImportDate = null;
+            if (mc != null)
+            {
+              lastImportDate = importDetails
+                        .Where(id => id.MobilePhoneId == mp.Id && id.MobilePhoneColorId == mc.Id)
+                        .OrderByDescending(id => id.Import.CreationTime)
+                        .FirstOrDefault()?.Import.CreationTime;
+            }
+
+            return new LowStockProductVariantDto
+            {
+              MobilePhoneId = mp.Id,
+              ProductName = mp.Name,
+              ImageUrl = mp.ImageUrl,
+              Color = mc?.ColorName,
+              ColorStockQuantity = mc?.StockQuantity ?? 0,
+              TotalStockQuantity = mp.StockQuantity,
+              LastImportDate = lastImportDate
+            };
+          })
+          .Where(x => (x.Color != null && x.ColorStockQuantity <= lowStockThreshold)
+                      || (x.Color == null && x.TotalStockQuantity <= lowStockThreshold))
+          .OrderBy(x => x.TotalStockQuantity)
+          .ToList();
+
+      return lowStockProducts;
+    }
+
+    // =========================
+    // Biểu đồ doanh thu
+    // =========================
     private async Task<(List<string> labels, List<decimal> data)> GetRevenueChartAsync(DateTime startDate, DateTime endDate)
     {
       var totalDays = (endDate - startDate).TotalDays + 1;
       var labels = new List<string>();
       var data = new List<decimal>();
 
-      if (totalDays <= 7)
+      if (totalDays <= 8)
       {
-        // 1 ngày/ cột
         for (var d = startDate; d <= endDate; d = d.AddDays(1))
         {
           labels.Add(d.ToString("dd/MM"));
@@ -252,7 +246,6 @@ namespace SimpleTaskApp.Statistics
       }
       else if (totalDays <= 30)
       {
-        // 2 ngày/ cột
         var d = startDate;
         while (d <= endDate)
         {
@@ -267,11 +260,10 @@ namespace SimpleTaskApp.Statistics
       }
       else if (totalDays <= 180)
       {
-        // 1 tuần/ cột
         var d = startDate;
         while (d <= endDate)
         {
-          var dEnd = d.AddDays(6) <= endDate ? d.AddDays(6) : endDate;
+          var dEnd = d.AddDays(7) <= endDate ? d.AddDays(7) : endDate;
           labels.Add($"{d:dd/MM}-{dEnd:dd/MM}");
           var revenue = await _orderRepository.GetAll()
               .Where(x => x.CreationTime.Date >= d.Date && x.CreationTime.Date <= dEnd.Date)
@@ -282,7 +274,6 @@ namespace SimpleTaskApp.Statistics
       }
       else
       {
-        // > nửa năm → theo tháng
         var d = new DateTime(startDate.Year, startDate.Month, 1);
         var endMonth = new DateTime(endDate.Year, endDate.Month, 1);
         while (d <= endMonth)
@@ -299,6 +290,49 @@ namespace SimpleTaskApp.Statistics
 
       return (labels, data);
     }
+    public async Task<byte[]> ExportStatisticsToExcelAsync(StatisticsDto stats)
+    {
+      using var workbook = new XLWorkbook();
+      var ws = workbook.Worksheets.Add("Dashboard Statistics");
 
+      // Header thông tin chung
+      ws.Cell(1, 1).Value = "Thông tin chung";
+      ws.Cell(2, 1).Value = "Tổng sản phẩm bán ra";
+      ws.Cell(2, 2).Value = stats.TotalProductsSold;
+
+      ws.Cell(3, 1).Value = "Tổng đơn hàng";
+      ws.Cell(3, 2).Value = stats.TotalOrders;
+
+      ws.Cell(4, 1).Value = "Tổng khách hàng";
+      ws.Cell(4, 2).Value = stats.TotalCustomers;
+
+      ws.Cell(5, 1).Value = "Doanh thu tháng";
+      ws.Cell(5, 2).Value = stats.MonthlyRevenue;
+      ws.Cell(5, 2).Style.NumberFormat.Format = "#,##0 \"₫\"";
+
+      // Biểu đồ doanh thu (dạng bảng)
+      ws.Cell(7, 1).Value = "Biểu đồ doanh thu";
+      ws.Cell(8, 1).Value = "Ngày/Tháng";
+      ws.Cell(8, 2).Value = "Doanh thu";
+
+      for (int i = 0; i < stats.RevenueChartLabels.Count; i++)
+      {
+        ws.Cell(9 + i, 1).Value = stats.RevenueChartLabels[i];
+        ws.Cell(9 + i, 2).Value = stats.RevenueChartData[i];
+        ws.Cell(9 + i, 2).Style.NumberFormat.Format = "#,##0 \"₫\"";
+      }
+
+      // Format header
+      ws.Range("A1:B1").Style.Font.Bold = true;
+      ws.Range("A8:B8").Style.Font.Bold = true;
+      ws.Range("A8:B8").Style.Fill.BackgroundColor = XLColor.LightGray;
+
+      // Auto-fit cột
+      ws.Columns().AdjustToContents();
+
+      using var stream = new MemoryStream();
+      workbook.SaveAs(stream);
+      return await Task.FromResult(stream.ToArray());
+    }
   }
 }

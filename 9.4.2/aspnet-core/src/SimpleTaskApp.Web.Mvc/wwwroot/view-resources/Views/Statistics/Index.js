@@ -52,13 +52,19 @@
       _selectedDateRange.endDate = null;
     }
   });
- 
+
 
   // ==============================
   // Hàm load thống kê
   // ==============================
   function loadStatistics() {
     const type = select.val();
+    // Nếu chọn LowStock → reset thời gian
+    if (type === "LowStock") {
+      _selectedDateRange.startDate = null;
+      _selectedDateRange.endDate = null;
+      $('#StartEndRange').val(''); // xóa input hiển thị
+    }
 
     let startDate = _selectedDateRange.startDate;
     let endDate = _selectedDateRange.endDate;

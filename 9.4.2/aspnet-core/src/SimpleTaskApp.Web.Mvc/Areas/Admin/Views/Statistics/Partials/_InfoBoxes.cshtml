@@ -1,28 +1,43 @@
 ﻿@model SimpleTaskApp.Statistics.Dto.StatisticsDto
 
+
 <div class="overview-wrapper p-4 rounded-4 border shadow-sm bg-white">
-
-  <!-- Tiêu đề -->
-  <div class="overview-header mb-4 text-center">
-    <h2 class="fw-bold text-primary">
-      📊 Báo cáo tổng quan
-      @if (Model.Filter != null)
-      {
-        var start = DateTime.Parse(Model.Filter.StartDate).ToString("dd/MM/yyyy");
-        var end = DateTime.Parse(Model.Filter.EndDate).ToString("dd/MM/yyyy");
-
-        if (start == end)
+  <!-- Header -->
+  <div class="overview-header mb-4 d-flex justify-content-between align-items-center">
+    <!-- Tiêu đề -->
+    <div class="d-flex flex-column justify-content-center">
+      <h2 class="fw-bold text-primary mb-1" style="line-height:1.2;">
+        📊 Báo cáo tổng quan
+        @if (Model.Filter != null)
         {
-          <small class="text-primary d-block" style="font-size:0.8em;">(@start)</small>
+          var start = DateTime.Parse(Model.Filter.StartDate).ToString("dd/MM/yyyy");
+          var end = DateTime.Parse(Model.Filter.EndDate).ToString("dd/MM/yyyy");
+
+          if (start == end)
+          {
+            <small class="text-primary d-block" style="font-size:0.85em;">(@start)</small>
+          }
+          else
+          {
+            <small class="text-primary d-block" style="font-size:0.85em;">(Từ @start đến @end)</small>
+          }
         }
-        else
-        {
-          <small class="text-primary d-block" style="font-size:0.8em;">(Từ @start đến @end)</small>
-        }
-      }
-    </h2>
-    <p class="text-muted">Thống kê nhanh các chỉ số quan trọng của cửa hàng</p>
+      </h2>
+    </div>
+
+    <!-- Nút Excel -->
+    <div class="d-flex align-items-center">
+      <a class="btn btn-success d-flex align-items-center shadow-sm"
+         style="height:48px; padding:0 18px; font-weight:500; border-radius:8px;"
+         href="@Url.Action("ExportExcel", "Statistics", new {
+                    startDate = Model.Filter?.StartDate,
+                    endDate = Model.Filter?.EndDate
+               })">
+        <i class="fas fa-file-excel me-2"></i> Xuất Excel
+      </a>
+    </div>
   </div>
+
   <div class="row g-4">
     <!-- Sản phẩm đã bán -->
     <div class="col-md-3 col-sm-6">
@@ -90,7 +105,9 @@
           </small>
         }
       </h6>
-      <canvas id="overviewRevenueChart" height="100"></canvas>
+      <div class="chart-container" style="position: relative; height:400px; width:100%;">
+        <canvas id="overviewRevenueChart"></canvas>
+      </div>
     </div>
   </div>
 </div>
@@ -146,33 +163,82 @@
           }
       }, 15);
   });
- 
-  
-  var ctx = document.getElementById('overviewRevenueChart').getContext('2d');
+
+    var ctx = document.getElementById('overviewRevenueChart').getContext('2d');
+
+  // Lấy dữ liệu từ model
+  var labelsChart = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.RevenueChartLabels));
+  var dataChart = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.RevenueChartData));
+
+  // Hàm tạo màu ngẫu nhiên cho từng cột
+  function getRandomColor() {
+      const r = Math.floor(Math.random() * 156) + 100;
+      const g = Math.floor(Math.random() * 156) + 100;
+      const b = Math.floor(Math.random() * 156) + 100;
+      return `rgba(${r},${g},${b},0.7)`;
+  }
+  var backgroundColors = dataChart.map(() => getRandomColor());
+
+  // Tính giá trị max và stepSize "đẹp"
+  var maxValue = Math.max(...dataChart);
+  function niceStep(max) {
+      const magnitude = Math.pow(10, Math.floor(Math.log10(max)));
+      const step = magnitude / 5; // chia làm 5 tick
+      return Math.ceil(max / (step * 5)) * step;
+  }
+  var stepSize = niceStep(maxValue);
+  var suggestedMax = stepSize * 5;
+
+  // Tạo Chart
   var overviewChart = new Chart(ctx, {
       type: 'bar',
       data: {
-          labels: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.RevenueChartLabels)),
+          labels: labelsChart,
           datasets: [{
               label: 'Doanh thu',
-              data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.RevenueChartData)),
-              backgroundColor: 'rgba(54, 162, 235, 0.6)',
-              borderColor: 'rgba(54, 162, 235, 1)',
-              borderWidth: 1
+              data: dataChart,
+              backgroundColor: backgroundColors,
+              borderColor: backgroundColors.map(c => c.replace('0.7', '1')),
+              borderWidth: 1,
+              borderRadius: 6,
+              barPercentage: 0.5,
+              categoryPercentage: 0.6
           }]
       },
       options: {
           responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+              legend: { display: false },
+              tooltip: {
+                  callbacks: {
+                      label: function(context) {
+                          return context.dataset.label + ': ' + context.raw.toLocaleString('vi-VN') + ' đ';
+                      }
+                  }
+              }
+          },
           scales: {
               y: {
                   beginAtZero: true,
+                  max: suggestedMax,
                   ticks: {
+                      stepSize: stepSize,
                       callback: function(value) {
                           return value.toLocaleString('vi-VN') + ' đ';
                       }
+                  }
+              },
+              x: {
+                  grid: { display: false },
+                  ticks: {
+                      maxRotation: 45,
+                      minRotation: 0,
+                      autoSkip: true
                   }
               }
           }
       }
   });
+
 </script>

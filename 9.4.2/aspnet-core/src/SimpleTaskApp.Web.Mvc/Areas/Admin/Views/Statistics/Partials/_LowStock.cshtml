@@ -39,7 +39,9 @@ else
                 </td>
                 <td class="text-start">@item.ProductName</td>
                 <td>@item.Color</td>
-                <td>@item.ColorStockQuantity</td>
+                <td>
+                  @(item.Color != null ? item.ColorStockQuantity.ToString() : "")
+                </td>
                 <td>@item.TotalStockQuantity</td>
                 <td>
                   @(item.LastImportDate.HasValue
