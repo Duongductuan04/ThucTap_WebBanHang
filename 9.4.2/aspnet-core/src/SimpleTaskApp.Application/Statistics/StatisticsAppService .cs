@@ -10,7 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ClosedXML.Excel;
 using System.IO;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 namespace SimpleTaskApp.Statistics
 {
   public class StatisticsAppService : ApplicationService, IStatisticsAppService
@@ -290,6 +290,44 @@ namespace SimpleTaskApp.Statistics
 
       return (labels, data);
     }
+    public async Task<byte[]> ExportTopProductsToExcelAsync(List<TopProductDto> topProducts, StatisticsFilterDto filter)
+    {
+      using var workbook = new XLWorkbook();
+      var ws = workbook.Worksheets.Add("Top Products");
+
+      // Tiêu đề và filter
+      ws.Cell(1, 1).Value = "Báo cáo Top sản phẩm bán chạy";
+      ws.Cell(2, 1).Value = $"Từ: {filter.StartDate ?? "--"}  Đến: {filter.EndDate ?? "--"}";
+      ws.Range("A1:D1").Merge().Style.Font.Bold = true;
+      ws.Range("A2:D2").Merge().Style.Font.Italic = true;
+
+      // Header
+      ws.Cell(4, 1).Value = "STT";
+      ws.Cell(4, 2).Value = "Tên sản phẩm";
+      ws.Cell(4, 3).Value = "Màu";
+      ws.Cell(4, 4).Value = "Số lượng bán";
+
+      ws.Range("A4:D4").Style.Font.Bold = true;
+      ws.Range("A4:D4").Style.Fill.BackgroundColor = XLColor.LightGray;
+
+      for (int i = 0; i < topProducts.Count; i++)
+      {
+        var p = topProducts[i];
+        ws.Cell(5 + i, 1).Value = i + 1;
+        ws.Cell(5 + i, 2).Value = p.ProductName;
+        ws.Cell(5 + i, 3).Value = p.ColorName ?? "";
+        ws.Cell(5 + i, 4).Value = p.QuantitySold;
+        ws.Cell(5 + i, 4).Style.NumberFormat.Format = "#,##0"; // Không hiện .00
+      }
+
+      ws.Columns().AdjustToContents();
+
+      using var stream = new MemoryStream();
+      workbook.SaveAs(stream);
+      return await Task.FromResult(stream.ToArray());
+    }
+
+
     public async Task<byte[]> ExportStatisticsToExcelAsync(StatisticsDto stats)
     {
       using var workbook = new XLWorkbook();

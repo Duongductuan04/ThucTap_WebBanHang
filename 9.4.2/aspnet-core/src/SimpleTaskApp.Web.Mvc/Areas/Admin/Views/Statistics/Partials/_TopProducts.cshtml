@@ -1,61 +1,72 @@
-﻿@model List<SimpleTaskApp.Statistics.Dto.TopProductDto>
+﻿@model SimpleTaskApp.Web.Areas.Admin.Models.Statistics.TopProductsViewModel
 
-@if (Model == null || !Model.Any())
+@if (Model?.TopProducts == null || !Model.TopProducts.Any())
 {
-  <div class="alert alert-warning text-center my-3">
-    Không có sản phẩm bán chạy nào
-  </div>
+    <div class="alert alert-warning text-center my-3">
+        Không có sản phẩm bán chạy nào
+    </div>
 }
 else
 {
-  <div class="card shadow rounded-4">
-    <div class="card-body">
-      <h5 class="card-title mb-4">
-        <i class="fas fa-fire text-danger me-2"></i>Top sản phẩm bán chạy
-      </h5>
+    <div class="card shadow rounded-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <!-- Tiêu đề -->
+                <h3 class="text-danger fw-bold mb-0">
+                    <i class="fas fa-fire me-2"></i>Top sản phẩm bán chạy
+                </h3>
 
-      <div class="table-responsive">
-        <table class="table table-hover align-middle text-center">
-          <thead class="table-dark">
-            <tr>
-              <th>#</th>
-              <th>Sản phẩm</th>
-              <th>Màu</th>
-              <th>Số lượng bán</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (int i = 0; i < Model.Count; i++)
-            {
-              var item = Model[i];
-              <tr>
-                <td class="fw-bold">@((i + 1))</td>
-                <!-- Cột sản phẩm -->
-                <td class="text-start">
-                  <div class="d-flex align-items-center">
-                    <img src="@( !string.IsNullOrEmpty(item.ColorImageUrl) ? item.ColorImageUrl : item.ImageUrl )"
-                         class="rounded me-3"
-                         style="width: 55px; height: 55px; object-fit: cover;" />
-                    <span class="fw-semibold">@item.ProductName</span>
-                  </div>
-                </td>
+                <!-- Nút Xuất Excel -->
+                <a class="btn btn-success d-flex align-items-center shadow-sm"
+                   style="height:48px; padding:0 18px; font-weight:500; border-radius:8px; text-decoration:none;"
+                   href="@Url.Action("ExportTopProductsExcel", "Statistics", new { startDate = Model.Filter?.StartDate, endDate = Model.Filter?.EndDate })">
+                   <i class="fas fa-file-excel me-2"></i> Xuất Excel
+                </a>
+            </div>
 
-                <td>
-                  @if (!string.IsNullOrEmpty(item.ColorName))
-                  {
-                    <span class="fw-semibold">@item.ColorName</span>
-                  }
-                </td>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle text-center">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>STT</th>
+                            <th class="text-start">Sản phẩm</th>
+                            <th>Màu</th>
+                            <th>Số lượng bán</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.TopProducts.Count; i++)
+                        {
+                            var item = Model.TopProducts[i];
+                            <tr>
+                                <td class="fw-bold">@((i + 1))</td>
+                                <!-- Cột sản phẩm -->
+                              <td class="text-start">
+                                <div class="d-flex align-items-center">
+                                    <img src="@( !string.IsNullOrEmpty(item.ColorImageUrl) ? item.ColorImageUrl : item.ImageUrl )"
+                                         class="rounded me-3"
+                                         style="width: 55px; height: 55px; object-fit: cover;" />
+                                    <span class="fw-semibold">@item.ProductName</span>
+                                </div>
+                            </td>
 
-                <!-- Cột số lượng -->
-                <td class="fw-bold text-primary">
-                  @item.QuantitySold
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
+                                <!-- Cột màu -->
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.ColorName))
+                                    {
+                                        <span class="fw-semibold">@item.ColorName</span>
+                                    }
+                                </td>
+
+                                <!-- Cột số lượng -->
+                                <td class="fw-bold text-primary">
+                                    @item.QuantitySold
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-  </div>
 }
