@@ -54,7 +54,6 @@ namespace SimpleTaskApp.Areas.Admin.Controllers
         TopProducts = topProducts,
         Filter = filter
       };
-
       // Gọi trực tiếp AppService
       var fileContents = await _statisticsAppService.ExportTopProductsToExcelAsync(input);
 
@@ -66,9 +65,88 @@ namespace SimpleTaskApp.Areas.Admin.Controllers
           fileName
       );
     }
+    [HttpGet]
+    public async Task<IActionResult> ExportCategoryRevenueExcel(string startDate = null, string endDate = null)
+    {
+      // Tạo filter
+      var filter = new StatisticsFilterDto
+      {
+        StartDate = startDate,
+        EndDate = endDate
+      };
+
+      // Lấy dữ liệu tổng hợp dashboard
+      var stats = await _statisticsAppService.GetDashboardStatisticsAsync(filter);
+
+      // Trích danh sách danh mục + doanh thu thương hiệu
+      var categories = stats.RevenueByBrandPerCategory;
+
+      // Gộp vào input chuẩn ABP
+      var input = new ExportCategoryRevenueInput
+      {
+        Categories = categories,
+        Filter = filter
+      };
+
+      // Gọi AppService xuất Excel
+      var fileContents = await _statisticsAppService.ExportCategoryRevenueToExcelAsync(input);
+
+      var fileName = $"CategoryRevenue_{DateTime.Now:yyyyMMdd}.xlsx";
+
+      return File(
+          fileContents,
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          fileName
+      );
+    }
 
 
+    [HttpGet]
+    public async Task<IActionResult> ExportTopCustomersExcel(string startDate = null, string endDate = null)
+    {
+      // Tạo filter
+      var filter = new StatisticsFilterDto
+      {
+        StartDate = startDate,
+        EndDate = endDate
+      };
 
+      var customer = await _statisticsAppService.GetDashboardStatisticsAsync(filter);
+      var topCustomers = customer.TopCustomers;
+
+      // Gộp tất cả vào 1 DTO để truyền đúng chuẩn ABP
+      var input = new ExportTopCustomersInput
+      {
+        TopCustomers = topCustomers,
+        Filter = filter
+      };
+
+      // Gọi trực tiếp AppService
+      var fileContents = await _statisticsAppService.ExportTopCustomersToExcelAsync(input);
+
+      var fileName = $"TopCustomers_{DateTime.Now:yyyyMMdd}.xlsx";
+
+      return File(
+          fileContents,
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          fileName
+      );
+    }
+    // hàm xuất excel sản phẩm tồn kho báo động
+    [HttpGet]
+    public async Task<IActionResult> ExportLowStockProductsExcel(int lowStockThreshold = 20)
+    {
+      var lowStockItems = await _statisticsAppService.GetLowStockProductsAsync(lowStockThreshold);
+      // Gọi trực tiếp AppService
+      var fileContents = await _statisticsAppService.ExportLowStockProductsToExcelAsync(lowStockItems);
+      var fileName = $"LowStockProducts_{DateTime.Now:yyyyMMdd}.xlsx";
+      return File(
+          fileContents,
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          fileName
+      );
+    }
+    // Xuất excel toàn bộ thống kê trên dashboard
     [HttpGet]
     public async Task<IActionResult> ExportExcel(string startDate = null, string endDate = null)
     {
@@ -88,7 +166,6 @@ namespace SimpleTaskApp.Areas.Admin.Controllers
                   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                   fileName);
     }
-    // Load partial theo loại thống kê
     // Load partial theo loại thống kê
     public async Task<IActionResult> LoadPartial(string type, StatisticsFilterDto filter)
     {
@@ -124,9 +201,23 @@ namespace SimpleTaskApp.Areas.Admin.Controllers
           return PartialView("Partials/_TopProducts", viewModel);
         }
         else if (type == "BrandRevenue")
-          return PartialView("Partials/_BrandRevenue", stats.RevenueByBrandPerCategory);
+        {
+          var viewModel = new CategoryRevenueViewModel
+          {
+            Categories = stats.RevenueByBrandPerCategory,
+            Filter = filter
+          };
+          return PartialView("Partials/_BrandRevenue", viewModel);
+        }
         else if (type == "TopCustomers")
-          return PartialView("Partials/_TopCustomers", stats.TopCustomers);
+        {
+          var viewModel = new TopCustomersViewModel
+          {
+            TopCustomers = stats.TopCustomers,
+            Filter = filter
+          };
+          return PartialView("Partials/_TopCustomers", viewModel);
+        }
         else
           return Content("Không tìm thấy loại thống kê.");
       }

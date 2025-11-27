@@ -1,20 +1,29 @@
-﻿@model List<SimpleTaskApp.Statistics.Dto.TopCustomerDto>
+﻿@model SimpleTaskApp.Web.Areas.Admin.Models.Statistics.TopCustomersViewModel
 
-@if (Model == null || !Model.Any())
+@if (Model?.TopCustomers == null || !Model.TopCustomers.Any())
 {
   <div class="alert alert-warning text-center my-3">
-    Không có khách hàng nào trong thống kê
+    Không có khách hàng tiêu biểu nào
   </div>
 }
 else
 {
-  <div class="card shadow rounded-4 border-0">
+  <div class="card shadow rounded-4 border-0 my-3">
     <div class="card-body">
-      <h5 class="card-title mb-4 d-flex align-items-center">
-        <i class="fas fa-user-tie me-2 text-primary"></i>
-        Top Khách Hàng
-      </h5>
+      <!-- Header + nút Excel -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="text-danger fw-bold mb-0">
+          <i class="fas fa-star me-2"></i>Top khách hàng tiềm năng
+        </h3>
 
+        <a class="btn btn-success d-flex align-items-center shadow-sm"
+           style="height:48px; padding:0 18px; font-weight:500; border-radius:8px; text-decoration:none;"
+           href="@Url.Action("ExportTopCustomersExcel", "Statistics", new { startDate = Model.Filter?.StartDate, endDate = Model.Filter?.EndDate })">
+          <i class="fas fa-file-excel me-2"></i> Xuất Excel
+        </a>
+      </div>
+
+      <!-- Bảng danh sách -->
       <div class="table-responsive">
         <table class="table table-hover align-middle text-center mb-0">
           <thead class="table-gradient text-white">
@@ -29,16 +38,16 @@ else
             </tr>
           </thead>
           <tbody>
-            @for (int i = 0; i < Model.Count; i++)
+            @foreach (var (customer, index) in Model.TopCustomers.Select((c, i) => (c, i)))
             {
-              <tr class="align-middle">
-                <td class="fw-bold">@(@i + 1)</td>
-                <td class="text-start">@Model[i].UserName</td>
-                <td>@Model[i].PhoneNumber</td>
-                <td class="text-start">@Model[i].Address</td>
-                <td class="fw-semibold">@Model[i].TotalOrders</td>
-                <td class="fw-semibold">@Model[i].TotalProducts</td>
-                <td class="fw-bold text-success">@Model[i].TotalSpent.ToString("N0") đ</td>
+              <tr>
+                <td class="fw-bold">@(@index + 1)</td>
+                <td class="text-start">@customer.UserName</td>
+                <td>@customer.PhoneNumber</td>
+                <td class="text-start">@customer.Address</td>
+                <td class="fw-semibold">@customer.TotalOrders</td>
+                <td class="fw-semibold">@customer.TotalProducts</td>
+                <td class="fw-bold text-success">@customer.TotalSpent.ToString("N0") đ</td>
               </tr>
             }
           </tbody>

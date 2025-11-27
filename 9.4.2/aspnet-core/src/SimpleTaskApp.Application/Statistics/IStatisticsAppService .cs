@@ -11,6 +11,9 @@ namespace SimpleTaskApp.Statistics
     Task<List<LowStockProductVariantDto>> GetLowStockProductsAsync(int lowStockThreshold);
     Task<byte[]> ExportStatisticsToExcelAsync(StatisticsDto statistics);
     Task<byte[]> ExportTopProductsToExcelAsync(ExportTopProductsInput input);
+    Task<byte[]> ExportLowStockProductsToExcelAsync(List<LowStockProductVariantDto> items);
+    Task<byte[]> ExportTopCustomersToExcelAsync(ExportTopCustomersInput input);
+    Task<byte[]> ExportCategoryRevenueToExcelAsync(ExportCategoryRevenueInput input);
 
   }
 }

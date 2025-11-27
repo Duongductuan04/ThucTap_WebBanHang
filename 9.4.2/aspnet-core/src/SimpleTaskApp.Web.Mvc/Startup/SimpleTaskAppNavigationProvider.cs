@@ -46,17 +46,7 @@ namespace SimpleTaskApp.Web.Startup
                       )
                   )
               )
-               .AddItem(
-              new MenuItemDefinition(
-                  "CartsAdmin",
-                  L("Carts"),
-                  url: "/Admin/Carts", // đường dẫn tới trang quản lý giỏ hàng
-                  icon: "fas fa-shopping-cart",
-                  permissionDependency: new SimplePermissionDependency(
-                      PermissionNames.Pages_Cart // 👈 nhớ khai báo permission cho Cart
-                  )
-              )
-          )
+               
            .AddItem(
               new MenuItemDefinition(
                   "DiscountsAdmin",

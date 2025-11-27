@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using ClosedXML.Excel;
 using System.IO;
 using Microsoft.AspNetCore.Mvc;
+using DocumentFormat.OpenXml.Wordprocessing;
 namespace SimpleTaskApp.Statistics
 {
   public class StatisticsAppService : ApplicationService, IStatisticsAppService
@@ -301,17 +302,17 @@ namespace SimpleTaskApp.Statistics
 
       ws.Cell(1, 1).Value = "Báo cáo Top sản phẩm bán chạy";
       ws.Cell(2, 1).Value = $"Từ: {filter.StartDate ?? "--"}  Đến: {filter.EndDate ?? "--"}";
-      ws.Range("A1:D1").Merge().Style.Font.Bold = true;
-      ws.Range("A2:D2").Merge().Style.Font.Italic = true;
+      ws.Range("A1:D1").Merge().Style.Font.Bold = true;//tô đậm
+      ws.Range("A2:D2").Merge().Style.Font.Italic = true;//in nghiêng
 
       ws.Cell(4, 1).Value = "STT";
       ws.Cell(4, 2).Value = "Tên sản phẩm";
       ws.Cell(4, 3).Value = "Màu";
       ws.Cell(4, 4).Value = "Số lượng bán";
-
+      //tiêu đề in đậm và nền xám
       ws.Range("A4:D4").Style.Font.Bold = true;
       ws.Range("A4:D4").Style.Fill.BackgroundColor = XLColor.LightGray;
-
+      // Dữ liệu sản phẩm
       for (int i = 0; i < topProducts.Count; i++)
       {
         var p = topProducts[i];
@@ -321,14 +322,156 @@ namespace SimpleTaskApp.Statistics
         ws.Cell(5 + i, 4).Value = p.QuantitySold;
         ws.Cell(5 + i, 4).Style.NumberFormat.Format = "#,##0";
       }
-
+      // Auto-fit cột
       ws.Columns().AdjustToContents();
 
       using var stream = new MemoryStream();
       workbook.SaveAs(stream);
       return stream.ToArray();
     }
+    public async Task<byte[]> ExportTopCustomersToExcelAsync(ExportTopCustomersInput input)
+    {
+      var topCustomers = input.TopCustomers;
+      var filter = input.Filter;
+      using var workbook = new XLWorkbook();
+       var ws = workbook.Worksheets.Add("Top Customers");
+      ws.Cell(1, 1).Value = "Báo cáo Top khách hàng";
+      ws.Cell(2, 1).Value = $"Từ: {filter.StartDate ?? "--"}  Đến: {filter.EndDate ?? "--"}";
+      ws.Range("A1:E1").Merge().Style.Font.Bold = true;//tô đậm
+      ws.Range("A2:E2").Merge().Style.Font.Italic = true;//in nghiêng
+      ws.Cell(4, 1).Value = "STT";
+      ws.Cell(4, 2).Value = "Tên khách hàng";
+      ws.Cell(4, 3).Value = "Số điện thoại";
+      ws.Cell(4, 4).Value = "Địa chỉ";
+      ws.Cell(4, 5).Value = "Tổng đơn hàng";
+      ws.Cell(4, 6).Value = "Tổng sản phẩm mua";
+      ws.Cell(4, 7).Value = "Tổng chi tiêu";
+      //tiêu đề in đậm và nền xám
+      ws.Range("A4:G4").Style.Font.Bold = true;
+      ws.Range("A4:G4").Style.Fill.BackgroundColor = XLColor.LightGray;
+      // Dữ liệu khách hàng
+      for (int i = 0; i < topCustomers.Count; i++)
+      {
+        var c = topCustomers[i];
+        int row = 5 + i;
+        ws.Cell(row, 1).Value = i + 1;
+        ws.Cell(row, 2).Value = c.UserName;
+        ws.Cell(row, 3).Value = c.PhoneNumber;
+        ws.Cell(row, 4).Value = c.Address;
+        ws.Cell(row, 5).Value = c.TotalOrders;
+        ws.Cell(row, 5).Style.NumberFormat.Format = "#,##0";
+        ws.Cell(row, 6).Value = c.TotalProducts;
+        ws.Cell(row, 6).Style.NumberFormat.Format = "#,##0";
+        ws.Cell(row, 7).Value = c.TotalSpent;
+        ws.Cell(row, 7).Style.NumberFormat.Format = "#,##0 \"₫\"";
+      }
+      // Auto-fit cột
+      ws.Columns().AdjustToContents();
+      //Export
+      using var stream = new MemoryStream();
+      workbook.SaveAs(stream);
+      return stream.ToArray();
+    }
 
+    public async Task<byte[]> ExportLowStockProductsToExcelAsync(List<LowStockProductVariantDto> items)
+    { using var workbook = new XLWorkbook();
+      var ws = workbook.Worksheets.Add("Low Stock Products");
+      ws.Cell(1, 1).Value = "Báo cáo sản phẩm tồn kho thấp";
+      ws.Range("A1:E1").Merge().Style.Font.Bold = true;//tô đậm
+      ws.Cell(3, 1).Value = "STT";
+      ws.Cell(3, 2).Value = "Tên sản phẩm";
+      ws.Cell(3, 3).Value = "Màu";
+      ws.Cell(3, 4).Value = "Tồn kho màu";
+      ws.Cell(3, 5).Value = "Tổng tồn kho";
+      ws.Cell(3, 6).Value = "Ngày nhập cuối";
+      //tiêu đề in đậm và nền xám
+      ws.Range("A3:F3").Style.Font.Bold = true;
+      ws.Range("A3:F3").Style.Fill.BackgroundColor = XLColor.LightGray;
+      // Dữ liệu sản phẩm
+      for (int i = 0; i < items.Count; i++)
+      {
+        var p = items[i];
+        int row = 4 + i;
+        ws.Cell(row, 1).Value = i + 1;
+        ws.Cell(row, 2).Value = p.ProductName;
+        ws.Cell(row, 3).Value = p.Color ?? "";
+        ws.Cell(row, 4).Value = p.ColorStockQuantity;
+        ws.Cell(row, 4).Style.NumberFormat.Format = "#,##0";
+        ws.Cell(row, 5).Value = p.TotalStockQuantity;
+        ws.Cell(row, 5).Style.NumberFormat.Format = "#,##0";
+        ws.Cell(row, 6).Value = p.LastImportDate?.ToString("dd/MM/yyyy") ?? "N/A";
+      }
+      // Auto-fit cột
+      ws.Columns().AdjustToContents();
+      //Export
+      using var stream = new MemoryStream();
+      workbook.SaveAs(stream);
+      return stream.ToArray();
+    }
+    public async Task<byte[]> ExportCategoryRevenueToExcelAsync(ExportCategoryRevenueInput input)
+    {
+      var categories = input.Categories;
+      var filter = input.Filter;
+
+      using var workbook = new XLWorkbook();
+      var ws = workbook.Worksheets.Add("Doanh Thu Theo Danh Mục");
+
+      // ===== TIÊU ĐỀ =====
+      ws.Cell(1, 1).Value = "Báo cáo doanh thu theo danh mục & thương hiệu";
+      ws.Cell(2, 1).Value = $"Từ: {filter.StartDate ?? "--"}  Đến: {filter.EndDate ?? "--"}";
+      ws.Range("A1:D1").Merge().Style.Font.Bold = true;
+      ws.Range("A2:D2").Merge().Style.Font.Italic = true;
+
+      // ===== HEADER =====
+      ws.Cell(4, 1).Value = "STT";
+      ws.Cell(4, 2).Value = "Danh mục";
+      ws.Cell(4, 3).Value = "Thương hiệu";
+      ws.Cell(4, 4).Value = "Doanh thu";
+
+      var headerRange = ws.Range("A4:D4");
+      headerRange.Style.Font.Bold = true;
+      headerRange.Style.Fill.BackgroundColor = XLColor.LightGray;
+      headerRange.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+
+      // ===== DỮ LIỆU =====
+      int row = 5;
+      int stt = 1;
+
+      foreach (var category in categories)
+      {
+        int categoryStartRow = row; // dòng bắt đầu merge cho danh mục
+        foreach (var brand in category.BrandRevenues)
+        {
+          ws.Cell(row, 1).Value = stt++;
+          ws.Cell(row, 3).Value = brand.BrandName;
+          ws.Cell(row, 4).Value = brand.Revenue;
+          ws.Cell(row, 4).Style.NumberFormat.Format = "#,##0 \"₫\"";
+          row++;
+        }
+
+        // Merge ô danh mục nếu có nhiều thương hiệu
+        if (category.BrandRevenues.Count > 1)
+        {
+          ws.Range(categoryStartRow, 2, row - 1, 2).Merge();
+          ws.Cell(categoryStartRow, 2).Value = category.CategoryName;
+          ws.Cell(categoryStartRow, 2).Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+          ws.Cell(categoryStartRow, 2).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+        }
+        else if (category.BrandRevenues.Count == 1)
+        {
+          ws.Cell(categoryStartRow, 2).Value = category.CategoryName;
+          ws.Cell(categoryStartRow, 2).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+        }
+      }
+
+      // ===== AUTO-FIT CỘT =====
+      ws.Columns().AdjustToContents();
+
+      // ===== RETURN BYTE[] =====
+      using var stream = new MemoryStream();
+      workbook.SaveAs(stream);
+      return stream.ToArray();
+    }
 
 
     public async Task<byte[]> ExportStatisticsToExcelAsync(StatisticsDto stats)

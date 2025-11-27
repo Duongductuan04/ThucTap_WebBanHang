@@ -10,9 +10,16 @@ else
 {
   <div class="card shadow rounded-4 my-3">
     <div class="card-body">
-      <h5 class="card-title mb-4">
-        <i class="fas fa-boxes me-2"></i>Sản phẩm tồn kho thấp
-      </h5>
+      <!-- Header + nút Excel -->
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class=" mb-0">
+          <i class="fas fa-boxes me-2"></i>Sản phẩm tồn kho thấp
+        </h3>
+
+        <a href="/Admin/Statistics/ExportLowStockProductsExcel" class="btn btn-success">
+          <i class="fas fa-file-excel me-1"></i> Xuất Excel
+        </a>
+      </div>
 
       <div class="table-responsive">
         <table class="table table-striped table-hover align-middle text-center">

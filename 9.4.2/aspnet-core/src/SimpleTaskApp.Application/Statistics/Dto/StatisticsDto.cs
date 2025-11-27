@@ -18,6 +18,11 @@ namespace SimpleTaskApp.Statistics.Dto
         public string CategoryName { get; set; }                  // Tên danh mục
         public List<BrandRevenueDto> BrandRevenues { get; set; } = new List<BrandRevenueDto>();
     }
+  public class ExportCategoryRevenueInput
+  {
+    public List<CategoryRevenueDto> Categories { get; set; } = new List<CategoryRevenueDto>();
+    public StatisticsFilterDto Filter { get; set; }
+  }
   public class TopProductDto
   {
     public int MobilePhoneId { get; set; }        // Id sản phẩm
@@ -57,6 +62,11 @@ namespace SimpleTaskApp.Statistics.Dto
   public class ExportTopProductsInput
   {
     public List<TopProductDto> TopProducts { get; set; }
+    public StatisticsFilterDto Filter { get; set; }
+  }
+  public class ExportTopCustomersInput
+  {
+    public List<TopCustomerDto> TopCustomers { get; set; }
     public StatisticsFilterDto Filter { get; set; }
   }
   public class StatisticsDto
