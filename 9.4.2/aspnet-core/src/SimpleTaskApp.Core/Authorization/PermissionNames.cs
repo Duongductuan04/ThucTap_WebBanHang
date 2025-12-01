@@ -46,5 +46,12 @@
         public const string Pages_Import_Edit = "Pages.Import.Edit";        // Sửa
         public const string Pages_Import_Delete = "Pages.Import.Delete";    // Xóa
 
-    }
+    // Chat Admin
+    public const string Pages_Chat = "Pages.Chat";              // Xem menu chat
+    public const string Pages_Chat_SendMessage = "Pages.Chat.SendMessage"; // Gửi tin nhắn
+    public const string Pages_Chat_DeleteMessage = "Pages.Chat.DeleteMessage"; // Xóa tin nhắn
+    public const string Pages_Chat_ViewHistory = "Pages.Chat.ViewHistory"; // Xem lịch sử chat
+  
+
+}
 }

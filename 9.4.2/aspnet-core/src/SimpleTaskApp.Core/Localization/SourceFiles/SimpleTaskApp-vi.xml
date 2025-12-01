@@ -190,11 +190,23 @@
 
 		<text name="Carts" value="Giỏ hàng" />
 		<text name="Orders" value="Đơn hàng" />
+		<text name="Surname" value="Họ" />
 
 		<text name="Edit" value="Sửa" />
 		<text name="CreateNewMobilePhone" value="Thêm điện thoại mới" />
 	
 		<text name="DiscountAmount" value="Giảm giá" />
+		<text name="CustomerSupport" value="Hỗ trợ khách hàng" />
+		<text name="ManageAndReplyCustomerMessages" value="Quản lý và trả lời tin nhắn từ khách hàng" />
+		<text name="SearchCustomer" value="Tìm kiếm khách hàng..." />
+		<text name="LoadingCustomers" value="Đang tải danh sách khách hàng..." />
+		<text name="SelectCustomerToSupport" value="Chọn khách hàng để hỗ trợ" />
+		<text name="DeleteChatHistory" value="Xóa lịch sử chat" />
+		<text name="WelcomeToCustomerSupport" value="Chào mừng đến với Hỗ trợ khách hàng" />
+		<text name="SelectCustomerFromList" value="Chọn một khách hàng từ danh sách bên trái để bắt đầu trò chuyện" />
+		<text name="EnterMessage" value="Nhập tin nhắn..." />
+		<text name="HistoryDeleted" value="Lịch sử đã được xóa" />
+		<text name="NoMessage" value="Không có tin nhắn" />
 
 		<!-- Flags / checkboxes -->
 		<text name="IsNew" value="Mới" />

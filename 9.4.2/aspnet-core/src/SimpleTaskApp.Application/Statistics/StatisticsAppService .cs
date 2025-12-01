@@ -259,7 +259,7 @@ namespace SimpleTaskApp.Statistics
           d = dEnd.AddDays(1);
         }
       }
-      else if (totalDays <= 180)
+      else if (totalDays <= 90)
       {
         var d = startDate;
         while (d <= endDate)

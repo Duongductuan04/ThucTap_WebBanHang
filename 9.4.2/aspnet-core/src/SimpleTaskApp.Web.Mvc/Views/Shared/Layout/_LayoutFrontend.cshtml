@@ -32,11 +32,14 @@
             @await Html.PartialAsync("_Alerts.cshtml")
             @RenderBody()
         </div>
+    @await Html.PartialAsync("_ChatPopup.cshtml")
+
         @await Html.PartialAsync("_Footer.cshtml")
     </div>
 
     @await Html.PartialAsync("_Scripts.cshtml")
     @RenderSection("scripts", required: false)
     @WebResourceManager.RenderScripts()
+
 </body>
 </html>

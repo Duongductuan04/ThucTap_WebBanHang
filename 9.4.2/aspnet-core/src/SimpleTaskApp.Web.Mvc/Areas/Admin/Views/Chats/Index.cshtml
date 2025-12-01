@@ -1,0 +1,54 @@
+﻿@{
+  ViewBag.Title = L("CustomerSupport");
+}
+
+<div class="admin-chat-container">
+  <!-- Sidebar -->
+  <div class="users-sidebar">
+    <div class="sidebar-header">
+      <h3>@L("CustomerSupport")</h3>
+      <p>@L("ManageAndReplyCustomerMessages")</p>
+    </div>
+    <div class="users-search">
+      <input type="text" class="search-input" placeholder="@L("SearchCustomer")">
+    </div>
+    <div class="users-list" id="usersList">
+      <div class="no-users" style="text-align:center;padding:30px;color:#999;">
+        @L("LoadingCustomers")
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat main -->
+  <div class="chat-main">
+    <div class="chat-header">
+      <div class="chat-user-info">
+        <div class="chat-avatar" id="currentUserAvatar"></div>
+        <div class="chat-user-details">
+          <h4 id="currentUserName">@L("SelectCustomerToSupport")</h4>
+        </div>
+      </div>
+      <div class="chat-actions">
+        <button class="chat-action-btn delete" id="deleteHistoryBtn" title="@L("DeleteChatHistory")">🗑️</button>
+      </div>
+    </div>
+
+    <div class="chat-messages" id="chatBody">
+      <div class="no-chat-selected" id="noChatSelected">
+        <div class="no-chat-icon">💬</div>
+        <h3>@L("WelcomeToCustomerSupport")</h3>
+        <p>@L("SelectCustomerFromList")</p>
+      </div>
+    </div>
+
+    <div class="chat-input-container">
+      <div class="input-area">
+        <textarea class="chat-input" id="chatInput" placeholder="@L("EnterMessage")" rows="1"></textarea>
+        <button class="send-btn" id="sendBtn" disabled>➤</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.0/signalr.min.js"></script>
+<script src="~/view-resources/Views/Chats/admin-chat.js"></script>

@@ -49,7 +49,12 @@ namespace SimpleTaskApp.Authorization
 
             var statistics = context.CreatePermission(PermissionNames.Pages_Statistics, L("Statistics"));
 
-        }
+            // Permissions cho Chat Admin
+            var chat = context.CreatePermission(PermissionNames.Pages_Chat, L("Chat"));
+            chat.CreateChildPermission(PermissionNames.Pages_Chat_ViewHistory, L("ViewChatHistory"));
+            chat.CreateChildPermission(PermissionNames.Pages_Chat_SendMessage, L("SendChatMessage"));
+            chat.CreateChildPermission(PermissionNames.Pages_Chat_DeleteMessage, L("DeleteChatMessage"));
+    }
 
         private static ILocalizableString L(string name)
         {

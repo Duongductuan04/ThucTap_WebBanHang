@@ -67,10 +67,19 @@ namespace SimpleTaskApp.Web.Startup
                       PermissionNames.Pages_Order
                   )
               )
-          
-    
-          ).AddItem(
+          )
+                    .AddItem(
               new MenuItemDefinition(
+                  "ChatAdmin",              // tên định danh menu
+                  L("CustomerSupport"), // hiển thị tên menu: Hỗ trợ khách hàng
+                  url: "/Admin/Chats",       // đường dẫn tới controller/action chat admin
+                  icon: "fas fa-comment",   // icon chat
+                  permissionDependency: new SimplePermissionDependency(
+                      PermissionNames.Pages_Chat // tạo permission riêng nếu muốn
+                  )
+              )
+          ).AddItem(
+                   new MenuItemDefinition(
                   PageNames.Tenants,
                   L("Tenants"),
                   url: "/Admin/Tenants",

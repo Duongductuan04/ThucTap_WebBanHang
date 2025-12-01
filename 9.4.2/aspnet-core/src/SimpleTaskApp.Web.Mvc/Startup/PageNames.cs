@@ -13,7 +13,8 @@
         public const string Statistics = "Statistics";
         public const string Discounts = "Discounts"; // 👈 thêm Discounts
         public const string Imports = "Imports";
+        public const string Chat = "Chat";
 
 
-    }
+  }
 }

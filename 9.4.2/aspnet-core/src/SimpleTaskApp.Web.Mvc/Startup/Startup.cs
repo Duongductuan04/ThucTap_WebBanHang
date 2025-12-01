@@ -21,6 +21,7 @@ using Microsoft.Extensions.FileProviders;
 using SimpleTaskApp.Vnpay;
 using System;
 using SimpleTaskApp.Otp;
+using SimpleTaskApp.Web.Hubs;
 
 
 namespace SimpleTaskApp.Web.Startup
@@ -124,9 +125,10 @@ namespace SimpleTaskApp.Web.Startup
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapHub<AbpCommonHub>("/signalr");
+                endpoints.MapHub<ChatHub>("/chatHub");
 
-                // Route cho areas
-                endpoints.MapControllerRoute(
+              // Route cho areas
+              endpoints.MapControllerRoute(
                     name: "areas",
                     pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
                 );

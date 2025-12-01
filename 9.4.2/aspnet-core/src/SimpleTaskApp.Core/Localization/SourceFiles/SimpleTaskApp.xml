@@ -156,6 +156,18 @@
 		<text name="QuantityRequired" value="Required" />
 		<text name="Flags" value="Flags" />
 		<text name="Color" value="Color" />
+		<text name="CustomerSupport" value="Customer Support" />
+		<text name="ManageAndReplyCustomerMessages" value="Manage and reply to customer messages" />
+		<text name="SearchCustomer" value="Search customers..." />
+		<text name="LoadingCustomers" value="Loading customer list..." />
+		<text name="SelectCustomerToSupport" value="Select a customer to support" />
+		<text name="DeleteChatHistory" value="Delete chat history" />
+		<text name="WelcomeToCustomerSupport" value="Welcome to Customer Support" />
+		<text name="SelectCustomerFromList" value="Select a customer from the list on the left to start chatting" />
+		<text name="EnterMessage" value="Enter message..." />
+		<text name="HistoryDeleted" value="Chat history has been deleted" />
+		<text name="NoMessage" value="No messages" />
+		<text name="Surname" value="Surname" />
 
 		<!-- Order -->
 		<text name="Order" value="Order" />
