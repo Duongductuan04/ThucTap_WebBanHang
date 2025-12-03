@@ -1,199 +1,30 @@
-﻿<!-- Icon chat -->
-<div id="chatIcon"
-     style="
-        position:fixed;
-        bottom:20px;
-        right:20px;
-        width:70px;
-        height:70px;
-        background: linear-gradient(135deg, #4A90E2, #7B68EE);
-        color:#fff;
-        border-radius:50%;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        cursor:pointer;
-        z-index:1000;
-        font-size:32px;
-        box-shadow: 0 6px 15px rgba(74, 144, 226, 0.4);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-     "
-     onmouseover="this.style.transform='scale(1.1)'; this.style.boxShadow='0 8px 20px rgba(74, 144, 226, 0.6)';"
-     onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 6px 15px rgba(74, 144, 226, 0.4)';">
-  💬
-</div>
+﻿@using SimpleTaskApp.Authorization.Users
+@inject UserManager UserManager
+
+<!-- Icon chat -->
+<div id="chatIcon">💬</div>
 
 <!-- Chat popup -->
-<div id="chatPopup"
-     style="
-        position:fixed;
-        bottom:100px;
-        right:20px;
-        width:380px;
-        height:480px;
-        background:#ffffff;
-        border-radius:16px;
-        display:none;
-        z-index:1000;
-        box-shadow:0 10px 30px rgba(0,0,0,0.15);
-        font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        flex-direction:column;
-        overflow:hidden;
-     ">
-
-  <!-- Header -->
-  <div style="
-        background: linear-gradient(135deg, #4A90E2, #7B68EE);
-        color:#fff;
-        padding:15px 20px;
-        font-weight:600;
-        font-size:16px;
-        display:flex;
-        align-items:center;
-        justify-content:space-between;
-     ">
-    <div>
-      <span style="font-size:20px; margin-right:8px;">💬</span>
-      Chat với Admin
-    </div>
-    <div id="closeChat" style="cursor:pointer; font-size:18px;">✖</div>
+<div id="chatPopup">
+  <div id="chatHeader">
+    <div><span>💬</span> Chat với Admin</div>
+    <div id="closeChat">✖</div>
   </div>
-
-  <!-- Body -->
-  <div id="chatBody" style="
-       flex:1;
-       overflow-y:auto;
-       padding:15px;
-       background:#f8f9fa;
-       display:flex;
-       flex-direction:column;
-       gap:10px;
-       word-break: break-word;
-     ">
-  </div>
-
-  <!-- Input + nút gửi -->
-  <div style="
-        padding:10px;
-        display:flex;
-        gap:10px;
-        border-top:1px solid #e9ecef;
-        background:#fff;
-     ">
-    <textarea id="chatInput" placeholder="Nhập tin nhắn của bạn..."
-              style="
-                flex:1;
-                padding:10px 14px;
-                border:1px solid #e9ecef;
-                border-radius:12px;
-                outline:none;
-                font-size:14px;
-                resize:none;
-                max-height:100px;
-                overflow-y:auto;
-              "></textarea>
-    <button id="sendBtn" style="
-        width:48px;
-        height:48px;
-        border-radius:50%;
-        border:none;
-        background: linear-gradient(135deg, #4A90E2, #7B68EE);
-        color:#fff;
-        cursor:pointer;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        font-size:18px;
-     ">
-      ➤
-    </button>
+  <div id="chatBody"></div>
+  <div id="chatInputArea">
+    <textarea id="chatInput" placeholder="Nhập tin nhắn của bạn..."></textarea>
+    <button id="sendBtn">➤</button>
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.0/signalr.min.js"></script>
+
+<!-- Lấy userId từ server -->
+
 <script>
-  const userId = 123; // lấy từ server thực tế
-
-  // Hàm toggle chat (phải khai báo trước khi dùng)
-  function toggleChat() {
-      const popup = document.getElementById("chatPopup");
-      const icon = document.getElementById("chatIcon");
-      if (popup.style.display === "none" || popup.style.display === "") {
-          popup.style.display = "flex";
-          icon.style.display = "none";
-          document.getElementById("chatInput").focus();
-      } else {
-          popup.style.display = "none";
-          icon.style.display = "flex";
-      }
-  }
-
-  // click icon mở popup
-  document.getElementById("chatIcon").onclick = toggleChat;
-  document.getElementById("closeChat").onclick = toggleChat;
-
-  // SignalR connection
-  const connection = new signalR.HubConnectionBuilder()
-      .withUrl("/chatHub?role=user")
-      .build();
-
-  connection.start()
-      .then(() => {
-          console.log("Connected to chatHub as user");
-          connection.invoke("RegisterUser", userId).catch(err => console.error(err.toString()));
-      })
-      .catch(err => console.error(err.toString()));
-
-  // Nhận tin nhắn từ admin
-  connection.on("ReceiveMessage", (from, message, type) => {
-      if(type === "Admin") showMessage(message, "Admin");
-  });
-
-  // Load lịch sử chat
-  connection.on("LoadHistory", messages => {
-      messages.forEach(m => {
-          const type = m.Sender === "Admin" ? "Admin" : "Client";
-          showMessage(m.Message, type);
-      });
-  });
-
-  // Gửi tin nhắn
-  document.getElementById("sendBtn").onclick = () => {
-      const input = document.getElementById("chatInput");
-      const message = input.value.trim();
-      if(!message) return;
-      connection.invoke("SendMessageToAdmin", userId, message).catch(err => console.error(err.toString()));
-      showMessage(message, "Client");
-      input.value = '';
-      input.focus();
-  };
-
-  // Hiển thị tin nhắn
-  function showMessage(message, type) {
-      const chatBody = document.getElementById("chatBody");
-      const div = document.createElement("div");
-
-      div.textContent = message;
-      div.style.alignSelf = type === "Client" ? "flex-end" : "flex-start";
-      div.style.background = type === "Client" ? "linear-gradient(135deg,#4A90E2,#7B68EE)" : "#f1f1f1";
-      div.style.color = type === "Client" ? "#fff" : "#333";
-      div.style.padding = "10px";
-      div.style.borderRadius = "12px";
-      div.style.maxWidth = "85%";
-      div.style.wordBreak = "break-word";
-
-      chatBody.appendChild(div);
-      chatBody.scrollTop = chatBody.scrollHeight;
-  }
-
-  // Enter gửi tin nhắn, Shift+Enter xuống dòng
-  document.getElementById("chatInput").addEventListener("keydown", e => {
-      if(e.key === "Enter" && !e.shiftKey) {
-          e.preventDefault();
-          document.getElementById("sendBtn").click();
-      }
-  });
-
-  // Load trang chỉ hiện icon
-  document.getElementById("chatIcon").style.display = "flex";
+  const userId = @(UserManager.AbpSession.UserId.HasValue ? UserManager.AbpSession.UserId.Value.ToString() : "0");
+  console.log("UserId:", userId);
 </script>
+
+<!-- SignalR + JS chat -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.0/signalr.min.js"></script>
+<script src="~/view-resources/Views/Chats/chat.js" asp-append-version="true"></script>

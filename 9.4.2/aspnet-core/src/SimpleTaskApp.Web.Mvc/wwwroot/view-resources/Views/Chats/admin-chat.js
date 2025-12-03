@@ -19,10 +19,15 @@
       .then(data => {
         const users = data.result || [];
         usersList.innerHTML = '';
+
         if (!users.length) {
-          usersList.innerHTML = `<div class="no-users" style="text-align:center;padding:30px;color:#999;">${L('NoUsers')}</div>`;
+          usersList.innerHTML = `
+            <div class="no-users" style="text-align:center;padding:30px;color:#999;">
+              Không có người dùng
+            </div>`;
           return;
         }
+
         users.forEach(u => {
           const userItem = document.createElement("div");
           userItem.className = "user-item";
@@ -30,14 +35,16 @@
           userItem.dataset.userName = u.userName;
 
           const avatarLetter = u.userName ? u.userName.charAt(0).toUpperCase() : 'U';
-          const lastMessage = u.lastMessage || L('NoMessage');
+          const lastMessage = u.lastMessage || "Chưa có tin nhắn";
+
           userItem.innerHTML = `
-                        <div class="user-avatar">${avatarLetter}</div>
-                        <div class="user-info">
-                            <div class="user-name">${u.userName || L('User')}</div>
-                            <div class="user-last-message">${lastMessage}</div>
-                        </div>
-                    `;
+            <div class="user-avatar">${avatarLetter}</div>
+            <div class="user-info">
+              <div class="user-name">${u.userName || "Người dùng"}</div>
+              <div class="user-last-message">${lastMessage}</div>
+            </div>
+          `;
+
           userItem.addEventListener("click", () => selectUser(u.id, u.userName, avatarLetter));
           usersList.appendChild(userItem);
         });
@@ -48,7 +55,7 @@
     selectedUserId = id;
     selectedUserName = name;
 
-    currentUserName.textContent = name || L('User');
+    currentUserName.textContent = name || "Người dùng";
     currentUserAvatar.textContent = avatarLetter;
 
     noChatSelected.style.display = 'none';
@@ -63,18 +70,27 @@
     loadHistory(id);
   }
 
-  const connection = new signalR.HubConnectionBuilder().withUrl("/chatHub?role=admin").build();
-  connection.start().then(() => console.log("Admin connected")).catch(err => console.error(err));
+  // SignalR
+  const connection = new signalR.HubConnectionBuilder()
+    .withUrl("/chatHub?role=admin")
+    .build();
+
+  connection.start()
+    .then(() => console.log("Admin connected"))
+    .catch(err => console.error(err));
 
   connection.on("ReceiveMessage", (userId, message, type) => {
+
     if (selectedUserId !== userId) {
       const userItem = document.querySelector(`.user-item[data-user-id="${userId}"]`);
       if (userItem) {
         const lastMsgEl = userItem.querySelector('.user-last-message');
-        if (lastMsgEl) lastMsgEl.textContent = message.length > 30 ? message.substring(0, 30) + '...' : message;
+        if (lastMsgEl)
+          lastMsgEl.textContent = message.length > 30 ? message.substring(0, 30) + '...' : message;
       }
       return;
     }
+
     showMessage(message, type);
     updateUserLastMessage(userId, message);
   });
@@ -85,15 +101,22 @@
       .then(data => {
         const messages = data.result || [];
         chatBody.innerHTML = "";
+
         if (!messages.length) {
-          chatBody.innerHTML = `<div class="no-chat-selected"><div class="no-chat-icon">📨</div><h3>${L('NoMessages')}</h3></div>`;
+          chatBody.innerHTML = `
+            <div class="no-chat-selected">
+              <div class="no-chat-icon">📨</div>
+              <h3>Chưa có tin nhắn</h3>
+            </div>`;
           return;
         }
+
         messages.forEach(msg => {
-          const messageText = msg.Message || msg.message || L('NoContent');
+          const messageText = msg.Message || msg.message || "Không có nội dung";
           const messageType = msg.Sender || msg.sender || "User";
           showMessage(messageText, messageType);
         });
+
         chatBody.scrollTop = chatBody.scrollHeight;
       });
   }
@@ -102,6 +125,7 @@
     const msgDiv = document.createElement("div");
     msgDiv.className = `message ${type === "User" ? "message-user" : "message-admin"}`;
     msgDiv.textContent = message;
+
     chatBody.appendChild(msgDiv);
     chatBody.scrollTop = chatBody.scrollHeight;
   }
@@ -110,17 +134,21 @@
     const userItem = document.querySelector(`.user-item[data-user-id="${userId}"]`);
     if (userItem) {
       const lastMsgEl = userItem.querySelector('.user-last-message');
-      if (lastMsgEl) lastMsgEl.textContent = message.length > 30 ? message.substring(0, 30) + '...' : message;
+      if (lastMsgEl)
+        lastMsgEl.textContent = message.length > 30 ? message.substring(0, 30) + '...' : message;
     }
   }
 
   sendBtn.addEventListener("click", () => {
     const message = chatInput.value.trim();
     if (!message || !selectedUserId) return;
+
     connection.invoke("SendMessageToUser", selectedUserId, message)
       .catch(err => console.error(err));
+
     showMessage(message, "Admin");
     updateUserLastMessage(selectedUserId, message);
+
     chatInput.value = "";
     chatInput.style.height = 'auto';
   });
@@ -136,6 +164,7 @@
     this.style.height = 'auto';
     this.style.height = Math.min(this.scrollHeight, 120) + 'px';
   });
+
   deleteHistoryBtn.addEventListener("click", () => {
     if (!selectedUserId) return;
 
@@ -146,11 +175,10 @@
       .then(res => {
         if (res.success) {
           chatBody.innerHTML = `
-                    <div class="no-chat-selected">
-                        <div class="no-chat-icon">✅</div>
-                        <h3>Lịch sử đã được xóa</h3>
-                    </div>
-                `;
+            <div class="no-chat-selected">
+              <div class="no-chat-icon">✅</div>
+              <h3>Lịch sử đã được xóa</h3>
+            </div>`;
           updateUserLastMessage(selectedUserId, "Không có tin nhắn");
         }
       })

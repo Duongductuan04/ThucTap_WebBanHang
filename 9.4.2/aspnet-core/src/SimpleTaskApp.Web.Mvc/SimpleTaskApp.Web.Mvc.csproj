@@ -56,6 +56,10 @@
     <EditorConfigFiles Remove="E:\SimpleTaskApp\9.4.2\aspnet-core\src\SimpleTaskApp.Web.Mvc\Models\.editorconfig" />
   </ItemGroup>
   <ItemGroup>
+    <Content Update="wwwroot\css\chat.css">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
     <Content Update="wwwroot\view-resources\Views\Imports\_CreateModal.js">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
