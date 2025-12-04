@@ -1,57 +1,115 @@
 ﻿using Abp.Application.Services;
 using Abp.Application.Services.Dto;
-using Abp.Authorization; // THÊM NAMESPACE NÀY
+using Abp.Authorization;
 using Abp.Domain.Repositories;
-using SimpleTaskApp.Authorization; // THÊM NAMESPACE NÀY
-using SimpleTaskApp.MobilePhones.Dto;
 using Microsoft.EntityFrameworkCore;
+using SimpleTaskApp.Authorization;
+using SimpleTaskApp.MobilePhones.Dto;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace SimpleTaskApp.MobilePhones
 {
-    [AbpAuthorize] // THÊM AUTHORIZATION Ở ĐÂY
-    public class MobilePhoneCategoryAppService : ApplicationService, IMobilePhoneCategoryAppService
+  [AbpAuthorize(PermissionNames.Pages_MobilePhoneCategory)]
+  public class MobilePhoneCategoryAppService : ApplicationService, IMobilePhoneCategoryAppService
+  {
+    private readonly IRepository<MobilePhoneCategory, int> _categoryRepository;
+
+    public MobilePhoneCategoryAppService(IRepository<MobilePhoneCategory, int> categoryRepository)
     {
-        private readonly IRepository<MobilePhoneCategory, int> _categoryRepository;
-
-        public MobilePhoneCategoryAppService(IRepository<MobilePhoneCategory, int> categoryRepository)
-        {
-            _categoryRepository = categoryRepository;
-        }
-
-        // Lấy danh sách phân trang MobilePhoneCategory
-        public async Task<PagedResultDto<MobilePhoneCategoryDto>> GetAllAsync(PagedMobilePhoneCategoryResultRequestDto input)
-        {
-            var query = _categoryRepository.GetAll();
-
-            var totalCount = await query.CountAsync();
-
-            var items = await query
-                .OrderBy(c => c.Name)
-                .Skip(input.SkipCount)
-                .Take(input.MaxResultCount)
-                .ToListAsync();
-
-            var dtoList = items.Select(MapToDto).ToList();
-
-            return new PagedResultDto<MobilePhoneCategoryDto>(totalCount, dtoList);
-        }
-        public async Task<string> GetNameAsync(int id)
-        {
-            var category = await _categoryRepository.GetAsync(id); // Hoặc gọi GetAsync(id) từ service
-            return category?.Name;
-        }
-        // Map tay từ Entity -> DTO
-        private MobilePhoneCategoryDto MapToDto(MobilePhoneCategory category)
-        {
-            if (category == null) return null;
-
-            return new MobilePhoneCategoryDto
-            {
-                Id = category.Id,
-                Name = category.Name
-            };
-        }
+      _categoryRepository = categoryRepository;
     }
+
+
+
+    [AbpAuthorize(PermissionNames.Pages_MobilePhoneCategory)]
+    public async Task<PagedResultDto<MobilePhoneCategoryDto>> GetAllAsync(PagedMobilePhoneCategoryResultRequestDto input)
+    {
+      var query = _categoryRepository.GetAll();
+
+      if (!string.IsNullOrWhiteSpace(input.Keyword))
+      {
+        query = query.Where(c => c.Name.Contains(input.Keyword));
+      }
+
+      var totalCount = await query.CountAsync();
+
+      var items = await query
+          .OrderBy(c => c.Name)
+          .Skip(input.SkipCount)
+          .Take(input.MaxResultCount)
+          .ToListAsync();
+
+      var dtoList = items.Select(MapToDto).ToList();
+
+      return new PagedResultDto<MobilePhoneCategoryDto>(totalCount, dtoList);
+    }
+
+
+ 
+    [AbpAuthorize(PermissionNames.Pages_MobilePhoneCategory)]
+    public async Task<MobilePhoneCategoryDto> GetAsync(EntityDto<int> input)
+    {
+      var category = await _categoryRepository.GetAsync(input.Id);
+      return MapToDto(category);
+    }
+
+
+
+    [AbpAuthorize(PermissionNames.Pages_MobilePhoneCategory_Create)]
+    public async Task<MobilePhoneCategoryDto> CreateAsync(CreateMobilePhoneCategoryDto input)
+    {
+      var category = new MobilePhoneCategory
+      {
+        Name = input.Name
+      };
+
+      await _categoryRepository.InsertAsync(category);
+      await CurrentUnitOfWork.SaveChangesAsync();
+
+      return MapToDto(category);
+    }
+
+
+    [AbpAuthorize(PermissionNames.Pages_MobilePhoneCategory_Edit)]
+    public async Task<MobilePhoneCategoryDto> UpdateAsync(UpdateMobilePhoneCategoryDto input)
+    {
+      var category = await _categoryRepository.GetAsync(input.Id);
+
+      category.Name = input.Name;
+
+      await _categoryRepository.UpdateAsync(category);
+
+      return MapToDto(category);
+    }
+
+
+ 
+    [AbpAuthorize(PermissionNames.Pages_MobilePhoneCategory_Delete)]
+    public async Task DeleteAsync(EntityDto<int> input)
+    {
+      await _categoryRepository.DeleteAsync(input.Id);
+    }
+
+
+    [AbpAuthorize(PermissionNames.Pages_MobilePhoneCategory)]
+    public async Task<string> GetNameAsync(int id)
+    {
+      var category = await _categoryRepository.GetAsync(id);
+      return category?.Name;
+    }
+
+
+    private MobilePhoneCategoryDto MapToDto(MobilePhoneCategory category)
+    {
+      if (category == null)
+        return null;
+
+      return new MobilePhoneCategoryDto
+      {
+        Id = category.Id,
+        Name = category.Name
+      };
+    }
+  }
 }

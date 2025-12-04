@@ -21,4 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\SimpleTaskApp.Core\SimpleTaskApp.Core.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="NewFolder\" />
+  </ItemGroup>
 </Project>

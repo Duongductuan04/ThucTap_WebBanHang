@@ -566,7 +566,6 @@ namespace SimpleTaskApp.MobilePhones
       };
     }
     // ================== LẤY DANH SÁCH MÃ GIẢM GIÁ KHẢ DỤNG ==================
-    // ================== LẤY DANH SÁCH MÃ GIẢM GIÁ KHẢ DỤNG ==================
     public async Task<List<DiscountDto>> GetAvailableDiscountsAsync(List<OrderItemDto> cartItems, decimal cartTotalAmount)
     {
       var now = DateTime.Now;

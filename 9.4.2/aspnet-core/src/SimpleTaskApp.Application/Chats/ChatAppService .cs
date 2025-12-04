@@ -28,7 +28,7 @@ namespace SimpleTaskApp.Chats
     }
 
     // ================== LƯU TIN NHẮN MỚI ==================
-    [UnitOfWork]
+    [UnitOfWork] // đánh dấu hàm chạy trong 1 transtion
     public async Task SaveMessage(long userId, string sender, string message)
     {
       if (string.IsNullOrWhiteSpace(message))
@@ -68,7 +68,7 @@ namespace SimpleTaskApp.Chats
       // Lấy danh sách userId có chat
       var userIds = await _chatRepo.GetAll()
           .Select(x => x.UserId)
-          .Distinct()
+          .Distinct()//lọc ra mỗi userId duy nhất
           .ToListAsync();
 
       // Lấy thông tin user

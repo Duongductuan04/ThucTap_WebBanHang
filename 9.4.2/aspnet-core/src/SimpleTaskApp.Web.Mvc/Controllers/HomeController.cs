@@ -13,7 +13,7 @@ using SimpleTaskApp.Authorization;
 
 namespace SimpleTaskApp.Web.Controllers
 {
-    [Authorize]
+   
     [AbpMvcAuthorize]
 
     public class HomeController : AbpController

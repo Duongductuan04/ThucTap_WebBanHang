@@ -127,24 +127,37 @@ namespace SimpleTaskApp.MobilePhones
     // ================== DANH SÁCH PHIẾU NHẬP ==================
     public async Task<PagedResultDto<ImportDto>> GetAllAsync(PagedImportResultRequestDto input)
     {
+      // Lấy tất cả phiếu nhập
       var query = _importRepository.GetAll();
 
+      // Áp dụng filter theo Keyword / Supplier / Keeper
       if (!string.IsNullOrWhiteSpace(input.Keyword))
-        query = query.Where(x => x.ImportCode.Contains(input.Keyword) || x.SupplierName.Contains(input.Keyword));
+        query = query.Where(x => x.ImportCode.Contains(input.Keyword)
+                              || x.SupplierName.Contains(input.Keyword));
 
+      if (!string.IsNullOrWhiteSpace(input.SupplierName))
+        query = query.Where(x => x.SupplierName.Contains(input.SupplierName));
+
+      if (!string.IsNullOrWhiteSpace(input.KeeperName))
+        query = query.Where(x => x.KeeperName.Contains(input.KeeperName));
+
+      // Đếm tổng số
       var totalCount = await query.CountAsync();
 
+      // Include chi tiết phiếu nhập + màu điện thoại
       var imports = await query
           .OrderByDescending(x => x.CreationTime)
           .Skip(input.SkipCount)
           .Take(input.MaxResultCount)
           .Include(x => x.ImportDetails)
-          .ThenInclude(d => d.MobilePhone)
-            .Include(x => x.ImportDetails)
-            .ThenInclude(d => d.MobilePhoneColor) // ✅ include màu
+              .ThenInclude(d => d.MobilePhone)
+          .Include(x => x.ImportDetails)
+              .ThenInclude(d => d.MobilePhoneColor)
           .ToListAsync();
 
+      // Map sang DTO
       var dtoList = imports.Select(MapToDto).ToList();
+
       return new PagedResultDto<ImportDto>(totalCount, dtoList);
     }
 

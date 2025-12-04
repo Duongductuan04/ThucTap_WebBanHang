@@ -51,7 +51,7 @@
     public const string Pages_Chat_SendMessage = "Pages.Chat.SendMessage"; // Gửi tin nhắn
     public const string Pages_Chat_DeleteMessage = "Pages.Chat.DeleteMessage"; // Xóa tin nhắn
     public const string Pages_Chat_ViewHistory = "Pages.Chat.ViewHistory"; // Xem lịch sử chat
-  
+   
 
-}
+  }
 }

@@ -18,7 +18,7 @@ namespace SimpleTaskApp.MobilePhones
   {
     private readonly IRepository<Cart, int> _cartRepository;
     private readonly IRepository<MobilePhone, int> _mobilePhoneRepository;
-    private readonly IRepository<MobilePhoneColor, int> _mobilePhoneColorRepository; // ✅ Thêm repository màu
+    private readonly IRepository<MobilePhoneColor, int> _mobilePhoneColorRepository;
     private readonly IAbpSession _abpSession;
 
     public CartAppService(
@@ -34,7 +34,7 @@ namespace SimpleTaskApp.MobilePhones
     }
 
     // CREATE / ADD TO CART
-    [AbpAuthorize]
+    [AbpAuthorize]   
     public async Task<CartDto> AddToCartAsync(CreateCartDto input)
     {
       var phone = await _mobilePhoneRepository.GetAsync(input.MobilePhoneId);
@@ -46,19 +46,20 @@ namespace SimpleTaskApp.MobilePhones
         if (color == null)
           throw new UserFriendlyException("Màu bạn chọn không tồn tại!");
       }
-
+      //truy vấn sản  phẩm trong giỏ 
       var existing = await _cartRepository.FirstOrDefaultAsync(
     c => c.UserId == _abpSession.UserId
          && c.MobilePhoneId == input.MobilePhoneId
          && c.MobilePhoneColorId == (int?)input.MobilePhoneColorId
 );
+      //kiểm tra nếu đã có thì cộng dồn số lượng
       if (existing != null)
       {
         existing.Quantity += input.Quantity;
         await _cartRepository.UpdateAsync(existing);
         return MapToDto(existing, phone, color);
       }
-
+      // nếu ch có thì tạo entity cart mới 
       var cart = new Cart
       {
         UserId = _abpSession.UserId.Value,
@@ -118,7 +119,6 @@ namespace SimpleTaskApp.MobilePhones
       await _cartRepository.UpdateAsync(cart);
     }
 
-    // DELETE
     public async Task DeleteAsync(EntityDto<int> input)
     {
       await _cartRepository.DeleteAsync(input.Id);
@@ -136,15 +136,14 @@ namespace SimpleTaskApp.MobilePhones
 
       var totalCount = await query.CountAsync();
       var items = await query.OrderBy(c => c.Id)
-                             .Skip(input.SkipCount)
-                             .Take(input.MaxResultCount)
+                             .Skip(input.SkipCount)//số bản ghi bo qua
+                             .Take(input.MaxResultCount)//số bản ghi lấy về
                              .ToListAsync();
 
       var result = items.Select(c => MapToDto(c, c.MobilePhone, c.MobilePhoneColor)).ToList();
       return new PagedResultDto<CartDto>(totalCount, result);
     }
 
-    // GET CART TOTAL
     public async Task<decimal> GetCartTotalAsync(long userId)
     {
       var items = await _cartRepository.GetAllIncluding(c => c.MobilePhone)
@@ -154,7 +153,6 @@ namespace SimpleTaskApp.MobilePhones
       return items.Sum(c => GetEffectivePrice(c.MobilePhone) * c.Quantity);
     }
 
-    // GET MY CART
     public async Task<List<CartDto>> GetMyCartAsync()
     {
       var userId = _abpSession.UserId.Value;
@@ -165,7 +163,7 @@ namespace SimpleTaskApp.MobilePhones
           .Include(x => x.MobilePhoneColor)
           .Where(x => x.UserId == userId)
           .ToListAsync();
-
+      // duyệt từng cart và map sang dto
       return carts.Select(c => MapToDto(c, c.MobilePhone, c.MobilePhoneColor)).ToList();
     }
 
@@ -178,7 +176,7 @@ namespace SimpleTaskApp.MobilePhones
           .GetAll()
           .Where(x => x.UserId == userId)
           .ToListAsync();
-
+      // xóa từng cart
       foreach (var cart in carts)
       {
         await _cartRepository.DeleteAsync(cart);

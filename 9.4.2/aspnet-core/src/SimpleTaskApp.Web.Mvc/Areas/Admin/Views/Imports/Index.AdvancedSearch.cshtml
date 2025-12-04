@@ -1,0 +1,60 @@
+﻿<div class="abp-advanced-search mb-3">
+  <form id="ImportsSearchForm" class="form-horizontal">
+    <div class="row g-2">
+
+      <!-- Keyword search -->
+      <div class="col-md-4">
+        <input type="text" name="Keyword" class="form-control txt-search" placeholder="@L("SearchByImportCodeOrSupplier")" />
+      </div>
+
+      <!-- Filter dropdown & Search button -->
+      <div class="col-md-8 d-flex">
+        <div class="dropdown mr-2">
+          <button type="button"
+                  class="btn btn-default dropdown-toggle"
+                  data-toggle="dropdown"
+                  aria-expanded="false">
+            <i class="fas fa-filter"></i> @L("Filter")
+          </button>
+          <div class="dropdown-menu dropdown-menu-right dd-menu p-2" role="menu">
+
+            <!-- Supplier filter -->
+            <label class="d-block mb-1">@L("Supplier")</label>
+            <select class="form-control mb-2" name="SupplierName">
+              <option value="">@L("All")</option>
+              @foreach (var supplier in ViewBag.Suppliers as List<SelectListItem>)
+              {
+                <option value="@supplier.Text">@supplier.Text</option>
+              }
+            </select>
+
+            <!-- Keeper filter -->
+            <label class="d-block mb-1">@L("Keeper")</label>
+            <select class="form-control mb-2" name="KeeperName">
+              <option value="">@L("All")</option>
+              @foreach (var keeper in ViewBag.Keepers as List<SelectListItem>)
+              {
+                <option value="@keeper.Text">@keeper.Text</option>
+              }
+            </select>
+
+            <hr />
+
+            <!-- Footer buttons -->
+            <div class="d-flex justify-content-between">
+              <button type="button" class="btn btn-default btn-clear">
+                <i class="fas fa-backspace"></i> @L("Clear")
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Search button -->
+        <button type="button" class="btn btn-primary ml-2 btn-search">
+          <i class="fas fa-search"></i> @L("Search")
+        </button>
+      </div>
+
+    </div>
+  </form>
+</div>

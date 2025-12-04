@@ -103,7 +103,9 @@
 		<text name="403PageHeader" value="Forbidden" />
 		<text name="403PageDescription" value="You do not have permission to access this resource. Please contact administrator." />
 		<text name="403PageButton" value="Back to Dashboard" />
-
+		<text name="SearchByImportCodeOrSupplier" value="Search by import code or supplier name" />
+		<text name="Supplier" value="Supplier" />
+		<text name="Keeper" value="Keeper" />
 		<!-- MobilePhone -->
 		<text name="MobilePhone" value="Mobile Phone" />
 		<text name="MobilePhones" value="Mobile Phone List" />
@@ -143,7 +145,10 @@
 		<text name="Cancel" value="Cancel" />
 		<text name="Save" value="Save" />
 		<text name="Stock" value="Stock" />
-
+		<text name="MobilePhoneCategories">Mobile Phone Categories</text>
+		<text name="SearchByName">Search by name</text>
+		<text name="CreateNewCategory">Create new category</text>
+		<text name="EditCategory">Edit category</text>
 		<!-- Cart -->
 		<text name="Cart" value="Cart" />
 		<text name="ProductName" value="Product Name" />

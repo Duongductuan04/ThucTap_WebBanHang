@@ -103,8 +103,12 @@ namespace SimpleTaskApp.MobilePhones
         public async Task<PagedResultDto<DiscountDto>> GetAllAsync(PagedDiscountResultRequestDto input)
         {
             var query = _discountRepository.GetAll();
-
-            var totalCount = await query.CountAsync();
+      // Lọc theo Keyword nếu có
+      if (!string.IsNullOrWhiteSpace(input.Keyword))
+      {
+        query = query.Where(d => d.Name.Contains(input.Keyword) || d.Code.Contains(input.Keyword));
+      }
+      var totalCount = await query.CountAsync();
 
             var items = await query
                 .OrderByDescending(d => d.CreationTime)

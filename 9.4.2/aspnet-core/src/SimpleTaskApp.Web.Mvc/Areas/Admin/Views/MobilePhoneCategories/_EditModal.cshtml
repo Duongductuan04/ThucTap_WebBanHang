@@ -1,0 +1,53 @@
+﻿@using SimpleTaskApp.MobilePhones.Dto
+@using SimpleTaskApp.Areas.Admin.Models.Common.Modals
+@using SimpleTaskApp.Areas.Admin.Models.MobilePhoneCategories
+@model MobilePhoneCategoryViewModel
+
+@{
+  Layout = null;
+}
+
+@await Html.PartialAsync(
+            "~/Areas/Admin/Views/Shared/Modals/_ModalHeader.cshtml",
+            new ModalHeaderViewModel(L("EditCategory"))
+        )
+
+<form id="CategoryEditForm" role="form" class="form-horizontal">
+  <div class="modal-body">
+
+    <!-- Hidden Id -->
+    <input type="hidden" name="Id" value="@Model.Category.Id" />
+
+    <!-- Name -->
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="Name">@L("Name")</label>
+      <div class="col-md-9">
+        <input id="Name"
+               name="Name"
+               type="text"
+               class="form-control"
+               maxlength="200"
+               required
+               value="@Model.Category.Name"
+               data-val="true"
+               data-val-required="@L("Name_Required")" />
+
+        <span class="text-danger field-validation-valid"
+              data-valmsg-for="Name"
+              data-valmsg-replace="true"></span>
+      </div>
+    </div>
+
+  </div>
+
+  @await Html.PartialAsync(
+      "~/Areas/Admin/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml"
+      )
+</form>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+<!-- JS xử lý edit -->
+<script src="~/view-resources/Views/MobilePhoneCategories/_EditModal.js" asp-append-version="true"></script>

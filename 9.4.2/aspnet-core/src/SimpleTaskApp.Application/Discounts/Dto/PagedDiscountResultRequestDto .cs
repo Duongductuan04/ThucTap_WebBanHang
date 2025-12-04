@@ -4,6 +4,6 @@ namespace SimpleTaskApp.MobilePhones.Dto
 {
     public class PagedDiscountResultRequestDto : PagedResultRequestDto
     {
-        public bool? IsActive { get; set; } // Lọc theo trạng thái
-    }
+    public string Keyword { get; set; }
+  }
 }

@@ -92,7 +92,7 @@ namespace SimpleTaskApp.MobilePhones
       // 1️⃣ Lấy mobile phone
       var phone = await _mobilePhoneRepository.GetAsync(input.Id);
       if (phone == null)
-        throw new KeyNotFoundException("Mobile phone not found");
+        throw new KeyNotFoundException("Sản phẩm không tồn tại");
 
       // 2️⃣ Cập nhật thông tin cơ bản
       phone.Name = input.Name;
@@ -319,8 +319,8 @@ namespace SimpleTaskApp.MobilePhones
 
             return await query
                 .Select(p => p.Brand)
-                .Where(b => !string.IsNullOrEmpty(b))
-                .Distinct()
+                .Where(b => !string.IsNullOrEmpty(b))//loại bỏ giá trị nulll hoặc rỗng
+                .Distinct()//lấy giá trị duy nhất)
                 .ToListAsync();
         }
     public async Task<List<MobilePhoneColorDto>> GetColorsByMobilePhoneIdAsync(int mobilePhoneId)
@@ -362,7 +362,6 @@ namespace SimpleTaskApp.MobilePhones
             .WhereIf(to.HasValue, p => p.CreationTime <= to.Value);
 
       var phones = await query.ToListAsync();
-
       var exportData = phones.Select(p => new
       {
         Name = p.Name,

@@ -35,6 +35,17 @@ namespace SimpleTaskApp.Web.Startup
 
           )
       )
+          .AddItem(
+    new MenuItemDefinition(
+        "MobilePhoneCategoryAdmin",   
+        L("MobilePhoneCategories"),
+       url: "/Admin/MobilePhoneCategories",
+        icon: "fas fa-list",          // Icon danh mục
+        permissionDependency: new SimplePermissionDependency(
+            PermissionNames.Pages_MobilePhoneCategory
+        )
+    )
+)
          .AddItem(
                   new MenuItemDefinition(
                       "ImportsAdmin",

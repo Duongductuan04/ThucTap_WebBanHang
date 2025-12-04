@@ -10,7 +10,7 @@
     listAction: {
       ajaxFunction: _importService.getAll,
       inputFilter: function () {
-        return $('#ImportsSearchForm').serializeFormToObject(true);
+                return $('#ImportsSearchForm').serializeFormToObject(true);
       }
     },
     buttons: [
@@ -53,6 +53,10 @@
           <button type="button" class="btn btn-sm btn-danger delete-import" data-id="${row.id}" data-name="${row.importCode}" title="${l('Delete')}">
               <i class="fas fa-times"></i>
           </button>
+           <a href="${abp.appPath}Admin/Imports/PrintImport?id=${row.id}" 
+       class="btn btn-sm btn-success" target="_blank" title="${l('Print')}">
+       <i class="fas fa-print"></i>
+    </a>
       </div>
     `;
         }

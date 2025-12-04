@@ -4,7 +4,8 @@ namespace SimpleTaskApp.MobilePhones.Dto
 {
     public class PagedMobilePhoneCategoryResultRequestDto : PagedAndSortedResultRequestDto
     {
-        // Có thể thêm Keyword để tìm kiếm theo tên nếu muốn
-    
-    }
+    // Có thể thêm Keyword để tìm kiếm theo tên nếu muốn
+    public string Keyword { get; set; }
+
+  }
 }
