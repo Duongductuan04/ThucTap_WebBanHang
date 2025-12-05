@@ -1,0 +1,93 @@
+﻿@using SimpleTaskApp.Suppliers.Dto
+@using SimpleTaskApp.Areas.Admin.Models.Suppliers
+@using SimpleTaskApp.Areas.Admin.Models.Common.Modals
+
+@model SupplierViewModel
+
+@{
+  Layout = null;
+}
+
+@await Html.PartialAsync(
+        "~/Areas/Admin/Views/Shared/Modals/_ModalHeader.cshtml",
+        new ModalHeaderViewModel(L("SupplierDetail"))
+    )
+
+<div class="modal-body">
+  <div class="row">
+
+    <!-- Bên trái: Thông tin cơ bản -->
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+
+          <div class="row mb-2">
+            <div class="col-sm-4 text-muted">@L("SupplierCode")</div>
+            <div class="col-sm-8 font-weight-bold">@Model.Supplier.SupplierCode</div>
+          </div>
+
+          <div class="row mb-2">
+            <div class="col-sm-4 text-muted">@L("SupplierName")</div>
+            <div class="col-sm-8 font-weight-bold">@Model.Supplier.SupplierName</div>
+          </div>
+
+          <div class="row mb-2">
+            <div class="col-sm-4 text-muted">@L("Phone")</div>
+            <div class="col-sm-8">@Model.Supplier.Phone</div>
+          </div>
+
+          <div class="row mb-2">
+            <div class="col-sm-4 text-muted">@L("Email")</div>
+            <div class="col-sm-8">@Model.Supplier.Email</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Bên phải: Thông tin bổ sung -->
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0">
+        <div class="card-body">
+
+          <div class="row mb-2">
+            <div class="col-sm-4 text-muted">@L("Address")</div>
+            <div class="col-sm-8">@Model.Supplier.Address</div>
+          </div>
+
+          <div class="row mb-2">
+            <div class="col-sm-4 text-muted">@L("TaxCode")</div>
+            <div class="col-sm-8">@Model.Supplier.TaxCode</div>
+          </div>
+
+          <div class="row mb-2">
+            <div class="col-sm-4 text-muted">@L("Status")</div>
+            <div class="col-sm-8">
+              @if (Model.Supplier.IsActive == 1)
+              {
+                <span class="badge badge-success">@L("Active")</span>
+              }
+              else
+              {
+                <span class="badge badge-secondary">@L("Inactive")</span>
+              }
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-4 text-muted">@L("Note")</div>
+            <div class="col-sm-8">@(!string.IsNullOrEmpty(Model.Supplier.Note) ? Model.Supplier.Note : "-")</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="modal-footer border-0">
+  <button type="button" class="btn btn-secondary" data-dismiss="modal">
+    <i class="fa fa-times"></i> @L("Close")
+  </button>
+</div>

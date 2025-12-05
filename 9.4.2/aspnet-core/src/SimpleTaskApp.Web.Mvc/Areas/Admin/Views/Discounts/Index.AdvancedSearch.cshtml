@@ -1,19 +1,56 @@
-﻿
-<div class="abp-advanced-search mb-3">
+﻿<div class="abp-advanced-search mb-3">
   <form id="DiscountsSearchForm" class="form-horizontal">
     <div class="row g-2">
 
       <!-- Keyword search -->
-      <div class="col-md-10">
+      <div class="col-md-4">
         <input type="text"
                name="Keyword"
                class="form-control txt-search"
                placeholder="@L("SearchByName")" />
       </div>
 
-      <!-- Search button -->
-      <div class="col-md-2">
-        <button type="button" class="btn bg-blue btn-search">
+
+        <!-- Filter dropdown -->
+        <div class="col-md-8 d-flex">
+          <div class="dropdown mr-2">
+            <button type="button"
+                    class="btn btn-default dropdown-toggle"
+                    data-toggle="dropdown"
+                    aria-expanded="false">
+              <i class="fas fa-filter"></i> @L("Filter")
+            </button>
+            <div class="dropdown-menu dropdown-menu-right dd-menu p-2" role="menu">
+
+            <!-- ApplyType filter -->
+            <label class="form-label">@L("ApplyType")</label>
+            <!-- ApplyType filter -->
+            <select name="ApplyType" class="form-control mb-2">
+              <option value="">@L("Noselect")</option> <!-- Rỗng, không lọc -->
+              <option value="0">@L("All")</option>
+              <option value="1">@L("Category")</option>
+              <option value="2">@L("Product")</option>
+            </select>
+
+            <!-- Status filter -->
+            <label class="form-label">@L("Status")</label>
+            <select name="IsActive" class="form-control">
+
+            <option value="">@L("All")</option>
+            <option value="true">@L("Active")</option>
+            <option value="false">@L("Inactive")</option>
+            </select>
+            <!-- Footer buttons -->
+            <div class="d-flex justify-content-between mt-2">
+              <button type="button" class="btn btn-light btn-clear">
+                <i class="fas fa-backspace"></i> @L("Clear")
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Search button -->
+        <button type="button" class="btn bg-blue btn-search flex-shrink-0">
           <i class="fas fa-search"></i> @L("Search")
         </button>
       </div>

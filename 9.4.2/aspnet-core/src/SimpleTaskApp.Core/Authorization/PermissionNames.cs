@@ -51,7 +51,11 @@
     public const string Pages_Chat_SendMessage = "Pages.Chat.SendMessage"; // Gửi tin nhắn
     public const string Pages_Chat_DeleteMessage = "Pages.Chat.DeleteMessage"; // Xóa tin nhắn
     public const string Pages_Chat_ViewHistory = "Pages.Chat.ViewHistory"; // Xem lịch sử chat
-   
+    // Nhà cung cấp / Suppliers
+    public const string Pages_Suppliers = "Pages.Suppliers";              // Xem
+    public const string Pages_Suppliers_Create = "Pages.Suppliers.Create"; // Thêm
+    public const string Pages_Suppliers_Edit = "Pages.Suppliers.Edit";     // Sửa
+    public const string Pages_Suppliers_Delete = "Pages.Suppliers.Delete"; // Xóa
 
   }
 }

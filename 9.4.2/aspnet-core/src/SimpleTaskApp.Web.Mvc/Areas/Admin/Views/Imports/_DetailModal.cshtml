@@ -7,8 +7,8 @@
 }
 
 @await Html.PartialAsync(
-      "~/Areas/Admin/Views/Shared/Modals/_ModalHeader.cshtml",
-      new ModalHeaderViewModel(L("ImportDetail"))
+        "~/Areas/Admin/Views/Shared/Modals/_ModalHeader.cshtml",
+        new ModalHeaderViewModel(L("ImportDetail"))
   )
 
 <div class="modal-body">
@@ -18,7 +18,7 @@
       <div class="card shadow-sm border-0 mb-3">
         <div class="card-body">
           <div class="mb-2"><strong>@L("ImportCode"):</strong> @Model.ImportCode</div>
-          <div class="mb-2"><strong>@L("SupplierName"):</strong> @Model.SupplierName</div>
+          <div class="mb-2"><strong>@L("Supplier"):</strong> @(string.IsNullOrWhiteSpace(Model.SupplierName) ? "-" : Model.SupplierName)</div>
           <div class="mb-2"><strong>@L("KeeperName"):</strong> @Model.KeeperName</div>
           <div class="mb-2"><strong>@L("KeeperPhone"):</strong> @Model.KeeperPhone</div>
           @if (!string.IsNullOrWhiteSpace(Model.Note))
@@ -52,12 +52,10 @@
                 {
                   <tr>
                     <td>@d.MobilePhoneName</td>
-                    <td>@(d.MobilePhoneColorName ?? "-")</td>
+                    <td>@(string.IsNullOrEmpty(d.MobilePhoneColorName) ? "-" : d.MobilePhoneColorName)</td>
                     <td>@d.Quantity</td>
                     <td>@d.ImportPrice.ToString("#,##0") đ</td>
-                    <td>
-                      @(d.MobilePhoneColorStockQuantity.HasValue ? d.MobilePhoneColorStockQuantity.Value : d.MobilePhoneStockQuantity)
-                    </td>
+                    <td>@(d.MobilePhoneColorStockQuantity ?? d.MobilePhoneStockQuantity)</td>
                   </tr>
                 }
               }

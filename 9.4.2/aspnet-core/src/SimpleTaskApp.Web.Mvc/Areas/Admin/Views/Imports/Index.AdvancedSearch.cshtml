@@ -20,11 +20,11 @@
 
             <!-- Supplier filter -->
             <label class="d-block mb-1">@L("Supplier")</label>
-            <select class="form-control mb-2" name="SupplierName">
+            <select class="form-control mb-2" name="SupplierId">
               <option value="">@L("All")</option>
               @foreach (var supplier in ViewBag.Suppliers as List<SelectListItem>)
               {
-                <option value="@supplier.Text">@supplier.Text</option>
+                <option value="@supplier.Value">@supplier.Text</option>
               }
             </select>
 

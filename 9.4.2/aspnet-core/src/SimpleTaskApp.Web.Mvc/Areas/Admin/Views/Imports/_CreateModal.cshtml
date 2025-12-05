@@ -6,100 +6,104 @@
 @model CreateImportViewModel
 
 @{
-    Layout = null;
+  Layout = null;
 }
 
 @await Html.PartialAsync(
-            "~/Areas/Admin/Views/Shared/Modals/_ModalHeader.cshtml",
-            new ModalHeaderViewModel(L("CreateNewImport"))
-        )
+      "~/Areas/Admin/Views/Shared/Modals/_ModalHeader.cshtml",
+      new ModalHeaderViewModel(L("CreateNewImport"))
+  )
 
 <form id="ImportCreateForm" role="form" class="form-horizontal" method="post" asp-controller="Imports" asp-action="Create">
-    <div class="modal-body">
+  <div class="modal-body">
 
-        <!-- SupplierName -->
-        <div class="form-group row required">
-            <label class="col-md-3 col-form-label" for="SupplierName">@L("SupplierName")</label>
-            <div class="col-md-9">
-                <input id="SupplierName" name="SupplierName" type="text" class="form-control" maxlength="256" required
-                       data-val="true" data-val-required="@L("SupplierName_Required")" />
-                <span class="text-danger field-validation-valid" data-valmsg-for="SupplierName" data-valmsg-replace="true"></span>
-            </div>
-        </div>
-
-        <!-- KeeperName -->
-        <div class="form-group row required">
-            <label class="col-md-3 col-form-label" for="KeeperName">@L("KeeperName")</label>
-            <div class="col-md-9">
-                <input id="KeeperName" name="KeeperName" type="text" class="form-control" maxlength="256" required
-                       data-val="true" data-val-required="@L("KeeperName_Required")" />
-                <span class="text-danger field-validation-valid" data-valmsg-for="KeeperName" data-valmsg-replace="true"></span>
-            </div>
-        </div>
-
-        <!-- KeeperPhone -->
-        <div class="form-group row required">
-            <label class="col-md-3 col-form-label" for="KeeperPhone">@L("KeeperPhone")</label>
-            <div class="col-md-9">
-                <input id="KeeperPhone" name="KeeperPhone" type="tel" class="form-control" maxlength="20" required
-                       data-val="true" data-val-required="@L("KeeperPhone_Required")"
-                       data-val-regex="@L("Phone_Invalid")" data-val-regex-pattern="^\+?\d{7,15}$" />
-                <span class="text-danger field-validation-valid" data-valmsg-for="KeeperPhone" data-valmsg-replace="true"></span>
-            </div>
-        </div>
-
-        <!-- Note -->
-        <div class="form-group row">
-            <label class="col-md-3 col-form-label" for="Note">@L("Note")</label>
-            <div class="col-md-9">
-                <textarea id="Note" name="Note" class="form-control" maxlength="500"
-                          data-val="true"
-                          data-val-maxlength="@L("Note_MaxLength")"
-                          data-val-maxlength-max="500"></textarea>
-                <span class="text-danger field-validation-valid" data-valmsg-for="Note" data-valmsg-replace="true"></span>
-            </div>
-        </div>
-
-        <!-- Products Container -->
-        <div class="form-group row">
-            <label class="col-md-3 col-form-label">@L("Products")</label>
-            <div class="col-md-9">
-                <div class="import-detail-container">
-                    <!-- Các dòng sản phẩm sẽ được thêm vào đây -->
-                </div>
-                <button type="button" class="btn btn-primary mt-2 add-detail">@L("AddProduct")</button>
-            </div>
-        </div>
-
+    <!-- Supplier dropdown -->
+    <!-- Supplier dropdown -->
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="SupplierId">@L("Supplier")</label>
+      <div class="col-md-9">
+        <select id="SupplierId" name="SupplierId" class="form-control" required
+                data-val="true" data-val-required="@L("SupplierName_Required")">
+          <option value="">-- @L("SelectSupplier") --</option>
+          @foreach (var supplier in Model.Suppliers)
+          {
+            <option value="@supplier.Value">@supplier.Text</option>
+          }
+        </select>
+        <span class="text-danger field-validation-valid" data-valmsg-for="SupplierId" data-valmsg-replace="true"></span>
+      </div>
     </div>
 
-    @await Html.PartialAsync("~/Areas/Admin/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml")
+    <!-- KeeperName -->
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="KeeperName">@L("KeeperName")</label>
+      <div class="col-md-9">
+        <input id="KeeperName" name="KeeperName" type="text" class="form-control" maxlength="256" required
+               data-val="true" data-val-required="@L("KeeperName_Required")" />
+        <span class="text-danger field-validation-valid" data-valmsg-for="KeeperName" data-valmsg-replace="true"></span>
+      </div>
+    </div>
+
+    <!-- KeeperPhone -->
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="KeeperPhone">@L("KeeperPhone")</label>
+      <div class="col-md-9">
+        <input id="KeeperPhone" name="KeeperPhone" type="tel" class="form-control" maxlength="20" required
+               data-val="true" data-val-required="@L("KeeperPhone_Required")"
+               data-val-regex="@L("Phone_Invalid")" data-val-regex-pattern="^\+?\d{7,15}$" />
+        <span class="text-danger field-validation-valid" data-valmsg-for="KeeperPhone" data-valmsg-replace="true"></span>
+      </div>
+    </div>
+
+    <!-- Note -->
+    <div class="form-group row">
+      <label class="col-md-3 col-form-label" for="Note">@L("Note")</label>
+      <div class="col-md-9">
+        <textarea id="Note" name="Note" class="form-control" maxlength="500"
+                  data-val="true"
+                  data-val-maxlength="@L("Note_MaxLength")"
+                  data-val-maxlength-max="500"></textarea>
+        <span class="text-danger field-validation-valid" data-valmsg-for="Note" data-valmsg-replace="true"></span>
+      </div>
+    </div>
+
+    <!-- Products Container -->
+    <div class="form-group row">
+      <label class="col-md-3 col-form-label">@L("Products")</label>
+      <div class="col-md-9">
+        <div class="import-detail-container">
+          <!-- Các dòng sản phẩm sẽ được thêm vào đây -->
+        </div>
+        <button type="button" class="btn btn-primary mt-2 add-detail">@L("AddProduct")</button>
+      </div>
+    </div>
+
+  </div>
+
+  @await Html.PartialAsync("~/Areas/Admin/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml")
 </form>
 
-<!-- Chuyển danh sách sản phẩm sang JS -->
-<!-- Chuyển danh sách sản phẩm sang JS -->
 <script>
-    // Danh sách điện thoại
-    window.availablePhones = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(
-        Model.MobilePhones.Select(p => new { 
-            id = int.Parse(p.Value), 
-            name = p.Text 
-        })
-    ));
+  // Danh sách điện thoại
+  window.availablePhones = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(
+      Model.MobilePhones.Select(p => new
+      {
+        id = int.Parse(p.Value),
+        name = p.Text
+      })
+  ));
 
-    // Danh sách màu
-    window.availableColors = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(
-        Model.MobilePhoneColors.Select(c => new
-        {
-            id = c.Id,                  // Id màu
-            mobilePhoneId = c.MobilePhoneId, // Id sản phẩm cha
-            colorName = c.ColorName     // Tên màu
-        })
-    ));
+  // Danh sách màu
+  window.availableColors = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(
+      Model.MobilePhoneColors.Select(c => new
+      {
+        id = c.Id,
+        mobilePhoneId = c.MobilePhoneId,
+        colorName = c.ColorName
+      })
+  ));
 </script>
 
-
-<!-- JS libraries -->
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
 <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>

@@ -149,6 +149,26 @@
 		<text name="SearchByName">Search by name</text>
 		<text name="CreateNewCategory">Create new category</text>
 		<text name="EditCategory">Edit category</text>
+		<text name="SupplierDetail" value="Supplier Details" />
+		<text name="CreateNewSupplier" value="Create New Supplier" />
+		<text name="EditSupplier" value="Edit Supplier" />
+		<text name="Id" value="Id" />
+		<text name="SearchBySupplierCodeOrName" value="Search by Supplier Code or Name" />
+		<text name="Suppliers" value="Suppliers" />
+		<text name="SupplierCode" value="Supplier Code" />
+		<text name="Email" value="Email" />
+		<text name="SelectSupplier" value="SelectSupplier" />
+		<text name="Noselect" value="No Select" />
+
+		<text name="Address" value="Địa chỉ nhà cung cấp" />
+		<text name="TaxCode" value="Mã số thuế" />		
+		<text name="SupplierCode_Required" value="Supplier code is required" />
+		<text name="Phone_Required" value="Phone number is required" />
+		<text name="Email_Required" value="Email is required" />
+		<text name="Email_Invalid" value="Invalid email address" />
+		<text name="Address_Required" value="Address is required" />
+		<text name="TaxCode_Required" value="Tax code is required" />
+		<text name="Status_Required" value="Status is required" />
 		<!-- Cart -->
 		<text name="Cart" value="Cart" />
 		<text name="ProductName" value="Product Name" />

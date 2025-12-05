@@ -54,6 +54,12 @@ namespace SimpleTaskApp.Authorization
             chat.CreateChildPermission(PermissionNames.Pages_Chat_ViewHistory, L("ViewChatHistory"));
             chat.CreateChildPermission(PermissionNames.Pages_Chat_SendMessage, L("SendChatMessage"));
             chat.CreateChildPermission(PermissionNames.Pages_Chat_DeleteMessage, L("DeleteChatMessage"));
+
+      // Permissions cho Supplier
+      var suppliers = context.CreatePermission(PermissionNames.Pages_Suppliers, L("Suppliers"));
+      suppliers.CreateChildPermission(PermissionNames.Pages_Suppliers_Create, L("CreateSupplier")); // Thêm
+      suppliers.CreateChildPermission(PermissionNames.Pages_Suppliers_Edit, L("EditSupplier"));     // Sửa
+      suppliers.CreateChildPermission(PermissionNames.Pages_Suppliers_Delete, L("DeleteSupplier")); // Xóa
     }
 
         private static ILocalizableString L(string name)

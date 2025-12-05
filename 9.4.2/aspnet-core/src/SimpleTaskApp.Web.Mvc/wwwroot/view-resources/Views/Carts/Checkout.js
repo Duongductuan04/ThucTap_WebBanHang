@@ -109,25 +109,45 @@ $(function () {
 });
 
 // Địa chỉ
-$(document).ready(() => {
-    let locations = [];
-    $.getJSON('/data/vietnam_provinces.json', data => { locations = data; locations.forEach(p => $('#Province').append(`<option value="${p.name}">${p.name}</option>`)); });
-    $('#Province').change(() => {
-        const province = locations.find(p => p.name === $('#Province').val());
-        const districtSelect = $('#District').empty().append('<option value="">Chọn Quận/Huyện</option>');
-        $('#Ward').empty().append('<option value="">Chọn Xã/Phường</option>');
-        if (province) province.districts.forEach(d => districtSelect.append(`<option value="${d.name}">${d.name}</option>`));
+$(document).ready(async () => {
+
+  // province_level_2.json -> chứa { Addresses: [...] }
+  const provinceData = await $.getJSON('/data/province_level_2.json');
+  const provinces = provinceData.Addresses;
+
+  // village_level_2.json -> chứa { Addresses: [...] }
+  const villageData = await $.getJSON('/data/village_level_2.json');
+  const villages = villageData.Addresses;
+
+  // Load tỉnh
+  provinces.forEach(p => {
+    $('#Province').append(`<option value="${p.Id}">${p.Name}</option>`);
+  });
+
+  // Khi chọn tỉnh -> load xã/phường
+  $('#Province').change(() => {
+    const provinceId = $('#Province').val();
+    const wardSelect = $('#Ward').empty();
+
+    wardSelect.append('<option value="">Chọn Xã/Phường</option>');
+
+    // Lọc xã theo SuperiorId = Id tỉnh
+    const wards = villages.filter(w => w.SuperiorId === provinceId);
+
+    wards.forEach(w => {
+      wardSelect.append(`<option value="${w.Name}">${w.Name}</option>`);
     });
-    $('#District').change(() => {
-        const province = locations.find(p => p.name === $('#Province').val());
-        const district = province?.districts.find(d => d.name === $('#District').val());
-        const wardSelect = $('#Ward').empty().append('<option value="">Chọn Xã/Phường</option>');
-        district?.wards.forEach(w => wardSelect.append(`<option value="${w.name}">${w.name}</option>`));
-    });
-    $('#btnPlaceOrder').click(() => {
-        const detail = $('#DetailAddress').val().trim(), ward = $('#Ward').val(), district = $('#District').val(), province = $('#Province').val();
-        $('#DetailAddress').val([detail, ward, district, province].filter(Boolean).join(', '));
-    });
+  });
+
+  // Ghép địa chỉ khi đặt hàng
+  $('#btnPlaceOrder').click(() => {
+    const detail = $('#DetailAddress').val().trim();
+    const ward = $('#Ward').val();
+    const provinceName = $('#Province option:selected').text();
+
+    $('#DetailAddress').val([detail, ward, provinceName].filter(Boolean).join(', '));
+  });
+
 });
 
 // OTP

@@ -1759,10 +1759,12 @@ namespace SimpleTaskApp.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SupplierName")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("SupplierId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("SupplierId");
 
                     b.ToTable("AppImports");
                 });
@@ -1998,6 +2000,46 @@ namespace SimpleTaskApp.Migrations
                     b.HasIndex("OrderId");
 
                     b.ToTable("AppOrderDetails");
+                });
+
+            modelBuilder.Entity("SimpleTaskApp.MobilePhones.Supplier", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("IsActive")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SupplierCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SupplierName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TaxCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AppSuppliers");
                 });
 
             modelBuilder.Entity("SimpleTaskApp.MultiTenancy.Tenant", b =>
@@ -2354,6 +2396,17 @@ namespace SimpleTaskApp.Migrations
                     b.Navigation("Discount");
 
                     b.Navigation("MobilePhone");
+                });
+
+            modelBuilder.Entity("SimpleTaskApp.MobilePhones.Import", b =>
+                {
+                    b.HasOne("SimpleTaskApp.MobilePhones.Supplier", "Supplier")
+                        .WithMany()
+                        .HasForeignKey("SupplierId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Supplier");
                 });
 
             modelBuilder.Entity("SimpleTaskApp.MobilePhones.ImportDetail", b =>

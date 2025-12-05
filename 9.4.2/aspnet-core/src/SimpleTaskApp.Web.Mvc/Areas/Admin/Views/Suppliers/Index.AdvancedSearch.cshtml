@@ -1,0 +1,53 @@
+﻿<div class="abp-advanced-search mb-3">
+  <form id="SuppliersSearchForm" class="form-horizontal">
+    <div class="row g-2">
+      <!-- Keyword search -->
+      <div class="col-md-6">
+        <input type="text" name="Keyword" class="form-control txt-search" placeholder="@L("SearchBySupplierCodeOrName")" />
+      </div>
+
+      <!-- Filter dropdown & Search button -->
+      <div class="col-md-6 d-flex">
+        <div class="dropdown mr-2">
+          <button type="button"
+                  class="btn btn-default dropdown-toggle"
+                  data-toggle="dropdown"
+                  aria-expanded="false">
+            <i class="fas fa-filter"></i> @L("Filter")
+          </button>
+          <div class="dropdown-menu dropdown-menu-right dd-menu p-2" role="menu">
+
+            <!-- Status filter -->
+            <label class="d-block mb-1">@L("Status")</label>
+
+            <div class="form-check form-check-inline">
+              <input type="radio" class="form-check-input" id="Status_All" name="IsActive" value="" checked>
+              <label class="form-check-label" for="Status_All">@L("All")</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input type="radio" class="form-check-input" id="Status_Active" name="IsActive" value="1">
+              <label class="form-check-label" for="Status_Active">@L("Active")</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input type="radio" class="form-check-input" id="Status_Inactive" name="IsActive" value="0">
+              <label class="form-check-label" for="Status_Inactive">@L("Inactive")</label>
+            </div>
+
+            <hr />
+            <!-- Footer buttons -->
+            <div class="d-flex justify-content-between">
+              <button type="button" class="btn btn-default btn-clear">
+                <i class="fas fa-backspace"></i> @L("Clear")
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nút search bên ngoài dropdown -->
+        <button type="button" class="btn bg-blue ml-2 btn-search">
+          <i class="fas fa-search"></i> @L("Search")
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

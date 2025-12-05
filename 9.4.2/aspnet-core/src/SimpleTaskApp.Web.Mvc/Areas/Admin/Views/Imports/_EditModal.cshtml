@@ -18,15 +18,21 @@
 
     <div class="modal-body">
 
-        <!-- SupplierName -->
-        <div class="form-group row required">
-            <label class="col-md-3 col-form-label" for="SupplierName">@L("SupplierName")</label>
-            <div class="col-md-9">
-                <input id="SupplierName" name="SupplierName" type="text" class="form-control"
-                       value="@Model.Import.SupplierName" required />
-            </div>
-        </div>
-
+       <!-- Supplier dropdown -->
+<div class="form-group row required">
+    <label class="col-md-3 col-form-label" for="SupplierId">@L("SupplierName")</label>
+    <div class="col-md-9">
+        <select id="SupplierId" name="SupplierId" class="form-control" required>
+          <option value="">-- @L("SelectSupplier") --</option>
+          @foreach (var s in Model.Suppliers)
+          {
+            <option value="@s.Value" selected="@(s.Value == Model.Import.SupplierId.ToString() ? "selected" : "")">
+              @s.Text
+            </option>
+          }
+        </select>
+    </div>
+</div>
         <!-- KeeperName -->
         <div class="form-group row required">
             <label class="col-md-3 col-form-label" for="KeeperName">@L("KeeperName")</label>

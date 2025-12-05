@@ -178,87 +178,113 @@ namespace SimpleTaskApp.MobilePhones
 
 
 
-    // ✅ GET BY ID (có danh sách màu)
+    // ✅ GET BY ID (có danh sách màu và xử lý hết thời gian sale)
     public async Task<MobilePhoneDto> GetAsync(EntityDto<int> input)
-        {
-            var phone = await _mobilePhoneRepository.GetAll()
-                .Include(p => p.Category)
-                .Include(p => p.Colors)
-                .FirstOrDefaultAsync(p => p.Id == input.Id);
-
-            if (phone == null)
-                throw new UserFriendlyException("Không tìm thấy sản phẩm");
-
-            return MapToDto(phone);
-        }
-
-
-
-
-        // ✅ GET ALL + FILTER
-        public async Task<PagedResultDto<MobilePhoneDto>> GetAllAsync(PagedMobilePhoneResultRequestDto input)
-        {
-            var query = _mobilePhoneRepository.GetAll()
-                .Include(mp => mp.Category)
-                .Include(mp => mp.Colors)
-                .AsQueryable();
-
-
-            if (!string.IsNullOrEmpty(input.Keyword))
-                query = query.Where(x => x.Name.Contains(input.Keyword) || x.Description.Contains(input.Keyword));
-
-            if (input.CategoryId.HasValue)
-                query = query.Where(p => p.CategoryId == input.CategoryId.Value);
-
-            if (!string.IsNullOrWhiteSpace(input.Brand))
-                query = query.Where(p => p.Brand == input.Brand);
-
-            if (input.IsNew.HasValue && input.IsNew.Value)
-                query = query.Where(p => p.IsNew == true);
-
-            if (input.IsOnSale.HasValue && input.IsOnSale.Value)
-            {
-                var now = DateTime.Now;
-                query = query.Where(p => p.IsOnSale == true &&
-                                         p.SaleStart <= now &&
-                                         (p.SaleEnd == null || p.SaleEnd >= now));
-            }
-
-            // Sort
-            switch (input.Sort)
-            {
-                case "priceAsc":
-                    query = query.OrderBy(p => p.Price);
-                    break;
-                case "priceDesc":
-                    query = query.OrderByDescending(p => p.Price);
-                    break;
-                case "new":
-                    query = query.OrderByDescending(p => p.CreationTime);
-                    break;
-                case "sale":
-                    query = query.OrderByDescending(p => p.DiscountPrice ?? p.Price);
-                    break;
-                default:
-                    query = query.OrderBy(p => p.Name);
-                    break;
-            }
-
-            var totalCount = await query.CountAsync();
-            var items = await query.Skip(input.SkipCount).Take(input.MaxResultCount).ToListAsync();
-
-            return new PagedResultDto<MobilePhoneDto>(
-                totalCount,
-                items.Select(MapToDto).ToList()
-            );
-        }
-    public async Task<PagedResultDto<MobilePhoneDto>> GetAllByUserAsync(PagedMobilePhoneResultRequestDto input)
     {
+      var now = DateTime.Now;
+
+      // Lấy sản phẩm theo Id, kèm Category và Colors
+      var phone = await _mobilePhoneRepository.GetAll()
+          .Include(p => p.Category)
+          .Include(p => p.Colors)
+          .FirstOrDefaultAsync(p => p.Id == input.Id);
+
+      if (phone == null)
+        throw new UserFriendlyException("Không tìm thấy sản phẩm");
+
+      // Kiểm tra nếu sản phẩm đang sale nhưng đã hết thời gian
+      if (phone.IsOnSale && phone.SaleEnd.HasValue && phone.SaleEnd.Value < now)
+      {
+        phone.IsOnSale = false;
+        await _mobilePhoneRepository.UpdateAsync(phone);
+        await CurrentUnitOfWork.SaveChangesAsync();
+      }
+
+      return MapToDto(phone);
+    }
+
+
+    // ✅ GET ALL + FILTER
+    public async Task<PagedResultDto<MobilePhoneDto>> GetAllAsync(PagedMobilePhoneResultRequestDto input)
+    {
+      var now = DateTime.Now;
+
+      // Lấy tất cả sản phẩm
       var query = _mobilePhoneRepository.GetAll()
           .Include(mp => mp.Category)
           .Include(mp => mp.Colors)
           .AsQueryable();
 
+      // 1️⃣ Cập nhật những sản phẩm hết thời gian sale
+      var phonesToUpdate = await query
+          .Where(p => p.IsOnSale && p.SaleEnd.HasValue && p.SaleEnd.Value < now)
+          .ToListAsync();
+
+      if (phonesToUpdate.Any())
+      {
+        phonesToUpdate.ForEach(p => p.IsOnSale = false);
+        await CurrentUnitOfWork.SaveChangesAsync(); // commit 1 lần
+      }
+
+      // 2️⃣ Filter theo input
+      if (!string.IsNullOrEmpty(input.Keyword))
+        query = query.Where(x => x.Name.Contains(input.Keyword) || x.Description.Contains(input.Keyword));
+
+      if (input.CategoryId.HasValue)
+        query = query.Where(p => p.CategoryId == input.CategoryId.Value);
+
+      if (!string.IsNullOrWhiteSpace(input.Brand))
+        query = query.Where(p => p.Brand == input.Brand);
+
+      if (input.IsNew.HasValue && input.IsNew.Value)
+        query = query.Where(p => p.IsNew);
+
+      if (input.IsOnSale.HasValue && input.IsOnSale.Value)
+        query = query.Where(p => p.IsOnSale);
+
+      // 3️⃣ Sort
+      query = input.Sort switch
+      {
+        "priceAsc" => query.OrderBy(p => p.Price),
+        "priceDesc" => query.OrderByDescending(p => p.Price),
+        "new" => query.OrderByDescending(p => p.CreationTime),
+        "sale" => query.OrderByDescending(p => p.DiscountPrice ?? p.Price),
+        _ => query.OrderBy(p => p.Name)
+      };
+
+      // 4️⃣ Paging
+      var totalCount = await query.CountAsync();
+      var items = await query.Skip(input.SkipCount).Take(input.MaxResultCount).ToListAsync();
+
+      // 5️⃣ Map sang DTO
+      return new PagedResultDto<MobilePhoneDto>(
+          totalCount,
+          items.Select(MapToDto).ToList()
+      );
+    }
+
+    public async Task<PagedResultDto<MobilePhoneDto>> GetAllByUserAsync(PagedMobilePhoneResultRequestDto input)
+    {
+      var now = DateTime.Now;
+
+      // Lấy tất cả sản phẩm
+      var query = _mobilePhoneRepository.GetAll()
+          .Include(mp => mp.Category)
+          .Include(mp => mp.Colors)
+          .AsQueryable();
+
+      // 1️⃣ Cập nhật một lần các sản phẩm hết hạn sale
+      var phonesToUpdate = await query
+          .Where(p => p.IsOnSale && p.SaleEnd.HasValue && p.SaleEnd.Value < now)
+          .ToListAsync();
+
+      if (phonesToUpdate.Any())
+      {
+        phonesToUpdate.ForEach(p => p.IsOnSale = false);
+        await CurrentUnitOfWork.SaveChangesAsync(); // commit 1 lần
+      }
+
+      // 2️⃣ Áp dụng filter cho sản phẩm còn tồn kho
       query = query.Where(p => p.StockQuantity > 0);
 
       if (!string.IsNullOrEmpty(input.Keyword))
@@ -271,44 +297,32 @@ namespace SimpleTaskApp.MobilePhones
         query = query.Where(p => p.Brand == input.Brand);
 
       if (input.IsNew.HasValue && input.IsNew.Value)
-        query = query.Where(p => p.IsNew == true);
+        query = query.Where(p => p.IsNew);
 
       if (input.IsOnSale.HasValue && input.IsOnSale.Value)
-      {
-        var now = DateTime.Now;
-        query = query.Where(p => p.IsOnSale == true &&
-                                 p.SaleStart <= now &&
-                                 (p.SaleEnd == null || p.SaleEnd >= now));
-      }
+        query = query.Where(p => p.IsOnSale);
 
-      // Sort
-      switch (input.Sort)
+      // 3️⃣ Sort
+      query = input.Sort switch
       {
-        case "priceAsc":
-          query = query.OrderBy(p => p.Price);
-          break;
-        case "priceDesc":
-          query = query.OrderByDescending(p => p.Price);
-          break;
-        case "new":
-          query = query.OrderByDescending(p => p.CreationTime);
-          break;
-        case "sale":
-          query = query.OrderByDescending(p => p.DiscountPrice ?? p.Price);
-          break;
-        default:
-          query = query.OrderBy(p => p.Name);
-          break;
-      }
+        "priceAsc" => query.OrderBy(p => p.Price),
+        "priceDesc" => query.OrderByDescending(p => p.Price),
+        "new" => query.OrderByDescending(p => p.CreationTime),
+        "sale" => query.OrderByDescending(p => p.DiscountPrice ?? p.Price),
+        _ => query.OrderBy(p => p.Name)
+      };
 
+      // 4️⃣ Paging
       var totalCount = await query.CountAsync();
       var items = await query.Skip(input.SkipCount).Take(input.MaxResultCount).ToListAsync();
 
+      // 5️⃣ Map sang DTO
       return new PagedResultDto<MobilePhoneDto>(
           totalCount,
           items.Select(MapToDto).ToList()
       );
     }
+
     // ✅ GET BRANDS BY CATEGORY
     public async Task<List<string>> GetBrandsByCategoryAsync(int? categoryId)
         {

@@ -1,0 +1,180 @@
+﻿@using SimpleTaskApp.Suppliers.Dto
+@using SimpleTaskApp.Areas.Admin.Models.Common.Modals
+@using SimpleTaskApp.Areas.Admin.Models.Suppliers
+@model SupplierViewModel
+
+@{
+    Layout = null;
+}
+
+@await Html.PartialAsync(
+    "~/Areas/Admin/Views/Shared/Modals/_ModalHeader.cshtml",
+    new ModalHeaderViewModel(L("EditSupplier"))
+)
+
+<form id="SupplierEditForm" role="form" class="form-horizontal">
+    <div class="modal-body">
+    <input type="hidden" id="SupplierId" name="Id" value="@Model.Supplier.Id" />
+
+        <!-- Supplier Code -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="SupplierCode">@L("SupplierCode")</label>
+            <div class="col-md-9">
+                <input id="SupplierCode"
+                       name="SupplierCode"
+                       type="text"
+                       class="form-control"
+                       maxlength="50"
+                       required
+                       value="@Model.Supplier.SupplierCode"
+                       data-val="true"
+                       data-val-required="@L("SupplierCode_Required")" />
+
+                <span class="text-danger field-validation-valid"
+                      data-valmsg-for="SupplierCode"
+                      data-valmsg-replace="true"></span>
+            </div>
+        </div>
+
+        <!-- Supplier Name -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="SupplierName">@L("SupplierName")</label>
+            <div class="col-md-9">
+                <input id="SupplierName"
+                       name="SupplierName"
+                       type="text"
+                       class="form-control"
+                       maxlength="200"
+                       required
+                       value="@Model.Supplier.SupplierName"
+                       data-val="true"
+                       data-val-required="@L("SupplierName_Required")" />
+
+                <span class="text-danger field-validation-valid"
+                      data-valmsg-for="SupplierName"
+                      data-valmsg-replace="true"></span>
+            </div>
+        </div>
+
+        <!-- Phone (10 số) -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="Phone">@L("Phone")</label>
+            <div class="col-md-9">
+                <input id="Phone"
+                       name="Phone"
+                       type="text"
+                       class="form-control"
+                       maxlength="10"
+                       required
+                       value="@Model.Supplier.Phone"
+                       data-val="true"
+                       data-val-regex="@L("Phone_Invalid")"
+                       data-val-regex-pattern="^\d{10}$"
+                       data-val-required="@L("Phone_Required")" />
+
+                <span class="text-danger field-validation-valid"
+                      data-valmsg-for="Phone"
+                      data-valmsg-replace="true"></span>
+            </div>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="Email">@L("Email")</label>
+            <div class="col-md-9">
+                <input id="Email"
+                       name="Email"
+                       type="email"
+                       class="form-control"
+                       maxlength="100"
+                       required
+                       value="@Model.Supplier.Email"
+                       data-val="true"
+                       data-val-email="@L("Email_Invalid")"
+                       data-val-required="@L("Email_Required")" />
+
+                <span class="text-danger field-validation-valid"
+                      data-valmsg-for="Email"
+                      data-valmsg-replace="true"></span>
+            </div>
+        </div>
+
+        <!-- Address -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="Address">@L("Address")</label>
+            <div class="col-md-9">
+                <input id="Address"
+                       name="Address"
+                       type="text"
+                       class="form-control"
+                       maxlength="250"
+                       required
+                       value="@Model.Supplier.Address"
+                       data-val="true"
+                       data-val-required="@L("Address_Required")" />
+
+                <span class="text-danger field-validation-valid"
+                      data-valmsg-for="Address"
+                      data-valmsg-replace="true"></span>
+            </div>
+        </div>
+
+        <!-- TaxCode -->
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="TaxCode">@L("TaxCode")</label>
+            <div class="col-md-9">
+                <input id="TaxCode"
+                       name="TaxCode"
+                       type="text"
+                       class="form-control"
+                       maxlength="50"
+                       required
+                       value="@Model.Supplier.TaxCode"
+                       data-val="true"
+                       data-val-required="@L("TaxCode_Required")" />
+
+                <span class="text-danger field-validation-valid"
+                      data-valmsg-for="TaxCode"
+                      data-valmsg-replace="true"></span>
+            </div>
+        </div>
+
+        <!-- Note (không required) -->
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="Note">@L("Note")</label>
+            <div class="col-md-9">
+                <textarea id="Note" name="Note" class="form-control" rows="3" maxlength="500">
+                    @Model.Supplier.Note
+                </textarea>
+            </div>
+        </div>
+
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="IsActive">@L("Status")</label>
+      <div class="col-md-9">
+        @{
+          var statusOptions = new List<SelectListItem>
+        {
+        new SelectListItem { Value = "1", Text = L("Active"), Selected = Model.Supplier.IsActive == 1 },
+        new SelectListItem { Value = "0", Text = L("Inactive"), Selected = Model.Supplier.IsActive == 0 }
+        };
+        }
+        @Html.DropDownList(
+               "IsActive",
+               statusOptions,
+               new { @class = "form-control", id = "IsActive", required = "required", data_val = "true", data_val_required = L("Status_Required") }
+               )
+      </div>
+    </div>
+
+    </div>
+
+    @await Html.PartialAsync(
+        "~/Areas/Admin/Views/Shared/Modals/_ModalFooterWithSaveAndCancel.cshtml"
+    )
+</form>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+<script src="~/view-resources/Views/Suppliers/_EditModal.js" asp-append-version="true"></script>

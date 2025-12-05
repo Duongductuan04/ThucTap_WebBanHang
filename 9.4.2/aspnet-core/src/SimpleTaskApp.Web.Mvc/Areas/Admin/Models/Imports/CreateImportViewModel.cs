@@ -8,24 +8,21 @@ namespace SimpleTaskApp.Areas.Admin.Models.Imports
   public class CreateImportViewModel
   {
     // Dropdown sản phẩm
-    public List<SelectListItem> MobilePhones { get; set; }
+    public List<SelectListItem> MobilePhones { get; set; } = new List<SelectListItem>();
 
     // Danh sách màu của các sản phẩm
-    public List<MobilePhoneColorDto> MobilePhoneColors { get; set; }
+    public List<MobilePhoneColorDto> MobilePhoneColors { get; set; } = new List<MobilePhoneColorDto>();
 
-    // Constructor với danh sách sản phẩm
+    // Constructor có thể truyền danh sách sản phẩm
+    public List<SelectListItem> Suppliers { get; set; } = new List<SelectListItem>();
+
     public CreateImportViewModel(List<SelectListItem> mobilePhones)
     {
-      MobilePhones = mobilePhones;
-      MobilePhoneColors = new List<MobilePhoneColorDto>();
+      MobilePhones = mobilePhones ?? new List<SelectListItem>();
     }
 
     // Constructor rỗng
-    public CreateImportViewModel()
-    {
-      MobilePhones = new List<SelectListItem>();
-      MobilePhoneColors = new List<MobilePhoneColorDto>();
-    }
+    public CreateImportViewModel() { }
   }
 
   // ViewModel chỉnh sửa phiếu nhập
@@ -35,21 +32,15 @@ namespace SimpleTaskApp.Areas.Admin.Models.Imports
     public ImportDto Import { get; set; }
 
     // Dropdown sản phẩm
-    public List<SelectListItem> MobilePhones { get; set; }
+    public List<SelectListItem> MobilePhones { get; set; } = new List<SelectListItem>();
 
     // Danh sách màu của các sản phẩm
-    public List<MobilePhoneColorDto> MobilePhoneColors { get; set; }
+    public List<MobilePhoneColorDto> MobilePhoneColors { get; set; } = new List<MobilePhoneColorDto>();
+    public List<SelectListItem> Suppliers { get; set; } = new List<SelectListItem>();
 
-    // Id sản phẩm đã chọn trong chi tiết (nếu cần)
+    // Id sản phẩm đã chọn trong chi tiết
     public List<int> SelectedMobilePhoneIds { get; set; } = new List<int>();
 
-    public EditImportViewModel()
-    {
-      MobilePhones = new List<SelectListItem>();
-      MobilePhoneColors = new List<MobilePhoneColorDto>();
-    }
+    public EditImportViewModel() { }
   }
-
-  // DTO màu để JS có thể đọc dễ dàng
-  
 }

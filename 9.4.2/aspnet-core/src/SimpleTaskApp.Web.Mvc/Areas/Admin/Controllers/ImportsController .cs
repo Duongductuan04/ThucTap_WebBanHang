@@ -24,78 +24,67 @@ namespace SimpleTaskApp.Areas.Admin.Controllers
     private readonly IRepository<MobilePhone, int> _productRepository;
     private readonly IRepository<MobilePhoneColor, int> _colorRepository;
     private readonly IRepository<Import, int> _importRepository;
+    private readonly IRepository<Supplier, int> _supplierRepository;
 
     public ImportsController(
         IImportAppService importAppService,
         IRepository<MobilePhone, int> productRepository,
         IRepository<MobilePhoneColor, int> colorRepository,
-    IRepository<Import, int> importRepository) // <-- interface chuẩn
-
+        IRepository<Import, int> importRepository,
+        IRepository<Supplier, int> supplierRepository)
     {
       _importAppService = importAppService;
       _productRepository = productRepository;
       _colorRepository = colorRepository;
-      _importRepository = importRepository; // <-- gán giá trị
-
+      _importRepository = importRepository;
+      _supplierRepository = supplierRepository;
     }
 
-    // =================== INDEX ===================
     public async Task<IActionResult> Index()
     {
-      // Lấy danh sách nhà cung cấp từ repository Import
-      // Lấy nhà cung cấp từ bảng Import
-      var suppliersData = await _importRepository.GetAll()
-          .Where(s => !string.IsNullOrEmpty(s.SupplierName))
-          .Select(s => s.SupplierName)
-          .Distinct()
-          .ToListAsync(); // EF Core async vẫn được vì đây là entity / primitive
-
-      var suppliers = suppliersData
+      var suppliers = await _supplierRepository.GetAll()
           .Select(s => new SelectListItem
           {
-            Value = s,
-            Text = s
+            Value = s.Id.ToString(),
+            Text = s.SupplierName
           })
-          .ToList();
-
-      // Tương tự cho Keepers
-      var keepersData = await _importRepository.GetAll()
-          .Where(k => !string.IsNullOrEmpty(k.KeeperName))
-          .Select(k => k.KeeperName)
-          .Distinct()
           .ToListAsync();
 
-      var keepers = keepersData
-          .Select(k => new SelectListItem
-          {
-            Value = k,
-            Text = k
-          })
-          .ToList();
+      var keepers = await _importRepository.GetAll()
+          .Where(i => !string.IsNullOrEmpty(i.KeeperName))
+          .Select(i => i.KeeperName)
+          .Distinct()
+          .ToListAsync();
+      var keepersList = keepers.Select(k => new SelectListItem { Value = k, Text = k }).ToList();
 
-      // Nếu cần mobile phones
       var mobilePhones = await _productRepository.GetAllListAsync();
       var mobilePhoneItems = mobilePhones
           .Select(p => new SelectListItem { Value = p.Id.ToString(), Text = p.Name })
           .ToList();
 
       ViewBag.Suppliers = suppliers;
-      ViewBag.Keepers = keepers;
+      ViewBag.Keepers = keepersList;
       ViewBag.MobilePhones = mobilePhoneItems;
 
       return View();
     }
 
-
-    // =================== CREATE MODAL ===================
     public async Task<PartialViewResult> CreateModal()
     {
+      // Lấy danh sách sản phẩm
       var mobilePhones = (await _productRepository.GetAllListAsync())
           .Select(p => new SelectListItem { Value = p.Id.ToString(), Text = p.Name })
           .ToList();
 
+      // Lấy danh sách màu
       var mobileColors = await _colorRepository.GetAllListAsync();
 
+      // Lấy danh sách nhà cung cấp
+      var suppliers = (await _supplierRepository.GetAllListAsync())
+          .Select(s => new SelectListItem { Value = s.Id.ToString(), Text = s.SupplierName })
+          .ToList();
+
+      // Tạo ViewModel
       var vm = new CreateImportViewModel
       {
         MobilePhones = mobilePhones,
@@ -104,17 +93,18 @@ namespace SimpleTaskApp.Areas.Admin.Controllers
           Id = c.Id,
           MobilePhoneId = c.MobilePhoneId,
           ColorName = c.ColorName
-        }).ToList()
+        }).ToList(),
+        Suppliers = suppliers
       };
 
       return PartialView("_CreateModal", vm);
     }
 
-    // =================== EDIT MODAL ===================
     public async Task<PartialViewResult> EditModal(int importId)
     {
       var import = await _importAppService.GetAsync(new EntityDto<int>(importId));
 
+      // Lấy danh sách sản phẩm
       var mobilePhones = (await _productRepository.GetAllListAsync())
           .Select(p => new SelectListItem
           {
@@ -124,7 +114,17 @@ namespace SimpleTaskApp.Areas.Admin.Controllers
           })
           .ToList();
 
+      // Lấy danh sách màu
       var mobileColors = await _colorRepository.GetAllListAsync();
+
+      var suppliers = (await _supplierRepository.GetAllListAsync())
+    .Select(s => new SelectListItem
+    {
+      Value = s.Id.ToString(),
+      Text = s.SupplierName,
+      Selected = import.SupplierId == s.Id  // nếu SupplierId là int
+    })
+    .ToList();
 
       var vm = new EditImportViewModel
       {
@@ -136,30 +136,28 @@ namespace SimpleTaskApp.Areas.Admin.Controllers
           Id = c.Id,
           MobilePhoneId = c.MobilePhoneId,
           ColorName = c.ColorName
-        }).ToList()
+        }).ToList(),
+        Suppliers = suppliers // gán dropdown nhà cung cấp
       };
 
       return PartialView("_EditModal", vm);
     }
 
-    // =================== DETAIL MODAL ===================
     public async Task<PartialViewResult> DetailModal(int importId)
     {
       var import = await _importAppService.GetAsync(new EntityDto<int>(importId));
       return PartialView("_DetailModal", import);
     }
+
     [HttpGet]
     public async Task<IActionResult> PrintImport(int id)
     {
-      // Lấy phiếu nhập theo Id
       var import = await _importAppService.GetAsync(new EntityDto<int>(id));
       if (import == null)
         return NotFound();
-
-      // Truyền sang view chuyên dụng để in
       return View("ImportPrint", import);
     }
-    // =================== DELETE ===================
+
     [HttpPost]
     public async Task<IActionResult> Delete(EntityDto<int> input)
     {
@@ -167,4 +165,5 @@ namespace SimpleTaskApp.Areas.Admin.Controllers
       return Json(new { success = true });
     }
   }
+
 }

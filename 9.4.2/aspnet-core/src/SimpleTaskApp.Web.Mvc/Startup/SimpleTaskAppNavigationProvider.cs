@@ -57,7 +57,17 @@ namespace SimpleTaskApp.Web.Startup
                       )
                   )
               )
-               
+               .AddItem(
+    new MenuItemDefinition(
+        "SuppliersAdmin",        // Unique name cho menu item
+        L("Suppliers"),          // Text hiển thị
+        url: "/Admin/Suppliers", // Đường dẫn tới trang quản lý Supplier
+        icon: "fas fa-truck",    // Icon (ví dụ: xe tải cho Supplier)
+        permissionDependency: new SimplePermissionDependency(
+            PermissionNames.Pages_Suppliers // Phân quyền xem menu
+        )
+    )
+)
            .AddItem(
               new MenuItemDefinition(
                   "DiscountsAdmin",

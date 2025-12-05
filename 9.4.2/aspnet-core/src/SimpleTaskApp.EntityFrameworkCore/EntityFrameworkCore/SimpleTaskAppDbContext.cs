@@ -24,6 +24,7 @@ namespace SimpleTaskApp.EntityFrameworkCore
         public DbSet<Import> Imports { get; set; }
         public DbSet<ImportDetail> ImportDetails { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
+        public DbSet<Supplier> Suppliers { get; set; }
 
     public SimpleTaskAppDbContext(DbContextOptions<SimpleTaskAppDbContext> options)
             : base(options)

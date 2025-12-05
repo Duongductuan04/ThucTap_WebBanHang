@@ -10,9 +10,12 @@ namespace SimpleTaskApp.MobilePhones.Dto
         public string ImportCode { get; set; }
 
         [Required]
-        public string SupplierName { get; set; }
 
-        public string Note { get; set; }
+
+    public int SupplierId { get; set; } // ✅ sử dụng Id thay vì tên
+
+
+    public string Note { get; set; }
         public string KeeperName { get; set; }
         public string KeeperPhone { get; set; }
 

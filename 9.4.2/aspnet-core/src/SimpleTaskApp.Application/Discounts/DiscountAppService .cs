@@ -108,6 +108,11 @@ namespace SimpleTaskApp.MobilePhones
       {
         query = query.Where(d => d.Name.Contains(input.Keyword) || d.Code.Contains(input.Keyword));
       }
+      if (input.IsActive.HasValue)
+        query = query.Where(d => d.IsActive == input.IsActive.Value);
+
+      if (input.ApplyType.HasValue)
+        query = query.Where(d => d.ApplyType == input.ApplyType.Value);
       var totalCount = await query.CountAsync();
 
             var items = await query

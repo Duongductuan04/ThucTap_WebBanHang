@@ -2,6 +2,7 @@
 using Abp.AutoMapper;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace SimpleTaskApp.MobilePhones.Dto
 {
@@ -11,8 +12,10 @@ namespace SimpleTaskApp.MobilePhones.Dto
         public int Id { get; set; }
 
         public string ImportCode { get; set; }
-        public string SupplierName { get; set; }
-        public string KeeperName { get; set; }
+    public int SupplierId { get; set; } // ✅ Id nhà cung cấp
+    public string SupplierName { get; set; } // tên nhà cung cấp để hiển thị
+
+    public string KeeperName { get; set; }
         public string KeeperPhone { get; set; }
 
         public string Note { get; set; }

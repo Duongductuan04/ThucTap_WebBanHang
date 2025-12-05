@@ -15,7 +15,7 @@
         public const string Imports = "Imports";
         public const string Chat = "Chat";
          public const string MobilePhoneCategories = "MobilePhoneCategories";
-
+    public const string Suppliers = "Suppliers";
 
   }
 }

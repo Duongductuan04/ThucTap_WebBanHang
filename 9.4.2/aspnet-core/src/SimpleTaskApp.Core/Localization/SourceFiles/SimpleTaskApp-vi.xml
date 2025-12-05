@@ -308,6 +308,29 @@
 		<text name="Supplier" value="Nhà cung cấp" />
 		<text name="Keeper" value="Người nhập" />
 		<text name="CurrentUsage" value="Số lần sử dụng" />
+		<text name="SupplierDetail" value="Chi tiết nhà cung cấp" />
+		<text name="CreateNewSupplier" value="Tạo nhà cung cấp mới" />
+		<text name="EditSupplier" value="Sửa nhà cung cấp" />
+		<text name="Id" value="Id" />
+		<text name="Suppliers" value="Danh sách Nhà cung cấp" />
+		<text name="SupplierCode" value="Mã nhà cung cấp" />
+		<text name="Email" value="Email" />
+
+		<text name="Address" value="Địa chỉ nhà cung cấp" />
+		<text name="TaxCode" value="Mã số thuế" />
+		<text name="Noselect" value="Không chọn" />
+
+		<text name="SelectSupplier" value="Lựa chọn Nhà cung cấp" />
+
+		<text name="SearchBySupplierCodeOrName" value="Tìm kiếm theo mã hoặc tên nhà cung cấp" />
+		<text name="SupplierCode_Required" value="Mã nhà cung cấp là bắt buộc" />
+		<text name="Phone_Required" value="Số điện thoại là bắt buộc" />
+		<text name="Email_Required" value="Email là bắt buộc" />
+		<text name="Email_Invalid" value="Email không hợp lệ" />
+		<text name="Address_Required" value="Địa chỉ là bắt buộc" />
+		<text name="TaxCode_Required" value="Mã số thuế là bắt buộc" />
+		<text name="Status_Required" value="Trạng thái là bắt buộc" />
+
 
 	</texts>
 </localizationDictionary>

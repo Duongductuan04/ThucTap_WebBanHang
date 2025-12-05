@@ -199,5 +199,11 @@
     "inputFiles": [
       "wwwroot/view-resources/Views/MobilePhoneCategories/Index.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/view-resources/Views/Suppliers/Index.min.js",
+    "inputFiles": [
+      "wwwroot/view-resources/Views/Suppliers/Index.js"
+    ]
   }
 ]

@@ -11,8 +11,10 @@ namespace SimpleTaskApp.MobilePhones
     public class Import : Entity, IHasCreationTime
     {
         public string ImportCode { get; set; } // Mã phiếu nhập
-        public string SupplierName { get; set; } // Tên nhà cung cấp
-        public string Note { get; set; } // Ghi chú
+    public int SupplierId { get; set; }
+    [ForeignKey(nameof(SupplierId))]
+    public Supplier Supplier { get; set; }
+    public string Note { get; set; } // Ghi chú
 
         // 👇 Thông tin thủ kho (người thực hiện nhập hàng)
         public string KeeperName { get; set; }

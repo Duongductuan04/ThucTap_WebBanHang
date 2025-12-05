@@ -1,0 +1,140 @@
+﻿{
+	"Addresses": [
+		{
+			"Id": "01",
+			"Name": "Thành phố Hà Nội"
+		},
+		{
+			"Id": "04",
+			"Name": "Cao Bằng"
+		},
+		{
+			"Id": "08",
+			"Name": "Tuyên Quang"
+		},
+		{
+			"Id": "11",
+			"Name": "Điện Biên"
+		},
+		{
+			"Id": "12",
+			"Name": "Lai Châu"
+		},
+		{
+			"Id": "14",
+			"Name": "Sơn La"
+		},
+		{
+			"Id": "15",
+			"Name": "Lào Cai"
+		},
+		{
+			"Id": "19",
+			"Name": "Thái Nguyên"
+		},
+		{
+			"Id": "20",
+			"Name": "Lạng Sơn"
+		},
+		{
+			"Id": "22",
+			"Name": "Quảng Ninh"
+		},
+		{
+			"Id": "24",
+			"Name": "Bắc Ninh"
+		},
+		{
+			"Id": "24",
+			"Name": "Phú Thọ"
+		},
+		{
+			"Id": "31",
+			"Name": "Thành phố Hải Phòng"
+		},
+		{
+			"Id": "33",
+			"Name": "Hưng Yên"
+		},
+		{
+			"Id": "37",
+			"Name": "Ninh Bình"
+		},
+		{
+			"Id": "38",
+			"Name": "Thanh Hóa"
+		},
+		{
+			"Id": "40",
+			"Name": "Nghệ An"
+		},
+		{
+			"Id": "42",
+			"Name": "Hà Tĩnh"
+		},
+		{
+			"Id": "44",
+			"Name": "Quảng Trị"
+		},
+		{
+			"Id": "46",
+			"Name": "Thành phố Huế"
+		},
+		{
+			"Id": "48",
+			"Name": "Thành phố Đà Nẵng"
+		},
+		{
+			"Id": "51",
+			"Name": "Quảng Ngãi"
+		},
+		{
+			"Id": "52",
+			"Name": "Gia Lai"
+		},
+		{
+			"Id": "56",
+			"Name": "Khánh Hòa"
+		},
+		{
+			"Id": "66",
+			"Name": "Đắk Lắk"
+		},
+		{
+			"Id": "68",
+			"Name": "Lâm Đồng"
+		},
+		{
+			"Id": "75",
+			"Name": "Đồng Nai"
+		},
+		{
+			"Id": "79",
+			"Name": "Thành phố Hồ Chí Minh"
+		},
+		{
+			"Id": "80",
+			"Name": "Tây Ninh"
+		},
+		{
+			"Id": "82",
+			"Name": "Đồng Tháp"
+		},
+		{
+			"Id": "86",
+			"Name": "Vĩnh Long"
+		},
+		{
+			"Id": "91",
+			"Name": "An Giang"
+		},
+		{
+			"Id": "92",
+			"Name": "Thành phố Cần Thơ"
+		},
+		{
+			"Id": "96",
+			"Name": "Cà Mau"
+		}
+	]
+}

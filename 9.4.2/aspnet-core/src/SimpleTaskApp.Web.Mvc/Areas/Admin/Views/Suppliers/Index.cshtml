@@ -1,0 +1,82 @@
+﻿@using SimpleTaskApp.Suppliers
+@using SimpleTaskApp.Suppliers.Dto
+@using SimpleTaskApp.Web.Startup
+
+@{
+  ViewBag.Title = L("Suppliers");
+}
+
+@section scripts
+{
+  <environment names="Development">
+    <script src="~/view-resources/Views/Suppliers/Index.js" asp-append-version="true"></script>
+  </environment>
+
+  <environment names="Staging,Production">
+    <script src="~/view-resources/Views/Suppliers/Index.min.js" asp-append-version="true"></script>
+  </environment>
+}
+
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1>@L("Suppliers")</h1>
+      </div>
+      <div class="col-sm-6 text-right">
+        <button type="button" class="btn bg-blue create-supplier">
+          <i class="fa fa-plus-square"></i> @L("Create")
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="content">
+  <div class="container-fluid">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-md-6">
+            <!-- Optional: bulk actions -->
+          </div>
+          <div class="col-md-6">
+            <!-- Partial view tìm kiếm nâng cao cho Supplier -->
+            @await Html.PartialAsync("~/Areas/Admin/Views/Suppliers/Index.AdvancedSearch.cshtml")
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="table-responsive">
+          <table id="SuppliersTable" class="table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th style="width:50px">@L("Id")</th>
+                <th>@L("SupplierCode")</th>
+                <th>@L("SupplierName")</th>
+                <th>@L("Phone")</th>
+                <th>@L("Email")</th>
+                <th>@L("Status")</th>
+                <th style="width:200px">@L("Actions")</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Create Modal -->
+<div class="modal fade" id="SupplierCreateModal" tabindex="-1" role="dialog" data-backdrop="static">
+  <div class="modal-dialog"><div class="modal-content"></div></div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="SupplierEditModal" tabindex="-1" role="dialog" data-backdrop="static">
+  <div class="modal-dialog"><div class="modal-content"></div></div>
+</div>
