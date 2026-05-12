@@ -22,7 +22,6 @@ namespace SimpleTaskApp.MobilePhones
 
 
 
-    [AbpAuthorize(PermissionNames.Pages_MobilePhoneCategory)]
     public async Task<PagedResultDto<MobilePhoneCategoryDto>> GetAllAsync(PagedMobilePhoneCategoryResultRequestDto input)
     {
       var query = _categoryRepository.GetAll();
@@ -47,7 +46,6 @@ namespace SimpleTaskApp.MobilePhones
 
 
  
-    [AbpAuthorize(PermissionNames.Pages_MobilePhoneCategory)]
     public async Task<MobilePhoneCategoryDto> GetAsync(EntityDto<int> input)
     {
       var category = await _categoryRepository.GetAsync(input.Id);
@@ -92,7 +90,6 @@ namespace SimpleTaskApp.MobilePhones
     }
 
 
-    [AbpAuthorize(PermissionNames.Pages_MobilePhoneCategory)]
     public async Task<string> GetNameAsync(int id)
     {
       var category = await _categoryRepository.GetAsync(id);
